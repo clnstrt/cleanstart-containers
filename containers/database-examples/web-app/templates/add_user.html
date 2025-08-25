@@ -1,0 +1,121 @@
+{% extends "base.html" %}
+
+{% block title %}Add User - Database Examples{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+        <div class="card">
+            <div class="card-header bg-success text-white">
+                <h4 class="mb-0">
+                    <i class="fas fa-user-plus me-2"></i>
+                    Add New User
+                </h4>
+            </div>
+            <div class="card-body">
+                <form method="POST" id="addUserForm">
+                    <div class="mb-3">
+                        <label for="name" class="form-label">
+                            <i class="fas fa-user me-1"></i>Full Name
+                        </label>
+                        <input type="text" class="form-control" id="name" name="name" 
+                               placeholder="Enter full name" required>
+                        <div class="form-text">Enter the user's full name</div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="email" class="form-label">
+                            <i class="fas fa-envelope me-1"></i>Email Address
+                        </label>
+                        <input type="email" class="form-control" id="email" name="email" 
+                               placeholder="Enter email address" required>
+                        <div class="form-text">Enter a valid email address</div>
+                    </div>
+                    
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-success">
+                            <i class="fas fa-save me-1"></i>Add User
+                        </button>
+                        <a href="{{ url_for('index') }}" class="btn btn-outline-secondary">
+                            <i class="fas fa-arrow-left me-1"></i>Back to Users
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <!-- Quick Add Examples -->
+        <div class="card mt-4">
+            <div class="card-header bg-info text-white">
+                <h5 class="mb-0">
+                    <i class="fas fa-lightning-bolt me-2"></i>
+                    Quick Add Examples
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6 mb-2">
+                        <button class="btn btn-outline-primary btn-sm w-100" onclick="fillForm('Alice Johnson', 'alice@example.com')">
+                            <i class="fas fa-user me-1"></i>Alice Johnson
+                        </button>
+                    </div>
+                    <div class="col-md-6 mb-2">
+                        <button class="btn btn-outline-primary btn-sm w-100" onclick="fillForm('Charlie Brown', 'charlie@example.com')">
+                            <i class="fas fa-user me-1"></i>Charlie Brown
+                        </button>
+                    </div>
+                    <div class="col-md-6 mb-2">
+                        <button class="btn btn-outline-primary btn-sm w-100" onclick="fillForm('Diana Prince', 'diana@example.com')">
+                            <i class="fas fa-user me-1"></i>Diana Prince
+                        </button>
+                    </div>
+                    <div class="col-md-6 mb-2">
+                        <button class="btn btn-outline-primary btn-sm w-100" onclick="fillForm('Edward Norton', 'edward@example.com')">
+                            <i class="fas fa-user me-1"></i>Edward Norton
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function fillForm(name, email) {
+    document.getElementById('name').value = name;
+    document.getElementById('email').value = email;
+    document.getElementById('name').focus();
+}
+
+// Form validation
+document.getElementById('addUserForm').addEventListener('submit', function(e) {
+    const name = document.getElementById('name').value.trim();
+    const email = document.getElementById('email').value.trim();
+    
+    if (!name) {
+        e.preventDefault();
+        alert('Please enter a name');
+        document.getElementById('name').focus();
+        return false;
+    }
+    
+    if (!email) {
+        e.preventDefault();
+        alert('Please enter an email address');
+        document.getElementById('email').focus();
+        return false;
+    }
+    
+    // Basic email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+        e.preventDefault();
+        alert('Please enter a valid email address');
+        document.getElementById('email').focus();
+        return false;
+    }
+});
+</script>
+{% endblock %}
