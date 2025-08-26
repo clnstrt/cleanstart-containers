@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ruby User Management</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { padding-top: 2rem; }
+        .table-responsive { margin-top: 1rem; }
+        .btn-group-sm > .btn, .btn-sm { margin-right: 0.25rem; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="mb-4">
+            <h1 class="display-4 text-center text-primary">Ruby User Management</h1>
+            <p class="lead text-center text-muted">A simple web application built with Sinatra</p>
+        </header>
+        
+        <% if @error %>
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <%= @error %>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        <% end %>
+        
+        <% if @success %>
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <%= @success %>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        <% end %>
+        
+        <%= yield %>
+        
+        <footer class="mt-5 text-center text-muted">
+            <small>Built with Ruby, Sinatra, and Bootstrap</small>
+        </footer>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,11 @@
+source 'https://rubygems.org'
+
+gem 'sinatra', '~> 3.0'
+gem 'sinatra-contrib', '~> 3.0'
+gem 'sqlite3', '~> 1.5'
+gem 'json', '~> 2.6'
+gem 'thin', '~> 1.8'
+
+group :development do
+  gem 'rerun', '~> 0.14'
+end
