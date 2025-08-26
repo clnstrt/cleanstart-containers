@@ -151,7 +151,6 @@ class ContainerDocsGenerator:
     
     def _get_busybox_commands(self, registry_path: str, image_name: str) -> str:
         """Get BusyBox-specific commands following the documentation structure."""
-        full_image = f"{registry_path}/{image_name}"
         return f'''[
     {{
       "id": "key-features",
@@ -250,7 +249,19 @@ class ContainerDocsGenerator:
       "description": "Configuration options available through environment variables",
       "content": [
         {{
-          "text": "| Variable | Default | Description |\\n|----------|---------|-------------|\\n| PATH | /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin | System PATH configuration |\\n| BUSYBOX_VERSION | latest | Installed BusyBox version |\\n| HOME | /home/busybox | User home directory |"
+          "variable": "PATH",
+          "default": "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+          "description": "System PATH configuration"
+        }},
+        {{
+          "variable": "BUSYBOX_VERSION",
+          "default": "latest",
+          "description": "Installed BusyBox version"
+        }},
+        {{
+          "variable": "HOME",
+          "default": "/home/busybox",
+          "description": "User home directory"
         }}
       ],
       "type": "TABLE"
@@ -341,7 +352,7 @@ class ContainerDocsGenerator:
           "text": "**Container Registry**: https://{registry_path.replace('/', '.')}"
         }},
         {{
-          "text": "**Go Official Documentation**: https://go.org/"
+          "text": "**BusyBox Official Documentation**: https://busybox.net/"
         }}
       ],
       "type": "TEXT"
@@ -362,7 +373,6 @@ class ContainerDocsGenerator:
     
     def _get_database_commands(self, registry_path: str, image_name: str) -> str:
         """Get database-specific commands."""
-        full_image = f"{registry_path}/{image_name}"
         return f'''[
     {{
       "id": "key-features",
@@ -461,7 +471,24 @@ class ContainerDocsGenerator:
       "description": "Configuration options available through environment variables",
       "content": [
         {{
-          "text": "| Variable | Default | Description |\\n|----------|---------|-------------|\\n| POSTGRES_PASSWORD | (required) | Password for the PostgreSQL superuser |\\n| POSTGRES_USER | postgres | PostgreSQL superuser username |\\n| POSTGRES_DB | postgres | Default database name |\\n| POSTGRES_HOST_AUTH_METHOD | trust | Authentication method for host connections |"
+          "variable": "POSTGRES_PASSWORD",
+          "default": "(required)",
+          "description": "Password for the PostgreSQL superuser"
+        }},
+        {{
+          "variable": "POSTGRES_USER",
+          "default": "postgres",
+          "description": "PostgreSQL superuser username"
+        }},
+        {{
+          "variable": "POSTGRES_DB",
+          "default": "postgres",
+          "description": "Default database name"
+        }},
+        {{
+          "variable": "POSTGRES_HOST_AUTH_METHOD",
+          "default": "trust",
+          "description": "Authentication method for host connections"
         }}
       ],
       "type": "TABLE"
@@ -519,7 +546,7 @@ class ContainerDocsGenerator:
           "text": "**Container Registry**: https://{registry_path.replace('/', '.')}"
         }},
         {{
-          "text": "**Go Official Documentation**: https://go.org/"
+          "text": "**PostgreSQL Official Documentation**: https://www.postgresql.org/docs/"
         }}
       ],
       "type": "TEXT"
@@ -540,7 +567,6 @@ class ContainerDocsGenerator:
     
     def _get_webserver_commands(self, registry_path: str, image_name: str) -> str:
         """Get web server-specific commands."""
-        full_image = f"{registry_path}/{image_name}"
         return f'''[
     {{
       "id": "key-features",
@@ -651,7 +677,24 @@ class ContainerDocsGenerator:
       "description": "Configuration options available through environment variables",
       "content": [
         {{
-          "text": "| Variable | Default | Description |\\n|----------|---------|-------------|\\n| NGINX_HOST | localhost | Server hostname |\\n| NGINX_PORT | 80 | Server listening port |\\n| NGINX_ENVSUBST_TEMPLATE_DIR | /etc/nginx/templates | Template directory for configuration |\\n| NGINX_ENVSUBST_TEMPLATE_SUFFIX | .template | Template file suffix |"
+          "variable": "NGINX_HOST",
+          "default": "localhost",
+          "description": "Server hostname"
+        }},
+        {{
+          "variable": "NGINX_PORT",
+          "default": "80",
+          "description": "Server listening port"
+        }},
+        {{
+          "variable": "NGINX_ENVSUBST_TEMPLATE_DIR",
+          "default": "/etc/nginx/templates",
+          "description": "Template directory for configuration"
+        }},
+        {{
+          "variable": "NGINX_ENVSUBST_TEMPLATE_SUFFIX",
+          "default": ".template",
+          "description": "Template file suffix"
         }}
       ],
       "type": "TABLE"
@@ -709,7 +752,7 @@ class ContainerDocsGenerator:
           "text": "**Container Registry**: https://{registry_path.replace('/', '.')}"
         }},
         {{
-          "text": "**Go Official Documentation**: https://go.org/"
+          "text": "**Nginx Official Documentation**: https://nginx.org/en/docs/"
         }}
       ],
       "type": "TEXT"
@@ -718,21 +761,20 @@ class ContainerDocsGenerator:
     
     def _get_runtime_commands(self, registry_path: str, image_name: str) -> str:
         """Get programming language runtime-specific commands."""
-        full_image = f"{registry_path}/{image_name}"
         
         # Determine the proper interpreter command based on image type
         if image_name.lower() == 'node':
-            hello_world_cmd = f"docker run --rm <<{registry_path}>>/{image_name}:latest-dev node -e 'console.log(\\\"Hello, World!\\\")'"
+            hello_world_cmd = f"docker run --rm {registry_path}/{image_name}:latest-dev node -e 'console.log(\"Hello, World!\")'"
         elif image_name.lower() == 'python':
-            hello_world_cmd = f"docker run --rm <<{registry_path}>>/{image_name}:latest-dev python -c 'print(\\\"Hello, World!\\\")'"
+            hello_world_cmd = f"docker run --rm {registry_path}/{image_name}:latest-dev python -c 'print(\"Hello, World!\")'"
         elif image_name.lower() == 'java':
-            hello_world_cmd = f"docker run --rm <<{registry_path}>>/{image_name}:latest-dev java -version"
+            hello_world_cmd = f"docker run --rm {registry_path}/{image_name}:latest-dev java -version"
         elif image_name.lower() == 'go':
-            hello_world_cmd = f"docker run --rm <<{registry_path}>>/{image_name}:latest-dev go version"
+            hello_world_cmd = f"docker run --rm {registry_path}/{image_name}:latest-dev go version"
         elif image_name.lower() == 'php':
-            hello_world_cmd = f"docker run --rm <<{registry_path}>>/{image_name}:latest-dev php -r 'echo \\\"Hello, World!\\\\n\\\";'"
+            hello_world_cmd = f"docker run --rm {registry_path}/{image_name}:latest-dev php -r 'echo \"Hello, World!\\n\";'"
         else:
-            hello_world_cmd = f"docker run --rm <<{registry_path}>>/{image_name}:latest-dev -c 'print(\\\"Hello, World!\\\")'"
+            hello_world_cmd = f"docker run --rm {registry_path}/{image_name}:latest-dev -c 'print(\"Hello, World!\")'"
         
         return f'''[
     {{
@@ -844,7 +886,24 @@ class ContainerDocsGenerator:
       "description": "Configuration options available through environment variables",
       "content": [
         {{
-          "text": "| Variable | Default | Description |\\n|----------|---------|-------------|\\n| PATH | /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin | System PATH configuration |\\n| LANG | C.UTF-8 | Language and locale settings |\\n| {image_name.upper()}_VERSION | latest | Runtime version |\\n| HOME | /home/{image_name} | User home directory |"
+          "variable": "PATH",
+          "default": "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+          "description": "System PATH configuration"
+        }},
+        {{
+          "variable": "LANG",
+          "default": "C.UTF-8",
+          "description": "Language and locale settings"
+        }},
+        {{
+          "variable": "{image_name.upper()}_VERSION",
+          "default": "latest",
+          "description": "Runtime version"
+        }},
+        {{
+          "variable": "HOME",
+          "default": "/home/{image_name}",
+          "description": "User home directory"
         }}
       ],
       "type": "TABLE"
@@ -902,7 +961,7 @@ class ContainerDocsGenerator:
           "text": "**Container Registry**: https://{registry_path.replace('/', '.')}"
         }},
         {{
-          "text": "**Go Official Documentation**: https://go.org/"
+          "text": "**{image_name.title()} Official Documentation**: https://{image_name.lower()}.org/"
         }}
       ],
       "type": "TEXT"
@@ -911,7 +970,6 @@ class ContainerDocsGenerator:
     
     def _get_generic_commands(self, registry_path: str, image_name: str) -> str:
         """Get generic commands for unknown container types."""
-        full_image = f"{registry_path}/{image_name}"
         return f'''[
     {{
       "id": "key-features",
@@ -1022,7 +1080,24 @@ class ContainerDocsGenerator:
       "description": "Configuration options available through environment variables",
       "content": [
         {{
-          "text": "| Variable | Default | Description |\\n|----------|---------|-------------|\\n| PATH | /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin | System PATH configuration |\\n| HOME | /home/user | User home directory |\\n| USER | user | Default username |\\n| SHELL | /bin/sh | Default shell |"
+          "variable": "PATH",
+          "default": "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+          "description": "System PATH configuration"
+        }},
+        {{
+          "variable": "HOME",
+          "default": "/home/user",
+          "description": "User home directory"
+        }},
+        {{
+          "variable": "USER",
+          "default": "user",
+          "description": "Default username"
+        }},
+        {{
+          "variable": "SHELL",
+          "default": "/bin/sh",
+          "description": "Default shell"
         }}
       ],
       "type": "TABLE"
@@ -1080,7 +1155,7 @@ class ContainerDocsGenerator:
           "text": "**Container Registry**: https://{registry_path.replace('/', '.')}"
         }},
         {{
-          "text": "**Go Official Documentation**: https://go.org/"
+          "text": "**Container Documentation**: https://{registry_path.replace('/', '.')}/{image_name}"
         }}
       ],
       "type": "TEXT"
@@ -1188,16 +1263,40 @@ RESPOND WITH ONLY THE JSON OBJECT ABOVE - NO OTHER TEXT OR FORMATTING."""
             
             if block['type'] == 'CODE':
                 for content_item in block['content']:
-                    md_content += f"```{block['code_language']}\n{content_item['text']}\n```\n\n"
+                    if 'text' in content_item:
+                        md_content += f"```{block['code_language']}\n{content_item['text']}\n```\n\n"
+                    else:
+                        # Handle case where text might be missing
+                        md_content += f"```{block['code_language']}\n# Code example\n```\n\n"
             elif block['type'] == 'TABLE':
-                for content_item in block['content']:
-                    md_content += f"{content_item['text']}\n\n"
+                # Handle table content with proper structure
+                if block['content'] and len(block['content']) > 0:
+                    # Check if it's an environment variables table
+                    if 'variable' in block['content'][0]:
+                        md_content += "| Variable | Default | Description |\n"
+                        md_content += "|----------|---------|-------------|\n"
+                        for content_item in block['content']:
+                            variable = content_item.get('variable', '')
+                            default = content_item.get('default', '')
+                            description = content_item.get('description', '')
+                            md_content += f"| {variable} | {default} | {description} |\n"
+                        md_content += "\n"
+                    else:
+                        # Handle other table types
+                        for content_item in block['content']:
+                            if 'text' in content_item:
+                                md_content += f"{content_item['text']}\n\n"
+                            else:
+                                # Handle case where text might be missing
+                                md_content += f"Table content\n\n"
             else:  # TEXT type
                 for content_item in block['content']:
-                    md_content += f"- {content_item['text']}\n"
+                    if 'text' in content_item:
+                        md_content += f"- {content_item['text']}\n"
+                    else:
+                        # Handle case where text might be missing
+                        md_content += f"- Content item\n"
                 md_content += "\n"
-
-
 
         return md_content
 
