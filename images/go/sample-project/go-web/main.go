@@ -8,7 +8,7 @@ import (
 	"strconv"
 
 	"github.com/gin-gonic/gin"
-	_ "github.com/mattn/go-sqlite3"
+	_ "modernc.org/sqlite"
 )
 
 // User represents a user in the database
@@ -29,7 +29,7 @@ func NewDatabase() (*Database, error) {
 	os.Remove("users.db")
 
 	// Open database connection
-	db, err := sql.Open("sqlite3", "users.db")
+	db, err := sql.Open("sqlite", "users.db")
 	if err != nil {
 		return nil, err
 	}

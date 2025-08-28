@@ -1,181 +1,100 @@
-# Node.js User Management Application
+# 🟢 Node.js Sample Projects
 
-A simple web application built with Node.js and Express for managing users with SQLite database.
+This directory contains sample projects for testing the `cleanstart/node` Docker image that you already pulled from Docker Hub. These examples demonstrate Node.js applications for web development, API development, and server-side JavaScript.
 
-## Features
-
-- **User Management**: Create, read, and delete users
-- **Web Interface**: Clean Bootstrap-based UI
-- **REST API**: Full CRUD operations via API endpoints
-- **SQLite Database**: Lightweight database storage
-- **Health Check**: Docker health monitoring endpoint
-- **Docker Support**: Containerized application
-
-## Technology Stack
-
-- **Node.js 18+**: JavaScript runtime
-- **Express**: Web framework
-- **SQLite**: Database
-- **EJS**: Template engine
-- **Bootstrap 5**: UI framework
-
-## Quick Start
+## 🚀 Quick Start
 
 ### Prerequisites
+- Docker installed and running
+- Port 3000 available (optional)
 
-- Node.js 18 or higher
-- npm (comes with Node.js)
-
-### Local Development
-
-1. **Install dependencies**:
-   ```bash
-   npm install
-   ```
-
-2. **Run the application**:
-   ```bash
-   npm start
-   ```
-
-3. **Access the application**:
-   - Web interface: http://localhost:3000
-   - Health check: http://localhost:3000/health
-
-### Development Mode
-
-For development with auto-reload:
+### Setup
 ```bash
-npm run dev
+# Navigate to this directory
+cd images/node/sample-project
+
+# Test the image (you already pulled cleanstart/node:latest from Docker Hub)
+docker run --rm cleanstart/node:latest node --version
 ```
 
-### Using Docker
+### Run Examples
 
-1. **Build the image**:
-   ```bash
-   docker build -t nodejs-user-app .
-   ```
-
-2. **Run the container**:
-   ```bash
-   docker run -p 3000:3000 nodejs-user-app
-   ```
-
-3. **Access the application**:
-   - Web interface: http://localhost:3000
-   - Health check: http://localhost:3000/health
-
-## API Endpoints
-
-### Web Interface
-- `GET /` - Display all users
-- `GET /add` - Show add user form
-- `POST /add` - Create a new user
-- `POST /delete/:id` - Delete a user
-- `POST /reset` - Reset database (delete all users)
-
-### REST API
-- `GET /api/users` - Get all users (JSON)
-- `POST /api/users` - Create a new user (JSON)
-- `GET /api/users/:id` - Get a specific user (JSON)
-- `DELETE /api/users/:id` - Delete a user (JSON)
-- `GET /health` - Health check (JSON)
-
-### API Examples
-
-**Get all users**:
+#### Basic Node.js Application
 ```bash
-curl http://localhost:3000/api/users
+# Run Node.js web app
+docker run --rm -p 3000:3000 -v $(pwd):/app \
+  cleanstart/node:latest node /app/app.js
+
+# Access at http://localhost:3000
 ```
 
-**Create a user**:
+#### Package Management
 ```bash
-curl -X POST http://localhost:3000/api/users \
-  -H "Content-Type: application/json" \
-  -d '{"name":"John Doe","email":"john@example.com"}'
+# Install dependencies
+docker run --rm -v $(pwd):/app cleanstart/node:latest \
+  npm install
+
+# Run with npm
+docker run --rm -p 3000:3000 -v $(pwd):/app \
+  cleanstart/node:latest npm start
 ```
 
-**Get a specific user**:
+#### Using Docker Compose
 ```bash
-curl http://localhost:3000/api/users/1
+# Start Node.js application
+docker-compose up -d
+
+# Access application
+curl http://localhost:3000
 ```
 
-**Delete a user**:
-```bash
-curl -X DELETE http://localhost:3000/api/users/1
-```
+## 📁 Project Structure
 
-**Health check**:
-```bash
-curl http://localhost:3000/health
-```
-
-## Database Schema
-
-```sql
-CREATE TABLE users (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name TEXT NOT NULL,
-    email TEXT NOT NULL UNIQUE,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-```
-
-## Development
-
-### Project Structure
 ```
 sample-project/
-├── app.js              # Main application file
-├── package.json        # Node.js dependencies
-├── Dockerfile          # Docker configuration
-├── README.md           # This file
-├── test_app.js         # Test script
-├── views/              # EJS templates
-│   ├── layout.ejs      # Base layout
-│   ├── index.ejs       # User list page
-│   └── add_user.ejs    # Add user form
-└── users.db            # SQLite database (created automatically)
+├── README.md                    # This file
+├── app.js                      # Main application file
+├── package.json                # Node.js dependencies
+├── views/                      # EJS templates
+│   ├── index.ejs              # Main page template
+│   ├── add_user.ejs           # Add user form
+│   └── layout.ejs             # Layout template
+├── Dockerfile                  # Docker configuration
+├── setup.bat                   # Windows setup script
+└── setup.sh                    # Linux/Mac setup script
 ```
 
-### Environment Variables
-- `PORT`: Server port (default: 3000)
-- `NODE_ENV`: Environment (development/production)
+## 🎯 Features
 
-### Scripts
-- `npm start`: Start the application
-- `npm run dev`: Start with nodemon for development
-- `npm test`: Run tests
+- Node.js web applications
+- Express.js framework
+- EJS templating engine
+- RESTful APIs
+- Database integration
+- File uploads
+- Authentication
+- Real-time applications
 
-## Testing
+## 📊 Output
 
-The application includes basic error handling and validation:
-- Email uniqueness validation
-- Required field validation
-- SQL injection prevention
-- Error responses for API endpoints
+Node.js applications generate:
+- Web application responses
+- API endpoints
+- Database records
+- Log files
+- Static assets
 
-Run the test script:
-```bash
-npm test
-```
+## 🔒 Security
 
-## Security Features
+- Non-root user execution
+- Secure Node.js configurations
+- Input validation
+- Error handling
+- HTTPS support
 
-- SQL injection prevention using parameterized queries
-- Input validation and sanitization
-- Non-root user in Docker container
-- Health check endpoint for monitoring
+## 🤝 Contributing
 
-## Comparison with Other Languages
-
-This Node.js application provides the same functionality as the Python (Flask), Java (Spring Boot), and Ruby (Sinatra) versions:
-- Similar web interface
-- Identical API endpoints
-- Same database schema
-- Docker containerization
-- Health monitoring
-
-## License
-
-This project is part of the cleanstart-containers collection.
+To add new Node.js applications:
+1. Create JavaScript file in appropriate directory
+2. Add documentation
+3. Test with Node.js

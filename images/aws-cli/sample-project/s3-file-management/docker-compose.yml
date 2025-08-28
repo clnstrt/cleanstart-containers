@@ -1,0 +1,77 @@
+version: '3.8'
+
+services:
+  # AWS CLI for S3 file management
+  aws-s3:
+    image: cleanstart/aws-cli:latest
+    container_name: aws-s3-management
+    restart: unless-stopped
+    volumes:
+      - ~/.aws:/aws/config:ro
+      - ./data:/aws/data
+      - ./scripts:/aws/scripts
+      - ./uploads:/aws/uploads
+      - ./downloads:/aws/downloads
+    environment:
+      - AWS_CONFIG_FILE=/aws/config/config
+      - AWS_SHARED_CREDENTIALS_FILE=/aws/config/credentials
+      - AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION:-us-east-1}
+      - S3_BUCKET_NAME=${S3_BUCKET_NAME:-demo-bucket}
+    command: ["sh", "-c", "echo '🚀 AWS S3 File Management Demo' && echo '📊 Container Status: Healthy' && echo '☁️ AWS CLI Version:' && aws --version && echo '🔧 Available S3 Commands:' && echo '  • aws s3 ls - List S3 buckets' && echo '  • aws s3 mb s3://bucket-name - Create bucket' && echo '  • aws s3 cp file.txt s3://bucket/ - Upload file' && echo '  • aws s3 cp s3://bucket/file.txt . - Download file' && echo '  • aws s3 sync local/ s3://bucket/ - Sync directory' && echo '📁 Working Directory: /aws' && echo '📤 Upload Directory: /aws/uploads' && echo '📥 Download Directory: /aws/downloads' && echo '👤 User: awsuser (non-root)' && echo '✅ Ready for S3 operations!' && echo 'Press Ctrl+C to stop' && tail -f /dev/null"]
+    healthcheck:
+      test: ["CMD", "aws", "--version"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - s3-network
+
+  # S3 file uploader service
+  s3-uploader:
+    image: cleanstart/aws-cli:latest
+    container_name: s3-uploader
+    restart: unless-stopped
+    volumes:
+      - ~/.aws:/aws/config:ro
+      - ./uploads:/aws/uploads
+      - ./scripts:/aws/scripts
+    environment:
+      - AWS_CONFIG_FILE=/aws/config/config
+      - AWS_SHARED_CREDENTIALS_FILE=/aws/config/credentials
+      - AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION:-us-east-1}
+      - S3_BUCKET_NAME=${S3_BUCKET_NAME:-demo-bucket}
+    profiles:
+      - uploader
+    networks:
+      - s3-network
+
+  # S3 file downloader service
+  s3-downloader:
+    image: cleanstart/aws-cli:latest
+    container_name: s3-downloader
+    restart: unless-stopped
+    volumes:
+      - ~/.aws:/aws/config:ro
+      - ./downloads:/aws/downloads
+      - ./scripts:/aws/scripts
+    environment:
+      - AWS_CONFIG_FILE=/aws/config/config
+      - AWS_SHARED_CREDENTIALS_FILE=/aws/config/credentials
+      - AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION:-us-east-1}
+      - S3_BUCKET_NAME=${S3_BUCKET_NAME:-demo-bucket}
+    profiles:
+      - downloader
+    networks:
+      - s3-network
+
+volumes:
+  s3_data:
+    driver: local
+  upload_data:
+    driver: local
+  download_data:
+    driver: local
+
+networks:
+  s3-network:
+    driver: bridge

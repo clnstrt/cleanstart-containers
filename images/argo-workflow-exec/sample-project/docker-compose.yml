@@ -1,0 +1,51 @@
+version: '3.8'
+
+services:
+  argo-workflow-exec:
+    image: cleanstart/argo-workflow-exec:latest
+    container_name: argo-workflow-exec
+    volumes:
+      - ~/.kube:/home/argo/.kube:ro
+      - ./:/workspace
+    environment:
+      - KUBECONFIG=/home/argo/.kube/config
+      - ARGO_NAMESPACE=argo
+    working_dir: /workspace
+    command: ["tail", "-f", "/dev/null"]
+    profiles:
+      - development
+      - testing
+
+  argo-workflow-exec-interactive:
+    image: cleanstart/argo-workflow-exec:latest
+    container_name: argo-workflow-exec-interactive
+    volumes:
+      - ~/.kube:/home/argo/.kube:ro
+      - ./:/workspace
+    environment:
+      - KUBECONFIG=/home/argo/.kube/config
+      - ARGO_NAMESPACE=argo
+    working_dir: /workspace
+    stdin_open: true
+    tty: true
+    profiles:
+      - development
+      - interactive
+
+  argo-workflow-exec-test:
+    image: cleanstart/argo-workflow-exec:latest
+    container_name: argo-workflow-exec-test
+    volumes:
+      - ~/.kube:/home/argo/.kube:ro
+      - ./:/workspace
+    environment:
+      - KUBECONFIG=/home/argo/.kube/config
+      - ARGO_NAMESPACE=argo-test
+    working_dir: /workspace
+    command: ["sh", "-c", "echo 'Running tests...' && ./scripts/setup.sh && echo 'Tests completed'"]
+    profiles:
+      - testing
+
+networks:
+  default:
+    name: argo-workflow-network
