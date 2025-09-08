@@ -1,0 +1,90 @@
+version: '3.8'
+
+services:
+  # Nginx load balancer
+  nginx:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
+    depends_on:
+      - backend1
+      - backend2
+      - backend3
+    networks:
+      - app-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # Backend API service 1
+  backend1:
+    build:
+      context: ./backend1
+      dockerfile: Dockerfile
+    expose:
+      - "8001"
+    networks:
+      - app-network
+    restart: unless-stopped
+    environment:
+      - PYTHONUNBUFFERED=1
+      - SERVER_ID=1
+      - PORT=8001
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8001/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # Backend API service 2
+  backend2:
+    build:
+      context: ./backend2
+      dockerfile: Dockerfile
+    expose:
+      - "8002"
+    networks:
+      - app-network
+    restart: unless-stopped
+    environment:
+      - PYTHONUNBUFFERED=1
+      - SERVER_ID=2
+      - PORT=8002
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8002/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # Backend API service 3
+  backend3:
+    build:
+      context: ./backend3
+      dockerfile: Dockerfile
+    expose:
+      - "8003"
+    networks:
+      - app-network
+    restart: unless-stopped
+    environment:
+      - PYTHONUNBUFFERED=1
+      - SERVER_ID=3
+      - PORT=8003
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8003/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+networks:
+  app-network:
+    driver: bridge

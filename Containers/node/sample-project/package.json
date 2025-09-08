@@ -1,0 +1,33 @@
+{
+  "name": "nodejs-user-management",
+  "version": "1.0.0",
+  "description": "A simple web application built with Node.js and Express for managing users with SQLite database",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "dev": "nodemon app.js",
+    "test": "node test_app.js"
+  },
+  "keywords": [
+    "nodejs",
+    "express",
+    "sqlite",
+    "user-management",
+    "web-application"
+  ],
+  "author": "CleanStart Containers",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.18.2",
+    "sqlite3": "^5.1.6",
+    "ejs": "^3.1.9",
+    "body-parser": "^1.20.2",
+    "method-override": "^3.0.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
