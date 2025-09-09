@@ -43,6 +43,12 @@ The Go sample project has been thoroughly tested and verified to work perfectly:
 
 ## Quick Start
 
+## Run the hello world file in go
+## Make sure that hello_world.go is in the directory and it has proper logic and code and execute the docker command 
+```bash
+docker run --rm -v $(pwd):/app -w /app cleanstart/go:latest run hello_world.go
+```
+
 ### Option 1: Using Docker (Recommended)
 ```bash
 # Navigate to sample project
