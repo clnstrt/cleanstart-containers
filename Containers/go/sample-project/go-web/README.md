@@ -2,10 +2,10 @@
 
 A modern web interface for SQLite database operations built with **Go**, **Gin**, and **Bootstrap**.
 
-## 🚀 Quick Start - Run Locally
+## Quick Start - Run Locally
 
 ### Prerequisites
-- **Go 1.21 or higher**
+- **Go 1.18**
 - **GCC compiler** (for SQLite CGO)
 - **Internet connection** (to download dependencies)
 
@@ -20,7 +20,7 @@ sudo apt install golang-go
 
 # Verify Go installation
 go version
-# Should show: go version go1.21.x linux/amd64
+# Should show: go version go1.18.x linux/amd64
 ```
 
 ### Step 2: Install GCC (for SQLite CGO)
@@ -54,7 +54,7 @@ go run main.go
 ### Step 5: Access the Web Application
 Open your browser and go to: **http://localhost:8080**
 
-## 🎯 Quick One-Liner Commands
+## Quick One-Liner Commands
 
 Here's a complete sequence to run everything:
 ```bash
@@ -65,7 +65,7 @@ go mod tidy && go run main.go
 # Then open http://localhost:8080 in your browser
 ```
 
-## 📋 Expected Output
+##  Expected Output
 
 ### Go Build Output
 You should see output like this:
@@ -88,7 +88,7 @@ Starting Go web server on http://localhost:8080
 ### Application Access
 Once started, you can access the application at: **http://localhost:8080**
 
-## 🔧 Detailed Setup Instructions
+## Detailed Setup Instructions
 
 ### Check Go Installation
 ```bash
@@ -121,7 +121,7 @@ go build -o go-web-app main.go
 ./go-web-app
 ```
 
-## 🌐 Web Interface Features
+## Web Interface Features
 
 ### Main Dashboard
 - View all users in a responsive table
@@ -278,19 +278,65 @@ GOOS=linux GOARCH=amd64 go build -o go-web-app main.go
 
 ### Docker Deployment
 ```dockerfile
-FROM golang:1.21-alpine AS builder
-WORKDIR /app
-COPY go.mod go.sum ./
-RUN go mod download
-COPY . .
-RUN go build -o go-web-app main.go
+# Build stage
+FROM cleanstart/go:latest AS builder
 
+# Install build dependencies
+RUN apk add --no-cache 
+
+# Set working directory
+WORKDIR /app
+
+# Copy go mod files
+COPY go.mod ./
+
+# Download dependencies
+RUN go mod download
+
+# Copy source code
+COPY . .
+
+# Tidy and download dependencies
+RUN go mod tidy && go mod download
+
+# Build the application
+RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o go-web-app main.go
+
+# Final stage
 FROM alpine:latest
+
+# Install runtime dependencies
 RUN apk --no-cache add ca-certificates
-WORKDIR /root/
+
+# Create non-root user
+RUN addgroup -g 1001 -S appgroup && \
+    adduser -u 1001 -S appuser -G appgroup
+
+# Set working directory
+WORKDIR /app
+
+# Copy binary from builder stage
 COPY --from=builder /app/go-web-app .
+
+# Copy templates
+COPY --from=builder /app/templates ./templates
+
+# Change ownership to non-root user
+RUN chown -R appuser:appgroup /app
+
+# Switch to non-root user
+USER appuser
+
+# Expose port
 EXPOSE 8080
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+  CMD wget --no-verbose --tries=1 --spider http://localhost:8080/ || exit 1
+
+# Run the application
 CMD ["./go-web-app"]
+
 ```
 
 ## 🐛 Troubleshooting
