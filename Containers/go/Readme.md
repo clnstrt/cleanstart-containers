@@ -48,6 +48,8 @@ The Go sample project has been thoroughly tested and verified to work perfectly:
 # Navigate to sample project
 cd sample-project/go-web
 
+#Build the image from Dockerfile below are the steps
+
 #Make Dockerfile
 # Build stage
 FROM cleanstart/go:latest AS builder
