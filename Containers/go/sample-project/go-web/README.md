@@ -153,9 +153,9 @@ curl -X POST http://localhost:8080/api/users \
 - ✅ **Windows** (7, 8, 10, 11)
 
 ### Go Version Requirements
-- **Minimum**: Go 1.21+
-- **Recommended**: Go 1.21+
-- **Latest**: Go 1.22+
+- **Minimum**: Go 1.18+
+- **Recommended**: Go 1.18+
+- **Latest**: Go 1.18+
 
 ### Dependencies
 - **Gin Web Framework** - HTTP web framework
