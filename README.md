@@ -1,8 +1,8 @@
-# 🐳 CleanStart Containers - Sample Projects
+#  CleanStart Containers - Sample Projects
 
 A comprehensive collection of Docker container sample projects demonstrating various technologies, tools, and frameworks. Each container includes practical examples, setup scripts, and detailed documentation to help you learn and implement containerized solutions.
 
-## 🎯 What You'll Find
+##  What You'll Find
 
 This repository contains **20+ container sample projects** covering:
 
@@ -85,19 +85,19 @@ cleanstart-containers/
 
 ## 🎓 Learning Path
 
-### 🟢 **Beginner Level** (20-30 minutes each)
+### **Beginner Level** (20-30 minutes each)
 - **Basic PKI** (`step-cli/basic-pki/`) - Learn certificate management
 - **Static Website** (`nginx/static-site/`) - Simple web serving
 - **Python Hello World** (`python/sample-project/`) - Basic web app
 - **Node.js Express** (`node/sample-project/`) - REST API basics
 
-### 🟡 **Intermediate Level** (30-45 minutes each)
+### **Intermediate Level** (30-45 minutes each)
 - **Load Balancing** (`nginx/load-balancer/`) - Multi-server setup
 - **Database Integration** (`postgres/sample-project/`) - Full-stack app
 - **Advanced Certificates** (`step-cli/advanced-certificates/`) - Complex PKI
 - **BGP Load Balancing** (`metallb-controller/bgp-setup/`) - Enterprise networking
 
-### 🔴 **Advanced Level** (45-60 minutes each)
+### **Advanced Level** (45-60 minutes each)
 - **Production PKI** (`step-cli/production-pki/`) - Enterprise certificate management
 - **Multi-Pool Load Balancing** (`metallb-controller/multi-pool/`) - Complex networking
 - **Cloud Integration** (`aws-cli/sample-project/`) - AWS operations
