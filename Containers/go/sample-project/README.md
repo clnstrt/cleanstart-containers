@@ -145,24 +145,6 @@ docker run -p 8080:8080 go-web-app
 2. Try a different browser
 3. Check if your firewall is blocking the connection
 
-## 🎓 Learning Path
-
-### Beginner Level (You are here!)
-- ✅ Run the application using Docker
-- ✅ Add, view, edit, and delete users
-- ✅ Understand what a web application is
-
-### Intermediate Level (Next steps)
-- Learn how to modify the code
-- Add new features (like user search)
-- Understand how the database works
-- Learn about HTML and web design
-
-### Advanced Level (Future goals)
-- Build your own web applications
-- Learn about security and user authentication
-- Deploy your app to the internet
-- Work with other programming languages
 
 ## 🔗 What's Next?
 
