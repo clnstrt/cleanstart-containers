@@ -111,8 +111,8 @@ CMD ["./go-web-app"]
 #Build the image
 docker build -t latest-dev -f Dockerfile.dev .
 
-# Run the container
-docker run -p 8080:8080 go-web-app
+# Run the application
+docker run --rm -p 8080:8080 latest-dev:latest
 
 #Run the image
 docker run --rm latest-dev:latest
