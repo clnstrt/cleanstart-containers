@@ -4,7 +4,7 @@ This directory contains Go examples for the cleanstart-containers project.
 
 ## Next Steps for Sample Project Testing
 
-You have already pulled the Go image from Docker Hub and run the container. Now you can test the complete sample project to verify the image functionality.
+You should pullg the Go image from Docker Hub and run the container. Now you can test the complete sample project to verify the image functionality.
 
 ## Available Examples
 
