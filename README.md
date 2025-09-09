@@ -83,41 +83,6 @@ cleanstart-containers/
     └── [15+ more containers...]
 ```
 
-## 🎓 Learning Path
-
-### **Beginner Level** (20-30 minutes each)
-- **Basic PKI** (`step-cli/basic-pki/`) - Learn certificate management
-- **Static Website** (`nginx/static-site/`) - Simple web serving
-- **Python Hello World** (`python/sample-project/`) - Basic web app
-- **Node.js Express** (`node/sample-project/`) - REST API basics
-
-### **Intermediate Level** (30-45 minutes each)
-- **Load Balancing** (`nginx/load-balancer/`) - Multi-server setup
-- **Database Integration** (`postgres/sample-project/`) - Full-stack app
-- **Advanced Certificates** (`step-cli/advanced-certificates/`) - Complex PKI
-- **BGP Load Balancing** (`metallb-controller/bgp-setup/`) - Enterprise networking
-
-### **Advanced Level** (45-60 minutes each)
-- **Production PKI** (`step-cli/production-pki/`) - Enterprise certificate management
-- **Multi-Pool Load Balancing** (`metallb-controller/multi-pool/`) - Complex networking
-- **Cloud Integration** (`aws-cli/sample-project/`) - AWS operations
-- **Backup & Recovery** (`velero-plugin-for-aws/sample-project/`) - Disaster recovery
-
-## 🔧 Prerequisites
-
-### **Required for All Projects:**
-- **Docker** - Container runtime
-- **Docker Compose** - Multi-container orchestration
-- **Git** - Version control
-
-### **Optional (for specific projects):**
-- **kubectl** - Kubernetes command-line tool
-- **AWS CLI** - Amazon Web Services CLI
-- **Python 3.8+** - For Python-based projects
-- **Node.js 18+** - For Node.js projects
-- **Java 17+** - For Java projects
-- **Go 1.21+** - For Go projects
-
 ## 🚀 Getting Started with Any Project
 
 ### **Option 1: Automated Setup (Recommended)**
@@ -153,38 +118,6 @@ docker build -t my-container .
 # Run the container
 docker run -p 8080:8080 my-container
 ```
-
-## 📊 Sample Project Features
-
-### **🔐 Step CLI (PKI & Certificates)**
-- Basic PKI operations and certificate generation
-- Advanced certificate management with automation
-- Production-ready PKI setup with security best practices
-- Integration examples with various systems
-
-### **⚖️ MetalLB Controller (Load Balancing)**
-- Basic Layer 2 load balancing with IP address pools
-- Advanced BGP configuration for enterprise environments
-- Multi-pool setup for service tier separation
-- Production-ready load balancer deployment
-
-### **🌐 Nginx (Web Server)**
-- Static website hosting
-- Reverse proxy configuration
-- Load balancing across multiple backends
-- SSL/TLS termination and security
-
-### **🐍 Python (Web Applications)**
-- Flask web applications
-- Database integration with SQLite/PostgreSQL
-- REST API development
-- Template rendering and user management
-
-### **🟢 Node.js (Web Applications)**
-- Express.js web applications
-- RESTful API development
-- Database integration
-- Real-time features with WebSockets
 
 ## 🧪 Testing Your Setup
 
