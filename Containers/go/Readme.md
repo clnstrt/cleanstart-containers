@@ -1,6 +1,6 @@
-# Go Examples
+# Go Description
 
-This directory contains Go examples for the cleanstart-containers project.
+This directory contains Go samples and examples for go cleanstart-containers project.
 
 ## Next Steps for Sample Project Testing
 
@@ -118,14 +118,15 @@ CMD ["./go-web-app"]
 #Build the image
 docker build -t latest-dev -f Dockerfile.dev .
 
-# Run the application
-docker run --rm -p 8080:8080 latest-dev:latest
 
 #Run the image
 docker run --rm latest-dev:latest
 
+# Run the application
+docker run --rm -p 8080:8080 latest-dev:latest
+
 # Access the application
-open http://localhost:8080
+Go to your localhost: http://localhost:8080
 ```
 
 ### Option 2: Local Development
@@ -145,7 +146,7 @@ open http://localhost:8080
 All Go examples include Docker support for easy deployment:
 
 ```bash
-# Run the container
+# Run the container with port expose command
 docker run -p 8080:8080 go-web-app
 ```
 
