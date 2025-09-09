@@ -42,9 +42,8 @@ The Go sample project has been thoroughly tested and verified to work perfectly:
 7. Application works perfectly with all features 
 
 ## Quick Start
-
-## Run the hello world file in go
-## Make sure that hello_world.go is in the directory and it has proper logic and code and execute the docker command 
+Run the hello world file in go
+Make sure that hello_world.go is in the directory and it has proper logic and code and execute the docker command 
 ```bash
 docker run --rm -v $(pwd):/app -w /app cleanstart/go:latest run hello_world.go
 ```
