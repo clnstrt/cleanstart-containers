@@ -297,3 +297,86 @@ Feel free to contribute to this project by:
 ## 📄 License
 
 This project is open source and available under the [MIT License](LICENSE).
+
+
+
+
+
+Go Database Web Application
+
+A modern SQLite User Management System built with Go (Gin) and Bootstrap.
+
+
+
+
+
+
+🚀 Quick Start (Docker)
+Step 1: Clone Repository
+git clone <repo-url>
+cd containers/app4/test/go-web
+
+Step 2: Build Image
+docker build -t go-web-app .
+
+Step 3: Run Container
+docker run -p 8080:8080 go-web-app
+
+Step 4: Access App
+
+Open 👉 http://localhost:8080
+
+📂 Project Structure
+go-web/
+├── main.go           # App entry
+├── go.mod            # Dependencies
+├── templates/        # HTML UI (Bootstrap + FontAwesome)
+│   ├── index.html
+│   ├── add_user.html
+│   ├── edit_user.html
+│   └── error.html
+└── Dockerfile        # Docker build instructions
+
+⚡ Features
+
+📋 View all users in dashboard
+
+➕ Add new users
+
+✏️ Edit user details
+
+❌ Delete users
+
+🌐 API endpoints:
+
+GET /api/users → list users (JSON)
+
+POST /api/users → add user
+
+🐛 Troubleshooting
+
+Port 8080 already in use → run with another port:
+
+docker run -p 8081:8080 go-web-app
+
+
+App not running → check container:
+
+docker ps
+
+📸 Demo
+
+Add screenshot of dashboard UI here
+
+📄 License
+
+MIT License – see LICENSE
+
+
+
+
+
+
+
+
+
