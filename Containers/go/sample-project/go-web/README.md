@@ -5,25 +5,8 @@ A modern web interface for SQLite database operations built with **Go**, **Gin**
 ## Quick Start - Run Locally
 
 ### Prerequisites
-- **Go 1.18**
-- **GCC compiler** (for SQLite CGO)
-- **Internet connection** (to download dependencies)
 
-### Step 1: Install Go
-```bash
-# Install Go (Ubuntu/Debian)
-sudo apt update
-sudo apt install golang-go
-
-# Or download from https://golang.org/dl/
-# For other systems, visit: https://golang.org/doc/install
-
-# Verify Go installation
-go version
-# Should show: go version go1.18.x linux/amd64
-```
-
-### Step 2: Install GCC (for SQLite CGO)
+### Step 1: Install GCC (for SQLite CGO)
 ```bash
 # Ubuntu/Debian
 sudo apt install gcc
@@ -37,12 +20,12 @@ sudo dnf install gcc
 xcode-select --install
 ```
 
-### Step 3: Navigate to Go Web Directory
+### Step 2: Navigate to Go Web Directory
 ```bash
 cd containers/app4/test/go-web
 ```
 
-### Step 4: Build and Run the Application
+### Step 3: Build and Run the Application
 ```bash
 # Download dependencies
 go mod tidy
@@ -51,21 +34,8 @@ go mod tidy
 go run main.go
 ```
 
-### Step 5: Access the Web Application
+### Step 4: Access the Web Application
 Open your browser and go to: **http://localhost:8080**
-
-## Quick One-Liner Commands
-
-Here's a complete sequence to run everything:
-```bash
-# Install dependencies and run
-sudo apt update && sudo apt install golang-go gcc
-cd containers/app4/test/go-web
-go mod tidy && go run main.go
-# Then open http://localhost:8080 in your browser
-```
-
-##  Expected Output
 
 ### Go Build Output
 You should see output like this:
@@ -89,15 +59,6 @@ Starting Go web server on http://localhost:8080
 Once started, you can access the application at: **http://localhost:8080**
 
 ## Detailed Setup Instructions
-
-### Check Go Installation
-```bash
-# Verify Go is installed
-go version
-
-# Should show something like:
-# go version go1.21.0 linux/amd64
-```
 
 ### Check GCC Installation
 ```bash
@@ -162,61 +123,6 @@ curl -X POST http://localhost:8080/api/users \
 - **SQLite3 Driver** - Database driver for Go
 - **Bootstrap 5** - CSS framework (CDN)
 - **Font Awesome** - Icon library (CDN)
-
-## 🛠️ Installation by Operating System
-
-### Ubuntu/Debian
-```bash
-# Install Go
-sudo apt update
-sudo apt install golang-go
-
-# Install GCC
-sudo apt install gcc
-
-# Verify installations
-go version
-gcc --version
-```
-
-### CentOS/RHEL/Fedora
-```bash
-# Install Go
-sudo yum install golang
-# or for newer versions:
-sudo dnf install golang
-
-# Install GCC
-sudo yum install gcc
-# or
-sudo dnf install gcc
-
-# Verify installations
-go version
-gcc --version
-```
-
-### macOS
-```bash
-# Using Homebrew
-brew install go
-
-# Install Xcode Command Line Tools (includes GCC)
-xcode-select --install
-
-# Verify installations
-go version
-gcc --version
-```
-
-### Windows
-```bash
-# Download Go from https://golang.org/dl/
-# Install MinGW-w64 for GCC: https://www.mingw-w64.org/
-
-# Or use WSL2 for Linux environment
-wsl --install
-```
 
 ## 🏗️ Project Structure
 
