@@ -6,35 +6,92 @@ A modern web interface for SQLite database operations built with **Go**, **Gin**
 
 ### Prerequisites
 
-### Step 1: Install GCC (for SQLite CGO)
+### Step 1: Navigate to Go Web Directory
 ```bash
-# Ubuntu/Debian
-sudo apt install gcc
-
-# CentOS/RHEL/Fedora
-sudo yum install gcc
-# or
-sudo dnf install gcc
-
-# macOS
-xcode-select --install
+cd containers/go/sample-project/go-web
 ```
 
-### Step 2: Navigate to Go Web Directory
+### Step 2: Build and Run the Application
 ```bash
-cd containers/app4/test/go-web
+docker pull cleanstart/go:latest
 ```
 
-### Step 3: Build and Run the Application
+### Make Dockerfile
 ```bash
+FROM cleanstart/go:latest AS builder
+
+# Install build dependencies
+RUN apk add --no-cache 
+
+# Set working directory
+WORKDIR /app
+
+# Copy go mod files
+COPY go.mod ./
+
 # Download dependencies
-go mod tidy
+RUN go mod download
+
+# Copy source code
+COPY . .
+
+# Tidy and download dependencies
+RUN go mod tidy && go mod download
+
+# Build the application
+RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o go-web-app main.go
+
+# Final stage
+FROM alpine:latest
+
+# Install runtime dependencies
+RUN apk --no-cache add ca-certificates
+
+# Create non-root user
+RUN addgroup -g 1001 -S appgroup && \
+    adduser -u 1001 -S appuser -G appgroup
+
+# Set working directory
+WORKDIR /app
+
+# Copy binary from builder stage
+COPY --from=builder /app/go-web-app .
+
+# Copy templates
+COPY --from=builder /app/templates ./templates
+
+# Change ownership to non-root user
+RUN chown -R appuser:appgroup /app
+
+# Switch to non-root user
+USER appuser
+
+# Expose port
+EXPOSE 8080
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+  CMD wget --no-verbose --tries=1 --spider http://localhost:8080/ || exit 1
 
 # Run the application
-go run main.go
+CMD ["./go-web-app"]
+```
+
+### Step 3: Build the image
+```bash
+docker build -t <your-image-name> -f Dockerfile .
+```
+
+### Step 4: Run the image
+```bash
+docker run --rm <your-image-name>
 ```
 
 ### Step 4: Access the Web Application
+```bash
+docker run --rm -p 8080:8080 latest-dev:latest
+```
+
 Open your browser and go to: **http://localhost:8080**
 
 ### Go Build Output
@@ -56,32 +113,7 @@ Starting Go web server on http://localhost:8080
 ```
 
 ### Application Access
-Once started, you can access the application at: **http://localhost:8080**
-
-## Detailed Setup Instructions
-
-### Check GCC Installation
-```bash
-# Verify GCC is installed
-gcc --version
-
-# Should show something like:
-# gcc (Ubuntu 11.4.0-1ubuntu1~22.04) 11.4.0
-```
-
-### Run the Program
-```bash
-# Download dependencies
-go mod tidy
-
-# Run the application
-go run main.go
-
-# Or build and run
-go build -o go-web-app main.go
-./go-web-app
-```
-
+Once started, you can access the application at: **http://localhost:8000b
 ## Web Interface Features
 
 ### Main Dashboard
@@ -105,18 +137,6 @@ curl -X POST http://localhost:8080/api/users \
   -H "Content-Type: application/json" \
   -d '{"name":"John Doe","email":"john@example.com"}'
 ```
-
-## 📋 System Requirements
-
-### Operating System Support
-- ✅ **Linux** (Ubuntu, Debian, CentOS, Fedora, etc.)
-- ✅ **macOS** (10.14+)
-- ✅ **Windows** (7, 8, 10, 11)
-
-### Go Version Requirements
-- **Minimum**: Go 1.18+
-- **Recommended**: Go 1.18+
-- **Latest**: Go 1.18+
 
 ### Dependencies
 - **Gin Web Framework** - HTTP web framework
@@ -164,23 +184,6 @@ go-web/
 - **Error Sanitization**: Safe error messages
 
 ## 🚀 Deployment
-
-### Local Development
-```bash
-go run main.go
-```
-
-### Production Build
-```bash
-# Build for current platform
-go build -o go-web-app main.go
-
-# Build for specific platform
-GOOS=linux GOARCH=amd64 go build -o go-web-app main.go
-
-# Run the binary
-./go-web-app
-```
 
 ### Docker Deployment
 ```dockerfile
@@ -249,18 +252,7 @@ CMD ["./go-web-app"]
 
 ### Common Issues
 
-#### 1. CGO Error
-```
-# github.com/mattn/go-sqlite3
-exec: "gcc": executable file not found in $PATH
-```
-**Solution**: Install GCC compiler
-```bash
-sudo apt install gcc  # Ubuntu/Debian
-sudo yum install gcc  # CentOS/RHEL
-```
-
-#### 2. Port Already in Use
+#### 1. Port Already in Use
 ```
 listen tcp :8080: bind: address already in use
 ```
@@ -270,7 +262,7 @@ listen tcp :8080: bind: address already in use
 sudo lsof -ti:8080 | xargs kill -9
 ```
 
-#### 3. Permission Denied
+#### 2. Permission Denied
 ```
 permission denied: go-web-app
 ```
@@ -295,83 +287,7 @@ Feel free to contribute to this project by:
 - Improving documentation
 
 ## 📄 License
-
 This project is open source and available under the [MIT License](LICENSE).
-
-
-
-
-
-Go Database Web Application
-
-A modern SQLite User Management System built with Go (Gin) and Bootstrap.
-
-
-
-
-
-
-🚀 Quick Start (Docker)
-Step 1: Clone Repository
-git clone <repo-url>
-cd containers/app4/test/go-web
-
-Step 2: Build Image
-docker build -t go-web-app .
-
-Step 3: Run Container
-docker run -p 8080:8080 go-web-app
-
-Step 4: Access App
-
-Open 👉 http://localhost:8080
-
-📂 Project Structure
-go-web/
-├── main.go           # App entry
-├── go.mod            # Dependencies
-├── templates/        # HTML UI (Bootstrap + FontAwesome)
-│   ├── index.html
-│   ├── add_user.html
-│   ├── edit_user.html
-│   └── error.html
-└── Dockerfile        # Docker build instructions
-
-⚡ Features
-
-📋 View all users in dashboard
-
-➕ Add new users
-
-✏️ Edit user details
-
-❌ Delete users
-
-🌐 API endpoints:
-
-GET /api/users → list users (JSON)
-
-POST /api/users → add user
-
-🐛 Troubleshooting
-
-Port 8080 already in use → run with another port:
-
-docker run -p 8081:8080 go-web-app
-
-
-App not running → check container:
-
-docker ps
-
-📸 Demo
-
-Add screenshot of dashboard UI here
-
-📄 License
-
-MIT License – see LICENSE
-
 
 
 
