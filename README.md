@@ -35,11 +35,7 @@ cd images/node/sample-project              # Node.js Applications
 
 ### 3. Run the Sample Project
 ```bash
-# Most projects include setup scripts
-./setup.sh        # Linux/macOS
-setup.bat         # Windows
-
-# Or use Docker Compose
+# Use Docker Compose
 docker-compose up -d
 ```
 
@@ -225,13 +221,5 @@ If you encounter issues or need help:
 3. **Check the project logs for specific errors**
 4. **Open an issue on GitHub with detailed information**
 
-## 🔗 Related Projects
-
-- [CleanStart Tools](https://github.com/clnstrt/cleanstart-tools) - Development tools and utilities
-- [CleanStart Documentation](https://github.com/clnstrt/cleanstart-docs) - Comprehensive documentation
-
 ---
-
-**Happy Container Learning! 🐳**
-
 Start with any sample project that interests you, follow the setup instructions, and begin building amazing containerized applications!
