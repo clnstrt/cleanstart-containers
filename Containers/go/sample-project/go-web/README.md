@@ -149,23 +149,6 @@ curl -X POST http://localhost:8080/api/users \
 - **Bootstrap 5** - CSS framework (CDN)
 - **Font Awesome** - Icon library (CDN)
 
-## 🏗️ Project Structure
-
-```
-go-web/
-├── main.go              # Main application file
-├── go.mod               # Go module file
-├── go.sum               # Dependency checksums
-├── templates/           # HTML templates
-│   ├── base.html        # Base template
-│   ├── index.html       # Main page
-│   ├── add_user.html    # Add user form
-│   ├── edit_user.html   # Edit user form
-│   └── error.html       # Error page
-├── users.db             # SQLite database (created at runtime)
-└── README.md           # This file
-```
-
 ## 🔍 Code Features
 
 ### Database Operations
