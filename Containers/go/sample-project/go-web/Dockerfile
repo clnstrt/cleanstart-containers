@@ -1,58 +1,30 @@
-# Build stage
-FROM golang:1.22-alpine AS builder
+# Base image with Go pre-installed
+FROM cleanstart/go:latest
 
-# Install build dependencies
-RUN apk add --no-cache gcc musl-dev sqlite-dev
+# Install dependencies
+RUN apk add --no-cache git ca-certificates wget
 
 # Set working directory
 WORKDIR /app
 
-# Copy go mod files
-COPY go.mod ./
+# Copy go.mod and go.sum first (for caching dependencies)
+COPY go.mod go.sum ./
 
 # Download dependencies
 RUN go mod download
 
-# Copy source code
+# Copy the source code
 COPY . .
 
-# Tidy and download dependencies
-RUN go mod tidy && go mod download
-
-# Build the application
-RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o go-web-app main.go
-
-# Final stage
-FROM alpine:latest
-
-# Install runtime dependencies
-RUN apk --no-cache add ca-certificates
-
-# Create non-root user
-RUN addgroup -g 1001 -S appgroup && \
-    adduser -u 1001 -S appuser -G appgroup
-
-# Set working directory
-WORKDIR /app
-
-# Copy binary from builder stage
-COPY --from=builder /app/go-web-app .
-
-# Copy templates
-COPY --from=builder /app/templates ./templates
-
-# Change ownership to non-root user
-RUN chown -R appuser:appgroup /app
-
-# Switch to non-root user
-USER appuser
+# Build the Go application
+RUN CGO_ENABLED=0 GOOS=linux go build -o go-web-app main.go
 
 # Expose port
 EXPOSE 8080
 
-# Health check
+# Healthcheck
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
   CMD wget --no-verbose --tries=1 --spider http://localhost:8080/ || exit 1
 
 # Run the application
-CMD ["./go-web-app"]
+ENTRYPOINT  ["./go-web-app"]
