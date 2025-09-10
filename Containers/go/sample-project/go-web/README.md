@@ -75,7 +75,7 @@ Open your browser and go to: **http://localhost:8080**
 
 ### Go Build Output
 You should see output like this:
-```
+```bash
 go: downloading github.com/gin-gonic/gin v1.9.1
 go: downloading github.com/mattn/go-sqlite3 v1.14.17
 Database created successfully
