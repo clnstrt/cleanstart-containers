@@ -74,23 +74,28 @@ HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
   CMD wget --no-verbose --tries=1 --spider http://localhost:8080/ || exit 1
 
 # Run the application
-CMD ["./go-web-app"]
+ENTRYPOINT ["./go-web-app"]
 ```
 
 ### Step 3: Build the image
 ```bash
-docker build -t <your-image-name> -f Dockerfile .
+docker build -t go-web-app .
 ```
 
 ### Step 4: Run the image
 ```bash
-docker run --rm <your-image-name>
+docker run --rm go-web-app
 ```
 
 ### Step 4: Access the Web Application
 ```bash
 docker run --rm -p 8080:8080 latest-dev:latest
 ```
+
+### Docker Compose for services
+```bash
+docker compose build --no-cache
+
 
 Open your browser and go to: **http://localhost:8080**
 
@@ -177,76 +182,6 @@ go-web/
 - **Form Handling**: POST form processing with validation
 - **JSON API**: RESTful API endpoints
 - **Error Handling**: Comprehensive error management
-
-### Security Features
-- **Input Validation**: Form data validation
-- **SQL Injection Prevention**: Parameterized queries
-- **Error Sanitization**: Safe error messages
-
-## 🚀 Deployment
-
-### Docker Deployment
-```dockerfile
-# Build stage
-FROM cleanstart/go:latest AS builder
-
-# Install build dependencies
-RUN apk add --no-cache 
-
-# Set working directory
-WORKDIR /app
-
-# Copy go mod files
-COPY go.mod ./
-
-# Download dependencies
-RUN go mod download
-
-# Copy source code
-COPY . .
-
-# Tidy and download dependencies
-RUN go mod tidy && go mod download
-
-# Build the application
-RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o go-web-app main.go
-
-# Final stage
-FROM alpine:latest
-
-# Install runtime dependencies
-RUN apk --no-cache add ca-certificates
-
-# Create non-root user
-RUN addgroup -g 1001 -S appgroup && \
-    adduser -u 1001 -S appuser -G appgroup
-
-# Set working directory
-WORKDIR /app
-
-# Copy binary from builder stage
-COPY --from=builder /app/go-web-app .
-
-# Copy templates
-COPY --from=builder /app/templates ./templates
-
-# Change ownership to non-root user
-RUN chown -R appuser:appgroup /app
-
-# Switch to non-root user
-USER appuser
-
-# Expose port
-EXPOSE 8080
-
-# Health check
-HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-  CMD wget --no-verbose --tries=1 --spider http://localhost:8080/ || exit 1
-
-# Run the application
-CMD ["./go-web-app"]
-
-```
 
 ## 🐛 Troubleshooting
 
