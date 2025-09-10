@@ -116,7 +116,7 @@ HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
 CMD ["./go-web-app"]
 
 #Build the image
-docker build -t latest-dev -f Dockerfile.dev .
+docker build -t latest-dev -f Dockerfile .
 
 
 #Run the image
