@@ -1,6 +1,6 @@
 # 🚀 Go Web Application
 
-A simple **User Management System** built with Go.
+A simple **User Management System** built with Go as well as **HELLO WORLD** program.
 
 ## 📂 Project Structure
 ```bash
@@ -17,28 +17,19 @@ go-web/
 └── docker-compose.yml #For service up an down
 ```
 
-## ⚡ Quick Start
-
-# Build the Docker image
-```bash
-docker build -t go-web-app .
-```
-
-# Run the container
-```bash
-docker run -p 8080:8080 go-web-app
-```
-
-To up the service of application so you dont need to do manual process again So we can use docker compose yaml file so we can up the servcies
-```bash
-docker compose up
-```
-
-## 🌐 Access the App
-http://localhost:8080
-
 ## 🎮 Features
 - Add new users  
 - View all users  
 - Edit user details  
 - Delete users  
+
+## To run the Hello World without Dockerfile to avoid making simple things complex
+```bash
+docker pull cleanstart/go:latest
+docker pull cleanstart/go:latest-dev
+```
+
+## If you  have the Go image pulled, you can also run your program directly:
+```bash
+docker run --rm -v $(pwd):/app -w /app cleanstart/go:latest go run hello_world.go
+```
