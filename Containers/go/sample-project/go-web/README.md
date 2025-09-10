@@ -73,7 +73,7 @@ docker compose build --no-cache
 ### Docker Compose for running the services
 ```bash
 docker compose up
-``
+```
 
 Open your browser and go to: **http://localhost:8080**
 
