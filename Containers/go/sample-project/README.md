@@ -20,10 +20,19 @@ go-web/
 ## ⚡ Quick Start
 
 # Build the Docker image
+```bash
 docker build -t go-web-app .
+```
 
 # Run the container
+```bash
 docker run -p 8080:8080 go-web-app
+```
+
+# To up the service of application so you dont need to do manual process again So we can use docker compose yaml file so we can up the servcies
+```bash
+docker compose up
+```
 
 ## 🌐 Access the App
 http://localhost:8080
