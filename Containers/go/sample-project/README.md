@@ -3,6 +3,7 @@
 A simple **User Management System** built with Go.
 
 ## 📂 Project Structure
+```bash
 go-web/
 ├── main.go          # Application entry point
 ├── go.mod           # Dependencies
@@ -14,6 +15,7 @@ go-web/
 ├── users.db         # SQLite database
 ├── Dockerfile       # Build instructions
 └── docker-compose.yml #For service up an down
+```
 
 ## ⚡ Quick Start
 
