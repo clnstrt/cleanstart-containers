@@ -69,13 +69,17 @@ docker run --rm -p 8080:8080 latest-dev:latest
 ### Docker Compose for services
 ```bash
 docker compose build --no-cache
-
+```
+### Docker Compose for running the services
+```bash
+docker compose up
+``
 
 Open your browser and go to: **http://localhost:8080**
 
 ### Go Build Output
 You should see output like this:
-```bash
+```
 go: downloading github.com/gin-gonic/gin v1.9.1
 go: downloading github.com/mattn/go-sqlite3 v1.14.17
 Database created successfully
@@ -92,7 +96,8 @@ Starting Go web server on http://localhost:8080
 ```
 
 ### Application Access
-Once started, you can access the application at: **http://localhost:8000b
+Once started, you can access the application at: **http://localhost:8000**
+
 ## Web Interface Features
 
 ### Main Dashboard
