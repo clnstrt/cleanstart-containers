@@ -1,4 +1,4 @@
-FROM golang:1.21-alpine
+FROM cleanstart/go:latest
 
 # Set working directory
 WORKDIR /app
