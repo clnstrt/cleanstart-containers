@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+  go-web-app:
+    build:
+      context: ../go-web
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      - PORT=8080
+      - DATABASE_PATH=/app/data/users.db
+      - LOG_LEVEL=info
+    volumes:
+      - go-web-data:/app/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8080/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+volumes:
+  go-web-data:
+    driver: local

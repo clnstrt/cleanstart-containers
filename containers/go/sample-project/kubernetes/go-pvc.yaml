@@ -1,0 +1,28 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: go-web-pvc
+  labels:
+    app: go-web-app
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+  storageClassName: standard
+---
+# Alternative PVC for different storage classes
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: go-web-pvc-fast
+  labels:
+    app: go-web-app
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 2Gi
+  storageClassName: fast-ssd

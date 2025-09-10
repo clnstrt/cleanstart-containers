@@ -1,0 +1,46 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+rule_files:
+  # - "first_rules.yml"
+  # - "second_rules.yml"
+
+scrape_configs:
+  # Prometheus itself
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+
+  # Nginx main app
+  - job_name: 'nginx-app'
+    static_configs:
+      - targets: ['nginx-app:80']
+    metrics_path: '/metrics'
+    scrape_interval: 30s
+
+  # Nginx load balancer
+  - job_name: 'nginx-lb'
+    static_configs:
+      - targets: ['nginx-lb:80']
+    metrics_path: '/metrics'
+    scrape_interval: 30s
+
+  # Backend services
+  - job_name: 'backend-1'
+    static_configs:
+      - targets: ['backend-1:5000']
+    metrics_path: '/metrics'
+    scrape_interval: 30s
+
+  - job_name: 'backend-2'
+    static_configs:
+      - targets: ['backend-2:5000']
+    metrics_path: '/metrics'
+    scrape_interval: 30s
+
+  - job_name: 'backend-3'
+    static_configs:
+      - targets: ['backend-3:5000']
+    metrics_path: '/metrics'
+    scrape_interval: 30s
