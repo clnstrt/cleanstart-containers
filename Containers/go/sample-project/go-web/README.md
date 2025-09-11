@@ -1,10 +1,10 @@
-# Go Database Web Application
+# Execute Go Database Web Application on CleanStart Container - Go
 
 A modern web interface for SQLite database operations built with **Go**, **Gin**, and **Bootstrap**.
 
 ## Objective
 
-The objective of this project is to build a lightweight, containerized web application in Go that provides a user-friendly interface and REST APIs for performing SQLite database operations.
+The objective of this project is to utilize CleanStart Container Image - Go and build a lightweight, containerized web application in Go that provides a user-friendly interface and REST APIs for performing SQLite database operations.
 
 ## Summary
 
@@ -13,6 +13,10 @@ This project demonstrates how to combine Go, Gin, SQLite, and Bootstrap to creat
 ## Quick Start - Run Locally
 
 ### Prerequisites
+Pull CleanStart Go image from https://hub.docker.com/u/cleanstart 
+```bash
+docker pull cleanstart/go:latest
+```
 
 ### Step 1: Navigate to Go Web Directory
 ```bash
@@ -20,10 +24,6 @@ cd containers/go/sample-project/go-web
 ```
 
 ### Step 2: Build and Run the Application
-```bash
-docker pull cleanstart/go:latest
-```
-
 ### Make Dockerfile
 ```bash
 # Base image with Go pre-installed
@@ -179,8 +179,9 @@ permission denied: go-web-app
 chmod +x go-web-app
 ```
 
-## 📚 Learning Resources
+## 📚 Resources
 
+- [Verified Docker Image Publisher - CleanStart](https://cleanstart.com/)
 - [Go Official Documentation](https://golang.org/doc/)
 - [Gin Web Framework](https://gin-gonic.com/)
 - [SQLite with Go](https://github.com/mattn/go-sqlite3)
@@ -196,11 +197,3 @@ Feel free to contribute to this project by:
 
 ## 📄 License
 This project is open source and available under the [MIT License](LICENSE).
-
-
-
-
-
-
-
-
