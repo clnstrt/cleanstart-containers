@@ -33,3 +33,9 @@ docker pull cleanstart/go:latest-dev
 ```bash
 docker run --rm -v $(pwd):/app -w /app cleanstart/go:latest go run hello_world.go
 ```
+## Output 
+```bash
+Hello, World!
+Welcome to Go!
+What's your name? Nice to meet you, !
+```
