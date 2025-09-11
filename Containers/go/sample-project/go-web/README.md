@@ -2,6 +2,14 @@
 
 A modern web interface for SQLite database operations built with **Go**, **Gin**, and **Bootstrap**.
 
+## 🎯 Objective
+
+The objective of this project is to build a lightweight, containerized web application in Go that provides a user-friendly interface and REST APIs for performing SQLite database operations.
+
+## Summary
+
+This project demonstrates how to combine Go, Gin, SQLite, and Bootstrap to create a modern database management system. It offers both a web-based dashboard and API endpoints to manage users—supporting create, read, update, and delete (CRUD) operations—packaged in a Dockerized environment for easy deployment and scalability.
+
 ## Quick Start - Run Locally
 
 ### Prerequisites
@@ -97,6 +105,9 @@ Starting Go web server on http://localhost:8080
 
 ### Application Access
 Once started, you can access the application at: **http://localhost:8000**
+
+### Snapshot of the application
+<img width="1893" height="868" alt="image" src="https://github.com/user-attachments/assets/6706128e-95f1-4a45-902a-1a77ee88a9f4" />
 
 ## Web Interface Features
 
