@@ -2,7 +2,7 @@
 
 A modern web interface for SQLite database operations built with **Go**, **Gin**, and **Bootstrap**.
 
-## 🎯 Objective
+## Objective
 
 The objective of this project is to build a lightweight, containerized web application in Go that provides a user-friendly interface and REST APIs for performing SQLite database operations.
 
