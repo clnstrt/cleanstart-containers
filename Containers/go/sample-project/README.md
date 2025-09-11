@@ -1,27 +1,6 @@
-# 🚀 Go Web Application
+# 🚀 Hello World!!! 
 
-A simple **User Management System** built with Go as well as **HELLO WORLD** program.
-
-## 📂 Project Structure
-```bash
-go-web/
-├── main.go          # Application entry point
-├── go.mod           # Dependencies
-├── go.sum           # Dependency checksums
-├── templates/       # HTML templates
-│   ├── index.html   # Main page
-│   ├── add_user.html
-│   └── edit_user.html
-├── users.db         # SQLite database
-├── Dockerfile       # Build instructions
-└── docker-compose.yml #For service up an down
-```
-
-## 🎮 Features
-- Add new users  
-- View all users  
-- Edit user details  
-- Delete users  
+A simple **HELLO WORLD** program to run on CleanStart - Go container. 
 
 ## To run the Hello World without Dockerfile to avoid making simple things complex
 
