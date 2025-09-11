@@ -1,14 +1,6 @@
 # 🚀 Go Web Application - Beginner's Guide
 
-Welcome to your first Go web application! This guide is designed for college students who are new to programming and want to learn how to build web applications using Go.
-
-## 📚 What You'll Learn
-
-By the end of this tutorial, you'll understand:
-- **What is Go?** - A programming language created by Google
-- **What is a web application?** - A program that runs on the internet
-- **What is Docker?** - A tool that packages your application like a box
-- **How to build a simple user management system** - Like a mini social media app
+Welcome to your first Go web application! This guide is designed for the enthusiatic people who trying to try and experiements with CleanStart Image with Go-Web application.
 
 ## 🎯 What This Application Does
 
@@ -19,11 +11,6 @@ This is a **User Management System** - think of it like a simple contact list or
 - ✅ **Delete users** (like removing a contact)
 
 ## 🛠️ What You Need (Prerequisites)
-
-### For Complete Beginners:
-- **A computer** (Windows, Mac, or Linux)
-- **Basic computer skills** (knowing how to open files and folders)
-- **An internet connection** (to download the tools)
 
 ### Tools You'll Install:
 1. **Docker** - Think of this as a "magic box" that contains everything your app needs
@@ -163,63 +150,18 @@ docker run -p 8080:8080 go-web-app
 2. Try a different browser
 3. Check if your firewall is blocking the connection
 
-## 🎓 Learning Path
-
-### Beginner Level (You are here!)
-- ✅ Run the application using Docker
-- ✅ Add, view, edit, and delete users
-- ✅ Understand what a web application is
-
-### Intermediate Level (Next steps)
-- Learn how to modify the code
-- Add new features (like user search)
-- Understand how the database works
-- Learn about HTML and web design
-
-### Advanced Level (Future goals)
-- Build your own web applications
-- Learn about security and user authentication
-- Deploy your app to the internet
-- Work with other programming languages
 
 ## 🔗 What's Next?
 
 After you're comfortable with this application, you can:
 
-1. **Try other sample projects:**
+1. **Try other sample projects from another directories of cleanStart-containers images**
    - Python web app (similar but uses Python)
    - Java web app (similar but uses Java)
    - Node.js web app (similar but uses JavaScript)
 
-2. **Learn more about Go:**
-   - [Go Official Tutorial](https://golang.org/doc/tutorial/)
-   - [Go by Example](https://gobyexample.com/)
-
-3. **Learn more about web development:**
-   - HTML basics
-   - CSS styling
-   - JavaScript for interactivity
-
-## 🤝 Getting Help
-
-If you get stuck:
-1. **Check the troubleshooting section above**
-2. **Ask your classmates or teacher**
-3. **Search online** (Google is your friend!)
-4. **Join programming communities** (Reddit r/learnprogramming, Discord servers)
-
-## 🎉 Congratulations!
-
-You've just run your first web application! This is a big step in your programming journey. You now understand:
-- How to use Docker to run applications
-- What a web application looks like
-- How to interact with a user interface
-- Basic concepts of web development
-
 **Remember:** Every expert was once a beginner. Keep practicing, keep learning, and don't be afraid to make mistakes - that's how you learn!
-
 ---
-
 **Happy Coding! 🚀**
 
-*This guide was created specifically for college students who are new to programming. If you found it helpful, share it with your classmates!*
+
