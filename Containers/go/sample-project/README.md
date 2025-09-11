@@ -42,6 +42,7 @@ docker run --rm -v $(pwd):/app -w /app cleanstart/go:latest go run hello_world.g
 Hello, World!
 Welcome to Go!
 What's your name? Nice to meet you, !
+```
 
 ## 📚 Resources
 
