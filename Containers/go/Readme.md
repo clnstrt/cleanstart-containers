@@ -15,7 +15,7 @@ Official Go programming language container image optimized for enterprise enviro
 
 ## Link to DockerHub 
 
-https://hub.docker.com/repository/docker/cleanstart/go/general
+https://hub.docker.com/r/cleanstart/go
 
 **Pull Commands**
 Download the runtime container images
