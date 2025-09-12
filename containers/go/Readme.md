@@ -16,7 +16,7 @@ docker run -it --rm cleanstart/go:latest
 docker run -it --rm -v $(pwd):/app -w /app cleanstart/go:latest
 
 # Run Go program
-docker run --rm -v $(pwd):/app -w /app cleanstart/go:latest go run hello_world.go
+docker run --rm -v $(pwd):/app -w /app cleanstart/go:latest  run hello_world.go
 ```
 
 ## Check Version
@@ -40,3 +40,4 @@ docker run --rm cleanstart/go:latest go run hello_world.go
 
 ## Sample Projects
 For detailed usage examples and demonstrations, see the `sample-project/` directory.
+
