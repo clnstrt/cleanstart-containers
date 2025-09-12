@@ -1,0 +1,186 @@
+version: '3.8'
+
+networks:
+  monitoring:
+    driver: bridge
+  app-network:
+    driver: bridge
+
+services:
+  # cAdvisor for container monitoring
+  cadvisor:
+    image: cleanstart/cadvisor:latest
+    container_name: cadvisor-multi
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+      - /dev/disk/:/dev/disk:ro
+    privileged: true
+    networks:
+      - monitoring
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8080/healthz"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Web Application Stack
+  web-app:
+    image: nginx:alpine
+    container_name: web-app-multi
+    restart: unless-stopped
+    ports:
+      - "8081:80"
+    networks:
+      - app-network
+      - monitoring
+    depends_on:
+      - api-server
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:80"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # API Server
+  api-server:
+    image: node:18-alpine
+    container_name: api-server-multi
+    restart: unless-stopped
+    ports:
+      - "8082:3000"
+    working_dir: /app
+    command: >
+      sh -c "npm install -g http-server &&
+             echo '{\"message\":\"API Server Running\",\"timestamp\":\"$(date)\"}' > /app/index.json &&
+             http-server -p 3000 -a 0.0.0.0"
+    volumes:
+      - ./api-data:/app
+    networks:
+      - app-network
+      - monitoring
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Database
+  database:
+    image: postgres:13-alpine
+    container_name: database-multi
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: testdb
+      POSTGRES_USER: testuser
+      POSTGRES_PASSWORD: testpass
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - app-network
+      - monitoring
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U testuser -d testdb"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Cache Server
+  cache:
+    image: redis:7-alpine
+    container_name: cache-multi
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    networks:
+      - app-network
+      - monitoring
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Background Worker
+  worker:
+    image: python:3.9-alpine
+    container_name: worker-multi
+    restart: unless-stopped
+    working_dir: /app
+    command: >
+      sh -c "pip install requests &&
+             echo 'import time, requests; 
+             while True: 
+                 try: 
+                     requests.get(\"http://api-server-multi:3000\"); 
+                     print(\"Worker processed request\"); 
+                 except: 
+                     print(\"Worker waiting for API\"); 
+                 time.sleep(5)' > /app/worker.py &&
+             python /app/worker.py"
+    networks:
+      - app-network
+      - monitoring
+    depends_on:
+      - api-server
+    healthcheck:
+      test: ["CMD", "ps", "aux"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Load Generator
+  load-generator:
+    image: busybox:latest
+    container_name: load-generator-multi
+    restart: unless-stopped
+    command: >
+      sh -c "while true; do 
+               wget -q -O- http://web-app-multi:80 > /dev/null 2>&1;
+               wget -q -O- http://api-server-multi:3000 > /dev/null 2>&1;
+               echo 'Load generated at $(date)';
+               sleep 2;
+             done"
+    networks:
+      - app-network
+      - monitoring
+    depends_on:
+      - web-app
+      - api-server
+    healthcheck:
+      test: ["CMD", "ps", "aux"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # File Processor
+  file-processor:
+    image: alpine:latest
+    container_name: file-processor-multi
+    restart: unless-stopped
+    command: >
+      sh -c "while true; do 
+               echo 'Processing file $(date)' > /tmp/processed_$(date +%s).txt;
+               find /tmp -name 'processed_*.txt' -mtime +1 -delete;
+               sleep 10;
+             done"
+    volumes:
+      - file_processing:/tmp
+    networks:
+      - monitoring
+    healthcheck:
+      test: ["CMD", "ps", "aux"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+volumes:
+  postgres_data:
+  file_processing:

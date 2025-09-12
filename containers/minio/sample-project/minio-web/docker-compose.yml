@@ -1,0 +1,51 @@
+version: '3.8'
+
+services:
+  # MinIO Object Storage Server
+  minio:
+    image: minio/minio:latest
+    container_name: minio-basic
+    restart: unless-stopped
+    ports:
+      - "9000:9000"  # MinIO API
+      - "9001:9001"  # MinIO Console
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin123
+    volumes:
+      - minio_data:/data
+    command: server /data --console-address :9001
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - minio-network
+
+  # MinIO Client for testing
+  minio-client:
+    image: minio/mc:latest
+    container_name: minio-client-basic
+    restart: unless-stopped
+    depends_on:
+      - minio
+    environment:
+      MINIO_SERVER: minio:9000
+      MINIO_ACCESS_KEY: minioadmin
+      MINIO_SECRET_KEY: minioadmin123
+    volumes:
+      - ./scripts:/scripts
+    working_dir: /scripts
+    networks:
+      - minio-network
+    profiles:
+      - setup
+
+volumes:
+  minio_data:
+    driver: local
+
+networks:
+  minio-network:
+    driver: bridge

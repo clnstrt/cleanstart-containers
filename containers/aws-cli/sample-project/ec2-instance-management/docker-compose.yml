@@ -1,0 +1,75 @@
+version: '3.8'
+
+services:
+  # AWS CLI for EC2 instance management
+  aws-ec2:
+    image: cleanstart/aws-cli:latest
+    container_name: aws-ec2-management
+    restart: unless-stopped
+    volumes:
+      - ~/.aws:/aws/config:ro
+      - ./data:/aws/data
+      - ./scripts:/aws/scripts
+      - ./configs:/aws/configs
+    environment:
+      - AWS_CONFIG_FILE=/aws/config/config
+      - AWS_SHARED_CREDENTIALS_FILE=/aws/config/credentials
+      - AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION:-us-east-1}
+      - EC2_INSTANCE_TYPE=${EC2_INSTANCE_TYPE:-t2.micro}
+      - EC2_AMI_ID=${EC2_AMI_ID:-ami-12345678}
+    command: ["sh", "-c", "echo '🚀 AWS EC2 Instance Management Demo' && echo '📊 Container Status: Healthy' && echo '☁️ AWS CLI Version:' && aws --version && echo '🔧 Available EC2 Commands:' && echo '  • aws ec2 describe-instances - List instances' && echo '  • aws ec2 run-instances - Launch instance' && echo '  • aws ec2 start-instances - Start instance' && echo '  • aws ec2 stop-instances - Stop instance' && echo '  • aws ec2 terminate-instances - Terminate instance' && echo '  • aws ec2 describe-regions - List regions' && echo '📁 Working Directory: /aws' && echo '⚙️ Config Directory: /aws/configs' && echo '👤 User: awsuser (non-root)' && echo '✅ Ready for EC2 operations!' && echo 'Press Ctrl+C to stop' && tail -f /dev/null"]
+    healthcheck:
+      test: ["CMD", "aws", "--version"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - ec2-network
+
+  # EC2 instance launcher service
+  ec2-launcher:
+    image: cleanstart/aws-cli:latest
+    container_name: ec2-launcher
+    restart: unless-stopped
+    volumes:
+      - ~/.aws:/aws/config:ro
+      - ./configs:/aws/configs
+      - ./scripts:/aws/scripts
+    environment:
+      - AWS_CONFIG_FILE=/aws/config/config
+      - AWS_SHARED_CREDENTIALS_FILE=/aws/config/credentials
+      - AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION:-us-east-1}
+      - EC2_INSTANCE_TYPE=${EC2_INSTANCE_TYPE:-t2.micro}
+      - EC2_AMI_ID=${EC2_AMI_ID:-ami-12345678}
+    profiles:
+      - launcher
+    networks:
+      - ec2-network
+
+  # EC2 instance monitor service
+  ec2-monitor:
+    image: cleanstart/aws-cli:latest
+    container_name: ec2-monitor
+    restart: unless-stopped
+    volumes:
+      - ~/.aws:/aws/config:ro
+      - ./data:/aws/data
+      - ./scripts:/aws/scripts
+    environment:
+      - AWS_CONFIG_FILE=/aws/config/config
+      - AWS_SHARED_CREDENTIALS_FILE=/aws/config/credentials
+      - AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION:-us-east-1}
+    profiles:
+      - monitor
+    networks:
+      - ec2-network
+
+volumes:
+  ec2_data:
+    driver: local
+  config_data:
+    driver: local
+
+networks:
+  ec2-network:
+    driver: bridge

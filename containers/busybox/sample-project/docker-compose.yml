@@ -1,0 +1,12 @@
+version: "3.8"
+
+services:
+  busybox:
+    image: cleanstart/busybox
+    container_name: busybox-sample
+    command: ["sh", "-c", "sleep infinity"]
+    working_dir: /work
+    volumes:
+      - ./:/work
+
+
