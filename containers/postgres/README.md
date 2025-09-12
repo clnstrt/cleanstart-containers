@@ -1,42 +1,60 @@
-# PostgreSQL Docker Image
+**CleanStart Container for PostgreSQL**
 
-A powerful, open source object-relational database system with advanced features and standards compliance.
+Official PostgreSQL database container image optimized for enterprise environments. Includes the complete PostgreSQL database system with advanced features and standards compliance. Features security-hardened base image, minimal attack surface, and FIPS-compliant cryptographic modules. Supports both production deployments and development workflows with separate tagged versions. Includes PostgreSQL server, client tools, and essential database management utilities.
 
-## Pull Image
+**Key Features**
+* Complete PostgreSQL database environment with client tools
+* Optimized for cloud-native and microservices architectures
+
+**Common Use Cases**
+* Building and deploying PostgreSQL database applications
+* Data storage and management
+
+**Quick Start**
+
+## Link to DockerHub 
+
+https://hub.docker.com/r/cleanstart/postgres
+
+**Pull Commands**
+Download the runtime container images
+
 ```bash
 docker pull cleanstart/postgres:latest
+docker pull cleanstart/postgres:latest-dev
 ```
 
-## Run Container
+**Interactive Development**
+Start interactive session for development
+
 ```bash
-# Basic run with default settings
-docker run -d --name postgres-container -e POSTGRES_PASSWORD=mypassword cleanstart/postgres:latest
-
-# Run with custom port and database
-docker run -d --name postgres-container -p 5432:5432 -e POSTGRES_PASSWORD=mypassword -e POSTGRES_DB=mydb cleanstart/postgres:latest
-
-# Run with volume mount for data persistence
-docker run -d --name postgres-container -v postgres_data:/var/lib/postgresql/data -e POSTGRES_PASSWORD=mypassword cleanstart/postgres:latest
+docker run --rm -it --entrypoint /bin/sh cleanstart/postgres:latest-dev
 ```
 
-## Check Version
+**Container Start**
+Start the container
 ```bash
-docker run --rm cleanstart/postgres:latest psql --version
+docker run --rm -it --name postgres-db-dev cleanstart/postgres:latest
 ```
 
-## Check Image Size
+**Best Practices**
+* Use specific image tags for production (avoid latest)
+* Configure resource limits: memory and CPU constraints
+* Enable read-only root filesystem when possible
+
+**Architecture Support**
+
+**Multi-Platform Images**
+
 ```bash
-docker images cleanstart/postgres:latest
+docker pull --platform linux/amd64 cleanstart/postgres:latest
+docker pull --platform linux/arm64 cleanstart/postgres:latest
 ```
 
-## Test Container
-```bash
-# Test PostgreSQL connection
-docker run --rm cleanstart/postgres:latest psql --version
+**Resources & Documentation**
 
-# Run SQL commands
-docker run --rm -v $(pwd):/app cleanstart/postgres:latest psql -f /app/hello_world.sql
-```
+**Essential Links**
+* **CleanStart Website**: https://www.cleanstart.com
+* **PostgreSQL Official**: https://www.postgresql.org/
 
-## Sample Projects
-For detailed usage examples and demonstrations, see the `sample-project/` directory.
+---

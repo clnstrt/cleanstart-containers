@@ -1,42 +1,60 @@
-# Node.js Docker Image
+**CleanStart Container for Node.js**
 
-A JavaScript runtime built on Chrome's V8 JavaScript engine for building scalable network applications.
+Official Node.js runtime container image optimized for enterprise environments. Includes the complete Node.js development toolkit, npm package manager, and runtime environment. Features security-hardened base image, minimal attack surface, and FIPS-compliant cryptographic modules. Supports both production deployments and development workflows with separate tagged versions. Includes standard Node.js tools like npm, yarn, and essential development tools for scalable network applications.
 
-## Pull Image
+**Key Features**
+* Complete Node.js development environment with npm and package management
+* Optimized for cloud-native and microservices architectures
+
+**Common Use Cases**
+* Building and deploying Node.js web applications
+* Server-side JavaScript development
+
+**Quick Start**
+
+## Link to DockerHub 
+
+https://hub.docker.com/r/cleanstart/node
+
+**Pull Commands**
+Download the runtime container images
+
 ```bash
 docker pull cleanstart/node:latest
+docker pull cleanstart/node:latest-dev
 ```
 
-## Run Container
+**Interactive Development**
+Start interactive session for development
+
 ```bash
-# Interactive run
-docker run -it --rm cleanstart/node:latest
-
-# Run with volume mount
-docker run -it --rm -v $(pwd):/app -w /app cleanstart/node:latest
-
-# Run Node.js program
-docker run --rm -v $(pwd):/app -w /app cleanstart/node:latest node hello_world.js
+docker run --rm -it --entrypoint /bin/sh cleanstart/node:latest-dev
 ```
 
-## Check Version
+**Container Start**
+Start the container
 ```bash
-docker run --rm cleanstart/node:latest node --version
+docker run --rm -it --name node-web-dev cleanstart/node:latest
 ```
 
-## Check Image Size
+**Best Practices**
+* Use specific image tags for production (avoid latest)
+* Configure resource limits: memory and CPU constraints
+* Enable read-only root filesystem when possible
+
+**Architecture Support**
+
+**Multi-Platform Images**
+
 ```bash
-docker images cleanstart/node:latest
+docker pull --platform linux/amd64 cleanstart/node:latest
+docker pull --platform linux/arm64 cleanstart/node:latest
 ```
 
-## Test Container
-```bash
-# Test Node.js installation
-docker run --rm cleanstart/node:latest node --version
+**Resources & Documentation**
 
-# Run hello world
-docker run --rm cleanstart/node:latest node hello_world.js
-```
+**Essential Links**
+* **CleanStart Website**: https://www.cleanstart.com
+* **Node.js Official**: https://nodejs.org/
 
-## Sample Projects
-For detailed usage examples and demonstrations, see the `sample-project/` directory.
+---

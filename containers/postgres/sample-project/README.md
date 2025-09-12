@@ -278,6 +278,23 @@ You've just set up and used your first database! This is a big step in your prog
 
 **Remember:** Every expert was once a beginner. Keep practicing, keep learning, and don't be afraid to make mistakes - that's how you learn!
 
+## 📚 Resources
+
+- [Verified Docker Image Publisher - CleanStart](https://cleanstart.com/)
+- [PostgreSQL Official Documentation](https://www.postgresql.org/docs/)
+- [PostgreSQL Tutorial](https://www.postgresqltutorial.com/)
+
+## 🤝 Contributing
+
+Feel free to contribute to this project by:
+- Reporting bugs
+- Suggesting new features
+- Submitting pull requests
+- Improving documentation
+
+## 📄 License
+This project is open source and available under the [MIT License](LICENSE).
+
 ---
 
 **Happy Database Learning! 🚀**

@@ -1,21 +1,81 @@
-# 🌐 Nginx Sample Projects
+# Execute Nginx Web Server on CleanStart Container - Nginx
 
-This directory contains sample projects for testing the `cleanstart/nginx` Docker image that you already pulled from Docker Hub. These examples demonstrate Nginx web server configurations for static sites, reverse proxy, and load balancing.
+A comprehensive web server solution for static sites, reverse proxy, and load balancing built with **Nginx**, **Docker**, and **CleanStart**.
 
-## 🚀 Quick Start
+## Objective
+
+The objective of this project is to utilize CleanStart Container Image - Nginx and build a complete web server solution that provides high-performance static site hosting, reverse proxy capabilities, and load balancing—supporting various web server configurations—packaged in a containerized environment for easy deployment and scalability.
+
+## Summary
+
+This project demonstrates how to combine Nginx, Docker, and CleanStart to create a robust web server system. It offers both static site hosting and dynamic reverse proxy capabilities—supporting various web server configurations—packaged in a containerized environment for easy deployment and scalability.
+
+## Quick Start - Run Locally
 
 ### Prerequisites
-- Docker installed and running
-- Port 80/8080 available (optional)
-
-### Setup
+Pull CleanStart Nginx image from [Docker Hub - CleanStart](https://hub.docker.com/u/cleanstart) 
 ```bash
-# Navigate to this directory
-cd containers/nginx/sample-project
-
-# Test the image (you already pulled cleanstart/nginx:latest from Docker Hub)
-docker run --rm cleanstart/nginx:latest nginx -v
+docker pull cleanstart/nginx:latest
 ```
+
+### Step 1: Navigate to Nginx Directory
+```bash
+cd containers/nginx/sample-project
+```
+
+### Step 2: Run Static Site
+```bash
+# Run static site
+docker run --rm -p 8080:80 -v $(pwd)/static-site:/usr/share/nginx/html \
+  cleanstart/nginx:latest
+
+# Access at http://localhost:8080
+```
+
+### Step 3: Run Reverse Proxy
+```bash
+# Start backend service
+docker run --rm -d --name backend -p 3000:3000 \
+  -v $(pwd)/reverse-proxy/backend:/app python:3.9-slim \
+  python -m http.server 3000
+
+# Start nginx reverse proxy
+docker run --rm -p 8080:80 -v $(pwd)/reverse-proxy/nginx.conf:/etc/nginx/nginx.conf \
+  cleanstart/nginx:latest
+
+# Access backend through proxy at http://localhost:8080
+```
+
+### Step 4: Run Load Balancer
+```bash
+# Start multiple backend services
+docker run --rm -d --name backend1 -p 3001:3000 \
+  -v $(pwd)/load-balancer/backend1:/app python:3.9-slim \
+  python -m http.server 3000
+
+docker run --rm -d --name backend2 -p 3002:3000 \
+  -v $(pwd)/load-balancer/backend2:/app python:3.9-slim \
+  python -m http.server 3000
+
+# Start nginx load balancer
+docker run --rm -p 8080:80 -v $(pwd)/load-balancer/nginx.conf:/etc/nginx/nginx.conf \
+  cleanstart/nginx:latest
+
+# Access load balanced service at http://localhost:8080
+```
+
+### Nginx Output
+You should see output like this:
+```
+nginx: [alert] could not open error log file: open() "/var/log/nginx/error.log" failed (13: Permission denied)
+2024/01/15 10:30:45 [notice] 1#1: using the "epoll" event method
+2024/01/15 10:30:45 [notice] 1#1: nginx/1.25.3
+2024/01/15 10:30:45 [notice] 1#1: start worker processes
+2024/01/15 10:30:45 [notice] 1#1: start worker process 7
+```
+
+### Application Access
+Once started, you can access the application at: **http://localhost:8080**
 
 ### Run Examples
 
@@ -124,9 +184,19 @@ Nginx serves content on:
 - SSL/TLS support
 - Access control and rate limiting
 
+## 📚 Resources
+
+- [Verified Docker Image Publisher - CleanStart](https://cleanstart.com/)
+- [Nginx Official Documentation](https://nginx.org/en/docs/)
+- [Nginx Configuration Guide](https://nginx.org/en/docs/beginners_guide.html)
+
 ## 🤝 Contributing
 
-To add new nginx configurations:
-1. Create configuration in appropriate directory
-2. Add documentation
-3. Test with nginx
+Feel free to contribute to this project by:
+- Reporting bugs
+- Suggesting new features
+- Submitting pull requests
+- Improving documentation
+
+## 📄 License
+This project is open source and available under the [MIT License](LICENSE).

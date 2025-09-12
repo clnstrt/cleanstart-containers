@@ -1,45 +1,60 @@
-# Nginx Docker Image
+**CleanStart Container for Nginx**
 
-A lightweight and high-performance web server, reverse proxy, and load balancer based on Nginx.
+Official Nginx web server container image optimized for enterprise environments. Includes the complete Nginx web server, reverse proxy, and load balancer toolkit. Features security-hardened base image, minimal attack surface, and FIPS-compliant cryptographic modules. Supports both production deployments and development workflows with separate tagged versions. Includes Nginx, SSL/TLS support, and essential web server tools for high-performance web applications.
 
-## Pull Image
+**Key Features**
+* Complete Nginx web server environment with reverse proxy capabilities
+* Optimized for cloud-native and microservices architectures
+
+**Common Use Cases**
+* Serving static websites and web applications
+* Reverse proxy and load balancing
+
+**Quick Start**
+
+## Link to DockerHub 
+
+https://hub.docker.com/r/cleanstart/nginx
+
+**Pull Commands**
+Download the runtime container images
+
 ```bash
 docker pull cleanstart/nginx:latest
+docker pull cleanstart/nginx:latest-dev
 ```
 
-## Run Container
+**Interactive Development**
+Start interactive session for development
+
 ```bash
-# Basic run
-docker run -d -p 8080:80 --name nginx-container cleanstart/nginx:latest
-
-# Run with custom port
-docker run -d -p 3000:80 --name nginx-container cleanstart/nginx:latest
-
-# Run with volume mount
-docker run -d -p 8080:80 -v /path/to/html:/usr/share/nginx/html --name nginx-container cleanstart/nginx:latest
+docker run --rm -it --entrypoint /bin/sh cleanstart/nginx:latest-dev
 ```
 
-## Check Version
+**Container Start**
+Start the container
 ```bash
-docker run --rm cleanstart/nginx:latest nginx -v
+docker run --rm -it --name nginx-web-dev cleanstart/nginx:latest
 ```
 
-## Check Image Size
+**Best Practices**
+* Use specific image tags for production (avoid latest)
+* Configure resource limits: memory and CPU constraints
+* Enable read-only root filesystem when possible
+
+**Architecture Support**
+
+**Multi-Platform Images**
+
 ```bash
-docker images cleanstart/nginx:latest
+docker pull --platform linux/amd64 cleanstart/nginx:latest
+docker pull --platform linux/arm64 cleanstart/nginx:latest
 ```
 
-## Test Container
-```bash
-# Test if container is running
-docker ps | grep nginx
+**Resources & Documentation**
 
-# Test web server response
-curl http://localhost:8080
+**Essential Links**
+* **CleanStart Website**: https://www.cleanstart.com
+* **Nginx Official**: https://nginx.org/
 
-# Check container logs
-docker logs nginx-container
-```
-
-## Sample Projects
-For detailed usage examples and demonstrations, see the `sample-project/` directory.
+---

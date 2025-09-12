@@ -419,6 +419,23 @@ If you encounter issues or need help:
 3. **Check the logs for specific error messages**
 4. **Open an issue on GitHub with detailed information**
 
+## 📚 Resources
+
+- [Verified Docker Image Publisher - CleanStart](https://cleanstart.com/)
+- [Step CLI Documentation](https://smallstep.com/docs/step-cli/)
+- [Step CA Documentation](https://smallstep.com/docs/step-ca/)
+
+## 🤝 Contributing
+
+Feel free to contribute to this project by:
+- Reporting bugs
+- Suggesting new features
+- Submitting pull requests
+- Improving documentation
+
+## 📄 License
+This project is open source and available under the [MIT License](LICENSE).
+
 ---
 
 **Happy Certificate Management! 🔐**

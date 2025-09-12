@@ -1,6 +1,67 @@
-# MinIO Operator Sidecar Sample Projects
+# Execute MinIO Operator Sidecar on CleanStart Container - MinIO
 
-This directory contains practical examples demonstrating how to use the MinIO Operator Sidecar for MinIO tenant management and cluster operations in Kubernetes environments.
+A comprehensive MinIO operator toolkit for managing MinIO object storage tenants and clusters in Kubernetes environments built with **MinIO Operator**, **Kubernetes**, and **Docker**.
+
+## Objective
+
+The objective of this project is to utilize CleanStart Container Image - MinIO Operator Sidecar and build a complete MinIO tenant management system that provides enterprise-grade object storage capabilities, tenant isolation, and Kubernetes-native operations.
+
+## Summary
+
+This project demonstrates how to combine MinIO Operator, Kubernetes, and Docker to create a robust object storage management system. It offers both operator-based tenant management and direct API access to manage MinIO tenants—supporting create, read, update, and delete (CRUD) operations—packaged in a containerized environment for easy deployment and scalability.
+
+## Quick Start - Run Locally
+
+### Prerequisites
+Pull CleanStart MinIO Operator Sidecar image from [Docker Hub - CleanStart](https://hub.docker.com/u/cleanstart) 
+```bash
+docker pull cleanstart/minio-operator-sidecar:latest
+```
+
+### Step 1: Navigate to MinIO Operator Directory
+```bash
+cd containers/minio-operator-sidecar/sample-project
+```
+
+### Step 2: Deploy MinIO Operator
+```bash
+# Deploy the MinIO operator
+kubectl apply -f basic-tenant/minio-operator.yaml
+
+# Deploy the MinIO tenant
+kubectl apply -f basic-tenant/minio-tenant.yaml
+
+# Check the status
+kubectl get tenants
+kubectl get pods -n minio-operator
+```
+
+### Step 3: Access MinIO Console
+```bash
+# Access MinIO console
+kubectl port-forward svc/minio-console 9001:9001
+```
+
+### Step 4: Access MinIO API
+```bash
+# Access MinIO API
+kubectl port-forward svc/minio 9000:9000
+```
+
+Open your browser and go to: **http://localhost:9001** (Console) or **http://localhost:9000** (API)
+
+### MinIO Operator Output
+You should see output like this:
+```
+minio-operator-7d4b8c9f8-abc123   1/1     Running   0          2m
+minio-tenant-0-0                   1/1     Running   0          1m
+minio-tenant-0-1                   1/1     Running   0          1m
+minio-tenant-0-2                   1/1     Running   0          1m
+minio-tenant-0-3                   1/1     Running   0          1m
+```
+
+### Application Access
+Once started, you can access the application at: **http://localhost:9001** (Console) or **http://localhost:9000** (API)
 
 ## 🎯 What You'll Learn
 
@@ -446,6 +507,24 @@ If you encounter issues or need help:
 2. **Review the individual example READMEs**
 3. **Check the logs for specific error messages**
 4. **Open an issue on GitHub with detailed information**
+
+## 📚 Resources
+
+- [Verified Docker Image Publisher - CleanStart](https://cleanstart.com/)
+- [MinIO Official Documentation](https://docs.min.io/)
+- [MinIO Operator Documentation](https://docs.min.io/docs/minio-operator-quickstart-guide.html)
+- [Kubernetes Operators Guide](https://kubernetes.io/docs/concepts/extend-kubernetes/operator/)
+
+## 🤝 Contributing
+
+Feel free to contribute to this project by:
+- Reporting bugs
+- Suggesting new features
+- Submitting pull requests
+- Improving documentation
+
+## 📄 License
+This project is open source and available under the [MIT License](LICENSE).
 
 ---
 
