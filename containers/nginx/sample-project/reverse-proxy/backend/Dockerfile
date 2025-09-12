@@ -1,36 +1,28 @@
-# Dockerfile for Flask Backend API
-FROM cleanstart/python:latest
+FROM cleanstart/python:latest-dev
 
-# Set working directory
 WORKDIR /app
 
-# Install system dependencies
-RUN apt-get update && apt-get install -y \
-    curl \
-    && rm -rf /var/lib/apt/lists/*
+# Switch to root to install system dependencies
+USER root
+RUN apk add --no-cache curl bash
 
-# Copy requirements first for better caching
+# Copy requirements and install Python dependencies
 COPY requirements.txt .
-
-# Install Python dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy application code
 COPY app.py .
 
-# Create non-root user
-RUN useradd --create-home --shell /bin/bash app && \
+# Create non-root user and set permissions
+RUN adduser -D -s /bin/bash app && \
     chown -R app:app /app
 
-# Switch to non-root user
 USER app
 
-# Expose port
 EXPOSE 8000
 
-# Health check
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
     CMD curl -f http://localhost:8000/health || exit 1
 
-# Run the application
-CMD ["python", "app.py"]
+# Run the app
+ENTRYPOINT ["python3", "app.py"]
