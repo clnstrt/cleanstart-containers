@@ -1,0 +1,13 @@
+version: "3.9"
+
+services:
+  go-web-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - NO_CACHE=true
+    container_name: go-web-app
+    ports:
+      - "8080:8080"
+    restart: always
