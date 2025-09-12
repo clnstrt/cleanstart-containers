@@ -21,7 +21,7 @@ docker run --rm -v $(pwd):/app -w /app cleanstart/go:latest  run hello_world.go
 
 ## Check Version
 ```bash
-docker run --rm cleanstart/go:latest go version
+docker run --rm cleanstart/go:latest version
 ```
 
 ## Check Image Size
@@ -32,12 +32,13 @@ docker images cleanstart/go:latest
 ## Test Container
 ```bash
 # Test Go installation
-docker run --rm cleanstart/go:latest go version
+docker run --rm cleanstart/go:latest  version
 
 # Run hello world
-docker run --rm cleanstart/go:latest go run hello_world.go
+docker run --rm cleanstart/go:latest  run hello_world.go
 ```
 
 ## Sample Projects
 For detailed usage examples and demonstrations, see the `sample-project/` directory.
+
 
