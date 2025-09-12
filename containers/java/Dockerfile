@@ -1,4 +1,4 @@
-FROM openjdk:11-jre-alpine
+FROM cleanstart/jdk:latest-dev
 
 # Set working directory
 WORKDIR /app

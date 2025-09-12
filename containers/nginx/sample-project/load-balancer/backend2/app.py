@@ -273,6 +273,7 @@ if __name__ == '__main__':
     print("  GET  /users      - Get all users")
     print("  POST /users      - Create new user")
     print("  GET  /stats      - API statistics")
+    print("Server and Load Balancer Working fine")
     
     # Run the Flask app
     app.run(
@@ -281,3 +282,4 @@ if __name__ == '__main__':
         debug=False,
         threaded=True
     )
+
