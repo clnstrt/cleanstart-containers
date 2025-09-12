@@ -1,156 +1,27 @@
-# Execute Node.js Web Application on CleanStart Container - Node.js
+# 🚀 Hello World!!! 
 
-A modern web application for user management built with **Node.js**, **Express**, and **EJS**.
+A simple **HELLO WORLD** program to run on CleanStart - Node.js container. 
 
-## Objective
+## To run the Hello World without Dockerfile to avoid making simple things complex
 
-The objective of this project is to utilize CleanStart Container Image - Node.js and build a lightweight, containerized web application in Node.js that provides a user-friendly interface and REST APIs for performing user management operations.
-
-## Summary
-
-This project demonstrates how to combine Node.js, Express, EJS, and CleanStart to create a modern web application. It offers both a web-based dashboard and API endpoints to manage users—supporting create, read, update, and delete (CRUD) operations—packaged in a Dockerized environment for easy deployment and scalability.
-
-## Quick Start - Run Locally
-
-### Prerequisites
-Pull CleanStart Node.js image from [Docker Hub - CleanStart](https://hub.docker.com/u/cleanstart) 
+### Pull CleanStart Node.js image from [Docker Hub - CleanStart](https://hub.docker.com/u/cleanstart) 
 ```bash
 docker pull cleanstart/node:latest
 ```
-
-### Step 1: Navigate to Node.js Directory
 ```bash
-cd containers/node/sample-project
+docker pull cleanstart/node:latest-dev
 ```
 
-### Step 2: Build and Run the Application
-### Make Dockerfile
+## If you have the Node.js image pulled, you can also run your program directly:
 ```bash
-# Base image with Node.js pre-installed
-FROM cleanstart/node:latest
-
-# Set working directory
-WORKDIR /app
-
-# Copy package.json first (for caching dependencies)
-COPY package.json ./
-
-# Install dependencies
-RUN npm install
-
-# Copy the source code
-COPY . .
-
-# Expose port
-EXPOSE 3000
-
-# Run the application
-CMD ["npm", "start"]
+docker run --rm -v $(pwd):/app -w /app cleanstart/node:latest node hello_world.js
 ```
-
-### Step 3: Build the image
+## Output 
 ```bash
-docker build -t node-web-app .
+Hello, World!
+Welcome to Node.js!
+What's your name? Nice to meet you, !
 ```
-
-### Step 4: Run the image
-```bash
-docker run --rm -p 3000:3000 node-web-app
-```
-
-### Step 5: Access the Web Application
-```bash
-docker run --rm -p 3000:3000 cleanstart/node:latest node app.js
-```
-
-Open your browser and go to: **http://localhost:3000**
-
-### Node.js Build Output
-You should see output like this:
-```
-npm WARN deprecated express@4.18.2: express 4.18.2 is a security release
-npm WARN deprecated express@4.18.2: express 4.18.2 is a security release
-added 50 packages, and audited 51 packages in 2s
-Server running on http://localhost:3000
-```
-
-### Application Access
-Once started, you can access the application at: **http://localhost:3000**
-
-### Run Examples
-
-#### Basic Node.js Application
-```bash
-# Run Node.js web app
-docker run --rm -p 3000:3000 -v $(pwd):/app \
-  cleanstart/node:latest node /app/app.js
-
-# Access at http://localhost:3000
-```
-
-#### Package Management
-```bash
-# Install dependencies
-docker run --rm -v $(pwd):/app cleanstart/node:latest \
-  npm install
-
-# Run with npm
-docker run --rm -p 3000:3000 -v $(pwd):/app \
-  cleanstart/node:latest npm start
-```
-
-#### Using Docker Compose
-```bash
-# Start Node.js application
-docker-compose up -d
-
-# Access application
-curl http://localhost:3000
-```
-
-## 📁 Project Structure
-
-```
-sample-project/
-├── README.md                    # This file
-├── app.js                      # Main application file
-├── package.json                # Node.js dependencies
-├── views/                      # EJS templates
-│   ├── index.ejs              # Main page template
-│   ├── add_user.ejs           # Add user form
-│   └── layout.ejs             # Layout template
-├── Dockerfile                  # Docker configuration
-├── setup.bat                   # Windows setup script
-└── setup.sh                    # Linux/Mac setup script
-```
-
-## 🎯 Features
-
-- Node.js web applications
-- Express.js framework
-- EJS templating engine
-- RESTful APIs
-- Database integration
-- File uploads
-- Authentication
-- Real-time applications
-
-## 📊 Output
-
-Node.js applications generate:
-- Web application responses
-- API endpoints
-- Database records
-- Log files
-- Static assets
-
-## 🔒 Security
-
-- Non-root user execution
-- Secure Node.js configurations
-- Input validation
-- Error handling
-- HTTPS support
 
 ## 📚 Resources
 
