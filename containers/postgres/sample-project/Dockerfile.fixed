@@ -1,0 +1,38 @@
+FROM cleanstart/postgres:latest
+
+# Fix the missing entrypoint and directory issues
+USER root
+
+# Create necessary directories
+RUN mkdir -p /run/postgresql && \
+    chown postgres:postgres /run/postgresql && \
+    mkdir -p /var/lib/postgresql/data && \
+    chown postgres:postgres /var/lib/postgresql/data
+
+# Create a simple entrypoint script
+RUN echo '#!/bin/sh' > /docker-entrypoint.sh && \
+    echo 'set -e' >> /docker-entrypoint.sh && \
+    echo 'if [ "$1" = "postgres" ]; then' >> /docker-entrypoint.sh && \
+    echo '    if [ -z "$(ls -A /var/lib/postgresql/data 2>/dev/null)" ]; then' >> /docker-entrypoint.sh && \
+    echo '        initdb -D /var/lib/postgresql/data' >> /docker-entrypoint.sh && \
+    echo '    fi' >> /docker-entrypoint.sh && \
+    echo '    exec postgres -D /var/lib/postgresql/data' >> /docker-entrypoint.sh && \
+    echo 'else' >> /docker-entrypoint.sh && \
+    echo '    exec "$@"' >> /docker-entrypoint.sh && \
+    echo 'fi' >> /docker-entrypoint.sh && \
+    chmod +x /docker-entrypoint.sh
+
+# Switch back to postgres user
+USER postgres
+
+# Set environment variables
+ENV POSTGRES_DB=helloworld
+ENV POSTGRES_USER=postgres
+ENV POSTGRES_PASSWORD=password
+
+# Expose PostgreSQL port
+EXPOSE 5432
+
+# Set the entrypoint
+ENTRYPOINT ["/docker-entrypoint.sh"]
+CMD ["postgres"]
