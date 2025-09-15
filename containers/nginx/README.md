@@ -1,4 +1,4 @@
-**CleanStart Container for Nginx**
+ **CleanStart Container for Nginx**
 
 Official Nginx web server container image optimized for enterprise environments. Includes the complete Nginx web server, reverse proxy, and load balancer toolkit. Features security-hardened base image, minimal attack surface, and FIPS-compliant cryptographic modules. Supports both production deployments and development workflows with separate tagged versions. Includes Nginx, SSL/TLS support, and essential web server tools for high-performance web applications.
 

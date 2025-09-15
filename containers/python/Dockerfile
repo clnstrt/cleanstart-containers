@@ -1,5 +1,5 @@
-# Use Python 3.12 slim image as base
-FROM cleanstart/python:latest
+# Use official Python image
+FROM python:latest
 
 # Set environment variables
 ENV PYTHONDONTWRITEBYTECODE=1 \
@@ -8,13 +8,12 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 # Set work directory
 WORKDIR /app
 
-# Copy the hello world program
-COPY hello_world.py .
+# Install common Python packages
+RUN pip install --no-cache-dir \
+    flask \
+    requests \
+    pytest \
+    pytest-cov
 
-# Create non-root user for security
-RUN adduser --disabled-password --gecos '' appuser \
-    && chown -R appuser:appuser /app
-USER appuser
-
-# Run the hello world program
-CMD ["python", "hello_world.py"]
+# Default command
+CMD ["python", "--version"]
