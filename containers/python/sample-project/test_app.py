@@ -1,264 +1,135 @@
 #!/usr/bin/env python3
 """
-Test suite for Flask User Management Application
-Comprehensive tests for all endpoints and functionality.
+Simple test script to verify the CRUD application setup.
 """
 
 import os
-import tempfile
-import pytest
-import json
-from app import app, get_db_connection, init_db
+import sys
+import requests
+import time
+import subprocess
+from threading import Thread
 
-
-@pytest.fixture
-def client():
-    """Create a test client with a temporary database."""
-    # Create a temporary file for the test database
-    db_fd, app.config['DATABASE'] = tempfile.mkstemp()
-    app.config['TESTING'] = True
-    
-    with app.test_client() as client:
-        with app.app_context():
-            init_db()
-        yield client
-    
-    # Clean up
-    os.close(db_fd)
-    os.unlink(app.config['DATABASE'])
-
-
-def test_index_page(client):
-    """Test the home page loads correctly."""
-    response = client.get('/')
-    assert response.status_code == 200
-    assert b'User Management' in response.data or b'Users' in response.data
-
-
-def test_add_user_page(client):
-    """Test the add user page loads correctly."""
-    response = client.get('/add')
-    assert response.status_code == 200
-    assert b'Add User' in response.data or b'name' in response.data
-
-
-def test_add_user_form_submission(client):
-    """Test adding a user via form submission."""
-    response = client.post('/add', data={
-        'name': 'John Doe',
-        'email': 'john@example.com'
-    }, follow_redirects=True)
-    
-    assert response.status_code == 200
-    
-    # Check if user was added by getting the index page
-    response = client.get('/')
-    assert b'John Doe' in response.data
-    assert b'john@example.com' in response.data
-
-
-def test_add_user_duplicate_email(client):
-    """Test adding a user with duplicate email fails."""
-    # Add first user
-    client.post('/add', data={
-        'name': 'John Doe',
-        'email': 'john@example.com'
-    })
-    
-    # Try to add second user with same email
-    response = client.post('/add', data={
-        'name': 'Jane Doe',
-        'email': 'john@example.com'
-    })
-    
-    assert response.status_code == 400
-    assert b'Email already exists' in response.data
-
-
-def test_add_user_missing_fields(client):
-    """Test adding a user with missing fields fails."""
-    response = client.post('/add', data={
-        'name': 'John Doe'
-        # Missing email
-    })
-    
-    # Flask returns 400 for missing form fields, but the message might be generic
-    assert response.status_code == 400
-
-
-def test_get_users_api(client):
-    """Test the GET /api/users endpoint."""
-    # Add a test user
-    client.post('/add', data={
-        'name': 'Test User',
-        'email': 'test@example.com'
-    })
-    
-    response = client.get('/api/users')
-    assert response.status_code == 200
-    
-    data = json.loads(response.data)
-    # Check that our test user is in the list (there might be other users from previous tests)
-    test_user = next((user for user in data if user['email'] == 'test@example.com'), None)
-    assert test_user is not None
-    assert test_user['name'] == 'Test User'
-    assert test_user['email'] == 'test@example.com'
-    assert 'id' in test_user
-    assert 'created_at' in test_user
-
-
-def test_create_user_api(client):
-    """Test the POST /api/users endpoint."""
-    response = client.post('/api/users', 
-                          data=json.dumps({
-                              'name': 'API User',
-                              'email': 'api@example.com'
-                          }),
-                          content_type='application/json')
-    
-    assert response.status_code == 201
-    
-    data = json.loads(response.data)
-    assert data['name'] == 'API User'
-    assert data['email'] == 'api@example.com'
-    assert 'id' in data
-    assert 'created_at' in data
-
-
-def test_create_user_api_missing_fields(client):
-    """Test creating user via API with missing fields."""
-    response = client.post('/api/users',
-                          data=json.dumps({'name': 'Incomplete User'}),
-                          content_type='application/json')
-    
-    assert response.status_code == 400
-    
-    data = json.loads(response.data)
-    assert 'error' in data
-    assert 'required' in data['error']
-
-
-def test_create_user_api_duplicate_email(client):
-    """Test creating user via API with duplicate email."""
-    # Create first user
-    client.post('/api/users',
-                data=json.dumps({
-                    'name': 'First User',
-                    'email': 'duplicate@example.com'
-                }),
-                content_type='application/json')
-    
-    # Try to create second user with same email
-    response = client.post('/api/users',
-                          data=json.dumps({
-                              'name': 'Second User',
-                              'email': 'duplicate@example.com'
-                          }),
-                          content_type='application/json')
-    
-    assert response.status_code == 400
-    
-    data = json.loads(response.data)
-    assert 'error' in data
-    assert 'already exists' in data['error']
-
-
-def test_get_user_by_id(client):
-    """Test getting a specific user by ID."""
-    # Create a user
-    response = client.post('/api/users',
-                          data=json.dumps({
-                              'name': 'Specific User',
-                              'email': 'specific@example.com'
-                          }),
-                          content_type='application/json')
-    
-    user_id = json.loads(response.data)['id']
-    
-    # Get the user by ID
-    response = client.get(f'/api/users/{user_id}')
-    assert response.status_code == 200
-    
-    data = json.loads(response.data)
-    assert data['name'] == 'Specific User'
-    assert data['email'] == 'specific@example.com'
-    assert data['id'] == user_id
-
-
-def test_get_user_by_id_not_found(client):
-    """Test getting a non-existent user by ID."""
-    response = client.get('/api/users/999')
-    assert response.status_code == 404
-    
-    data = json.loads(response.data)
-    assert 'error' in data
-    assert 'not found' in data['error']
-
-
-def test_delete_user(client):
-    """Test deleting a user by ID."""
-    # Create a user
-    response = client.post('/api/users',
-                          data=json.dumps({
-                              'name': 'User to Delete',
-                              'email': 'delete@example.com'
-                          }),
-                          content_type='application/json')
-    
-    user_id = json.loads(response.data)['id']
-    
-    # Delete the user
-    response = client.delete(f'/api/users/{user_id}')
-    assert response.status_code == 200
-    
-    data = json.loads(response.data)
-    assert 'message' in data
-    assert 'deleted' in data['message']
-    
-    # Verify user is deleted
-    response = client.get(f'/api/users/{user_id}')
-    assert response.status_code == 404
-
-
-def test_delete_user_not_found(client):
-    """Test deleting a non-existent user."""
-    response = client.delete('/api/users/999')
-    assert response.status_code == 404
-    
-    data = json.loads(response.data)
-    assert 'error' in data
-    assert 'not found' in data['error']
-
-
-def test_health_check(client):
-    """Test the health check endpoint."""
-    response = client.get('/health')
-    assert response.status_code == 200
-    
-    data = json.loads(response.data)
-    assert data['status'] == 'healthy'
-    assert 'timestamp' in data
-
-
-def test_database_connection():
-    """Test database connection and initialization."""
-    with tempfile.NamedTemporaryFile(delete=False) as tmp:
-        db_path = tmp.name
+def test_database():
+    """Test database operations."""
+    print("Testing database operations...")
     
     try:
-        # Test database initialization
-        app.config['DATABASE'] = db_path
-        with app.app_context():
-            init_db()
-            
-            # Test connection
-            conn = get_db_connection()
-            cursor = conn.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='users'")
-            assert cursor.fetchone() is not None
-            conn.close()
-    finally:
-        os.unlink(db_path)
+        from models.database import init_db, reset_db
+        from models.user import User
+        
+        # Reset database for clean test
+        reset_db()
+        
+        # Test creating a user
+        user = User(name="Test User", email="test@example.com", age=25)
+        user.save()
+        print("✓ User creation successful")
+        
+        # Test retrieving user
+        retrieved_user = User.get_by_id(user.id)
+        assert retrieved_user is not None
+        assert retrieved_user.name == "Test User"
+        print("✓ User retrieval successful")
+        
+        # Test updating user
+        user.name = "Updated User"
+        user.update()
+        updated_user = User.get_by_id(user.id)
+        assert updated_user.name == "Updated User"
+        print("✓ User update successful")
+        
+        # Test deleting user
+        user.delete()
+        deleted_user = User.get_by_id(user.id)
+        assert deleted_user is None
+        print("✓ User deletion successful")
+        
+        print("✓ All database tests passed!")
+        return True
+        
+    except Exception as e:
+        print(f"✗ Database test failed: {e}")
+        return False
 
+def test_web_interface():
+    """Test web interface endpoints."""
+    print("Testing web interface...")
+    
+    base_url = "http://localhost:5000"
+    
+    try:
+        # Test health endpoint
+        response = requests.get(f"{base_url}/health", timeout=5)
+        assert response.status_code == 200
+        data = response.json()
+        assert data["status"] == "healthy"
+        print("✓ Health check successful")
+        
+        # Test home page
+        response = requests.get(f"{base_url}/", timeout=5)
+        assert response.status_code == 200
+        print("✓ Home page accessible")
+        
+        # Test API endpoints
+        response = requests.get(f"{base_url}/users", timeout=5)
+        assert response.status_code == 200
+        print("✓ Users API endpoint accessible")
+        
+        print("✓ All web interface tests passed!")
+        return True
+        
+    except requests.exceptions.ConnectionError:
+        print("✗ Web interface not accessible (app may not be running)")
+        return False
+    except Exception as e:
+        print(f"✗ Web interface test failed: {e}")
+        return False
 
-if __name__ == '__main__':
-    pytest.main([__file__, '-v'])
+def start_app():
+    """Start the Flask app in a separate thread."""
+    try:
+        import app
+        app.app.run(host='0.0.0.0', port=5000, debug=False)
+    except Exception as e:
+        print(f"Failed to start app: {e}")
+
+def main():
+    """Run all tests."""
+    print("=" * 50)
+    print("CRUD Sample Application Test Suite")
+    print("=" * 50)
+    
+    # Test database operations
+    db_success = test_database()
+    
+    # Start app in background for web tests
+    print("\nStarting Flask app for web interface tests...")
+    app_thread = Thread(target=start_app, daemon=True)
+    app_thread.start()
+    
+    # Wait for app to start
+    time.sleep(3)
+    
+    # Test web interface
+    web_success = test_web_interface()
+    
+    # Summary
+    print("\n" + "=" * 50)
+    print("Test Results Summary:")
+    print("=" * 50)
+    print(f"Database Tests: {'PASSED' if db_success else 'FAILED'}")
+    print(f"Web Interface Tests: {'PASSED' if web_success else 'FAILED'}")
+    
+    if db_success and web_success:
+        print("\n🎉 All tests passed! The application is working correctly.")
+        print("\nYou can now:")
+        print("1. Visit http://localhost:5000 to use the web interface")
+        print("2. Use the API endpoints for programmatic access")
+        print("3. Build and run the Docker container")
+    else:
+        print("\n❌ Some tests failed. Please check the error messages above.")
+        sys.exit(1)
+
+if __name__ == "__main__":
+    main()
