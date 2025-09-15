@@ -1,5 +1,5 @@
-# Use official Python image
-FROM python:latest
+# Use cleanstart Python image
+FROM cleanstart/python:latest-dev
 
 # Set environment variables
 ENV PYTHONDONTWRITEBYTECODE=1 \
@@ -8,12 +8,12 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 # Set work directory
 WORKDIR /app
 
-# Install common Python packages
-RUN pip install --no-cache-dir \
-    flask \
-    requests \
-    pytest \
-    pytest-cov
+# Copy requirements and install dependencies
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
 
-# Default command
-CMD ["python", "--version"]
+# Copy application code
+COPY app.py .
+
+# Run the application
+CMD ["python", "app.py"]

@@ -1,0 +1,8 @@
+# Basic Python dependencies for a minimal project
+# Add your dependencies here as needed
+
+# Example: requests for HTTP calls
+# requests==2.31.0
+
+# Example: flask for web applications  
+# flask==2.3.3
