@@ -1,60 +1,69 @@
-**CleanStart Container for Python**
+# Python Hello World Application
 
-Official Python programming language container image optimized for enterprise environments. Includes the complete Python development toolkit, interpreter, and runtime environment. Features security-hardened base image, minimal attack surface, and FIPS-compliant cryptographic modules. Supports both production deployments and development workflows with separate tagged versions. Includes standard Python tools like pip, virtualenv, and essential development tools for scalable applications.
+A minimal Python application using the `cleanstart/python:latest-dev` base image.
 
-**Key Features**
-* Complete Python development environment with package management
-* Optimized for cloud-native and microservices architectures
+## Files
 
-**Common Use Cases**
-* Building and deploying Python web applications
-* Data science and machine learning
+- `Dockerfile` - Container configuration
+- `app.py` - Simple hello world Python application
+- `requirements.txt` - Python dependencies (currently empty)
 
-**Quick Start**
+## Quick Start
 
-## Link to DockerHub 
-
-https://hub.docker.com/r/cleanstart/python
-
-**Pull Commands**
-Download the runtime container images
-
+### Step 1: Navigate to the project directory
 ```bash
-docker pull cleanstart/python:latest
-docker pull cleanstart/python:latest-dev
+cd /path/to/cleanstart-containers/containers/python
 ```
 
-**Interactive Development**
-Start interactive session for development
-
+### Step 2: Build the Docker image
 ```bash
-docker run --rm -it --entrypoint /bin/sh cleanstart/python:latest-dev
+docker build -t python-hello .
 ```
 
-**Container Start**
-Start the container
+### Step 3: Run the application
 ```bash
-docker run --rm -it --name python-web-dev cleanstart/python:latest
+docker run python-hello
 ```
 
-**Best Practices**
-* Use specific image tags for production (avoid latest)
-* Configure resource limits: memory and CPU constraints
-* Enable read-only root filesystem when possible
-
-**Architecture Support**
-
-**Multi-Platform Images**
-
-```bash
-docker pull --platform linux/amd64 cleanstart/python:latest
-docker pull --platform linux/arm64 cleanstart/python:latest
+### Expected output
+```
+Hello, World!
+Welcome to Python with cleanstart/python:latest-dev
+This is a minimal Python application running in Docker
 ```
 
-**Resources & Documentation**
+## Adding Dependencies
 
-**Essential Links**
-* **CleanStart Website**: https://www.cleanstart.com
-* **Python Official**: https://www.python.org/
+### Step 1: Edit requirements.txt
+Add your Python packages to `requirements.txt`:
+```bash
+echo "requests==2.31.0" >> requirements.txt
+echo "flask==2.3.3" >> requirements.txt
+```
 
----
+### Step 2: Rebuild the image
+```bash
+docker build -t python-hello .
+```
+
+### Step 3: Run with new dependencies
+```bash
+docker run python-hello
+```
+
+## Development Mode
+
+For development with live code changes:
+
+### Step 1: Run with volume mount
+```bash
+docker run -v $(pwd):/app python-hello
+```
+
+This mounts your current directory into the container, so changes to your code are reflected immediately.
+
+## Troubleshooting
+
+- **Permission issues**: Make sure Docker is running and you have proper permissions
+- **Build fails**: Check that you're in the correct directory with Dockerfile
+- **Container won't start**: Verify the base image `cleanstart/python:latest-dev` is available
