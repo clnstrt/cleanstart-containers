@@ -1,21 +1,27 @@
-<<<<<<< HEAD
-#  CleanStart Containers - Sample Projects
+# CleanStart Containers
 
-A comprehensive collection of Docker container sample projects demonstrating various technologies, tools, and frameworks. Each container includes practical examples, setup scripts, and detailed documentation to help you learn and implement containerized solutions.
-
-##  What You'll Find
-
-This repository contains **20+ container sample projects** covering:
-
-- **🔐 Security & PKI**: Step CLI, Certificate Management
-- **⚖️ Load Balancing**: MetalLB Controller, Nginx
-- **☁️ Cloud & DevOps**: AWS CLI, ArgoCD, Velero
-- **📊 Monitoring**: cAdvisor, Logstash Exporter
-- **🗄️ Databases**: PostgreSQL, Database Examples
-- **🌐 Web Technologies**: Node.js, Python, Ruby, Go, Java
-- **🔧 Utilities**: BusyBox, cURL, kube-proxy
+A comprehensive collection of Docker container images and sample projects for learning containerization, web development, and DevOps practices. Each container includes practical examples, setup scripts, and detailed documentation to help you learn and implement containerized solutions.
 
 ## 🚀 Quick Start
+
+### Prerequisites
+- Docker installed and running
+- Basic command line knowledge
+
+### Available Containers
+
+| Container | Description | Port | Sample Project |
+|-----------|-------------|------|----------------|
+| **Go** | Modern programming language | 8080 | Web application with database |
+| **Node.js** | JavaScript runtime | 3000 | Express.js web app |
+| **Python** | High-level programming language | 5000 | Flask web application |
+| **Nginx** | Web server and reverse proxy | 80/8080 | Static site, reverse proxy, load balancer |
+| **PostgreSQL** | Relational database | 5432 | Database web application |
+| **Prometheus** | Monitoring and alerting | 9090 | Metrics collection and visualization |
+| **MinIO Operator** | Object storage operator | - | Kubernetes operator examples |
+| **Step CLI** | PKI and certificate management | - | Certificate authority examples |
+
+## 🎯 Getting Started
 
 ### 1. Clone the Repository
 ```bash
@@ -23,21 +29,27 @@ git clone https://github.com/your-username/cleanstart-containers.git
 cd cleanstart-containers
 ```
 
-### 2. Choose Your Sample Project
+### 2. Pull a Container Image
 ```bash
-# Navigate to any container directory
-cd images/step-cli/sample-project          # PKI & Certificate Management
-cd images/metallb-controller/sample-project # Load Balancer Management
-cd images/nginx/sample-project             # Web Server & Load Balancing
-cd images/python/sample-project            # Python Web Applications
-cd images/node/sample-project              # Node.js Applications
-# ... and many more!
+# Example: Pull the Go container
+docker pull cleanstart/go:latest
 ```
 
-### 3. Run the Sample Project
+### 3. Run a Container
 ```bash
-# Use Docker Compose
-docker-compose up -d
+# Example: Run Go container interactively
+docker run -it --rm cleanstart/go:latest
+```
+
+### 4. Try Sample Projects
+```bash
+# Navigate to sample projects
+cd containers/go/sample-project
+
+# Run hello world example
+cd hello-world
+docker build -t go-hello-world .
+docker run --rm go-hello-world
 ```
 
 ## 📁 Project Structure
@@ -46,56 +58,44 @@ docker-compose up -d
 cleanstart-containers/
 ├── LICENSE                           # MIT License
 ├── README.md                         # This file
-└── images/                          # All container sample projects
+└── containers/                      # All container sample projects
     ├── step-cli/                    # 🔐 PKI & Certificate Management
     │   ├── Dockerfile
     │   ├── README.md
     │   └── sample-project/
-    │       ├── basic-pki/           # Basic PKI operations
-    │       ├── advanced-certificates/ # Advanced certificate management
-    │       ├── production-pki/      # Production-ready PKI setup
-    │       └── integration-examples/ # Integration examples
-    ├── metallb-controller/          # ⚖️ Load Balancer Management
-    │   ├── Dockerfile
-    │   ├── README.md
-    │   └── sample-project/
-    │       ├── basic-layer2/        # Basic Layer 2 load balancing
-    │       ├── bgp-setup/           # BGP-based load balancing
-    │       └── multi-pool/          # Multi-pool configuration
     ├── nginx/                       # 🌐 Web Server & Load Balancing
     ├── python/                      # 🐍 Python Web Applications
     ├── node/                        # 🟢 Node.js Applications
-    ├── ruby/                        # 💎 Ruby Web Applications
     ├── go/                          # 🐹 Go Web Applications
-    ├── java/                        # ☕ Java Applications
     ├── postgres/                    # 🗄️ PostgreSQL Database
-    ├── aws-cli/                     # ☁️ AWS Cloud Operations
-    ├── argocd-extension-installer/  # 🚀 ArgoCD Extensions
-    ├── velero-plugin-for-aws/       # 💾 Backup & Disaster Recovery
-    ├── cAdvisor/                    # 📊 Container Monitoring
-    ├── logstash-exporter/           # 📈 Log Monitoring
-    ├── minio/                       # 🗃️ Object Storage
-    ├── curl/                        # 🔧 HTTP Client Utilities
-    ├── busybox/                     # 🛠️ Lightweight Utilities
-    └── [15+ more containers...]
+    ├── prometheus/                  # 📊 Monitoring and Alerting
+    ├── minio-operator-sidecar/      # 🗃️ Object Storage Operator
+    └── [more containers...]
 ```
 
-## 🚀 Getting Started with Any Project
+## 🛠️ Development
 
-### **Option 1: Automated Setup (Recommended)**
+### Building Images
 ```bash
-# Navigate to any sample project
-cd images/[container-name]/sample-project
-
-# Run the setup script
-./setup.sh        # Linux/macOS
-setup.bat         # Windows
+# Build a specific container
+cd containers/go
+docker build -t cleanstart/go:latest .
 ```
 
-### **Option 2: Docker Compose**
+### Running Sample Projects
 ```bash
 # Navigate to any sample project
-cd images/[container-name]/sample-project
+cd containers/go/sample-project/go-web
+
+# Build and run
+docker build -t go-web-app .
+docker run -p 8080:8080 go-web-app
+```
+
+### Using Docker Compose
+```bash
+# Navigate to any sample project
+cd containers/[container-name]/sample-project
 
 # Start all services
 docker-compose up -d
@@ -107,18 +107,9 @@ docker-compose logs -f
 docker-compose down
 ```
 
-### **Option 3: Manual Setup**
-```bash
-# Build the container
-docker build -t my-container .
-
-# Run the container
-docker run -p 8080:8080 my-container
-```
-
 ## 🧪 Testing Your Setup
 
-### **Health Checks**
+### Health Checks
 ```bash
 # Check if services are running
 docker-compose ps
@@ -130,7 +121,7 @@ curl http://localhost:8080/health
 docker-compose logs -f [service-name]
 ```
 
-### **Common Test Commands**
+### Common Test Commands
 ```bash
 # Test Docker installation
 docker --version
@@ -138,15 +129,11 @@ docker-compose --version
 
 # Test container functionality
 docker run --rm cleanstart/[container-name] --version
-
-# Test sample project
-cd images/[container-name]/sample-project
-./test-setup.sh
 ```
 
 ## 🛠️ Troubleshooting
 
-### **Common Issues:**
+### Common Issues:
 
 1. **Port Conflicts**
    ```bash
@@ -177,11 +164,22 @@ cd images/[container-name]/sample-project
    docker system prune -f
    ```
 
-4. **Dependencies Missing**
-   ```bash
-   # Install required tools
-   # Check individual project READMEs for specific requirements
-   ```
+## 📚 Learning Path
+
+### Beginner
+1. Start with hello-world examples
+2. Learn basic Docker commands
+3. Understand container concepts
+
+### Intermediate
+1. Explore sample projects
+2. Learn about Docker Compose
+3. Understand networking and volumes
+
+### Advanced
+1. Kubernetes deployments
+2. Production configurations
+3. Monitoring and logging
 
 ## 📚 Documentation
 
@@ -202,7 +200,7 @@ We welcome contributions to improve these sample projects:
 4. **Add new features** - Extend functionality
 5. **Improve documentation** - Better explanations and guides
 
-### **How to Contribute:**
+### How to Contribute:
 1. Fork the repository
 2. Create a feature branch
 3. Make your changes
@@ -223,112 +221,5 @@ If you encounter issues or need help:
 4. **Open an issue on GitHub with detailed information**
 
 ---
-Start with any sample project that interests you, follow the setup instructions, and begin building amazing containerized applications!
-=======
-# CleanStart Containers
-
-A collection of Docker container images and sample projects for learning containerization, web development, and DevOps practices.
-
-## 🚀 Quick Start
-
-### Prerequisites
-- Docker installed and running
-- Basic command line knowledge
-
-### Available Containers
-
-| Container | Description | Port | Sample Project |
-|-----------|-------------|------|----------------|
-| **Go** | Modern programming language | 8080 | Web application with database |
-| **Node.js** | JavaScript runtime | 3000 | Express.js web app |
-| **Python** | High-level programming language | 5000 | Flask web application |
-| **Nginx** | Web server and reverse proxy | 80/8080 | Static site, reverse proxy, load balancer |
-| **PostgreSQL** | Relational database | 5432 | Database web application |
-| **Prometheus** | Monitoring and alerting | 9090 | Metrics collection and visualization |
-| **MinIO Operator** | Object storage operator | - | Kubernetes operator examples |
-| **Step CLI** | PKI and certificate management | - | Certificate authority examples |
-
-
-## 🎯 Getting Started
-
-### 1. Pull a Container Image
-```bash
-# Example: Pull the Go container
-docker pull cleanstart/go:latest
-```
-
-### 2. Run a Container
-```bash
-# Example: Run Go container interactively
-docker run -it --rm cleanstart/go:latest
-```
-
-### 3. Try Sample Projects
-```bash
-# Navigate to sample projects
-cd containers/go/sample-project
-
-# Run hello world example
-cd hello-world
-docker build -t go-hello-world .
-docker run --rm go-hello-world
-```
-
-## 🛠️ Development
-
-### Building Images
-```bash
-# Build a specific container
-cd containers/go
-docker build -t cleanstart/go:latest .
-```
-
-### Running Sample Projects
-```bash
-# Navigate to any sample project
-cd containers/go/sample-project/go-web
-
-# Build and run
-docker build -t go-web-app .
-docker run -p 8080:8080 go-web-app
-```
-
-## 📚 Learning Path
-
-### Beginner
-1. Start with hello-world examples
-2. Learn basic Docker commands
-3. Understand container concepts
-
-### Intermediate
-1. Explore sample projects
-2. Learn about Docker Compose
-3. Understand networking and volumes
-
-### Advanced
-1. Kubernetes deployments
-2. Production configurations
-3. Monitoring and logging
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Add your container or sample project
-4. Update documentation
-5. Submit a pull request
-
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 🆘 Support
-
-- Check the troubleshooting sections in individual README files
-- Open an issue for bugs or feature requests
-- Join our community discussions
-
----
 
 **Happy Containerizing! 🐳**
->>>>>>> pratham-dev
