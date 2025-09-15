@@ -1,0 +1,59 @@
+# Stakater Reloader ConfigMap Example
+# This demonstrates how to use Stakater Reloader with ConfigMaps
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-config
+  annotations:
+    # This annotation tells Reloader to restart pods when this ConfigMap changes
+    reloader.stakater.com/auto: "true"
+data:
+  app.properties: |
+    # Application configuration
+    server.port=8080
+    app.name=My Application
+    app.version=1.0.0
+    logging.level=INFO
+    
+    # Database configuration
+    db.host=localhost
+    db.port=5432
+    db.name=myapp
+    
+    # Feature flags
+    feature.new-ui.enabled=true
+    feature.analytics.enabled=false
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app-deployment
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: my-app
+  template:
+    metadata:
+      labels:
+        app: my-app
+      annotations:
+        # This annotation tells Reloader to restart pods when ConfigMap changes
+        configmap.reloader.stakater.com/reload: "app-config"
+    spec:
+      containers:
+      - name: app
+        image: nginx:latest
+        ports:
+        - containerPort: 80
+        env:
+        - name: CONFIG_FILE
+          value: "/etc/config/app.properties"
+        volumeMounts:
+        - name: config-volume
+          mountPath: /etc/config
+      volumes:
+      - name: config-volume
+        configMap:
+          name: app-config

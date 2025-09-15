@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+  tigera-operator:
+    image: cleanstart/tigera-operator:latest
+    container_name: tigera-operator-test
+    volumes:
+      - ./tigera-operator.yaml:/app/tigera-operator.yaml:ro
+      - ./calico-installation.yaml:/app/calico-installation.yaml:ro
+      - ./basic-network-policy.yaml:/app/basic-network-policy.yaml:ro
+      - ${HOME}/.kube:/root/.kube:ro
+    environment:
+      - KUBECONFIG=/root/.kube/config
+    command: |
+      bash -c "
+        echo 'Tigera Operator Test Environment'
+        echo '================================'
+        echo ''
+        echo 'Available commands:'
+        echo '  kubectl apply -f /app/tigera-operator.yaml'
+        echo '  kubectl apply -f /app/calico-installation.yaml'
+        echo '  kubectl apply -f /app/basic-network-policy.yaml'
+        echo ''
+        echo 'Checking kubectl connection...'
+        kubectl cluster-info || echo 'kubectl not configured or cluster not accessible'
+        echo ''
+        echo 'Container ready for testing!'
+        tail -f /dev/null
+      "
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "kubectl", "version", "--client"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s

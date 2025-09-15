@@ -1,0 +1,128 @@
+# BGP Configuration for Advanced Networking
+# This demonstrates BGP peering and advanced routing
+
+apiVersion: projectcalico.org/v3
+kind: BGPConfiguration
+metadata:
+  name: default
+spec:
+  # Enable BGP
+  logSeverityScreen: Info
+  
+  # AS number for the cluster
+  asNumber: 64512
+  
+  # Node-to-node mesh
+  nodeToNodeMeshEnabled: true
+  
+  # Service cluster IPs
+  serviceClusterIPs:
+  - cidr: 10.96.0.0/12
+  
+  # Service external IPs
+  serviceExternalIPs:
+  - cidr: 10.0.0.0/8
+  
+  # Service load balancer IPs
+  serviceLoadBalancerIPs:
+  - cidr: 10.0.0.0/8
+---
+# BGP Peer Configuration
+apiVersion: projectcalico.org/v3
+kind: BGPPeer
+metadata:
+  name: external-router
+spec:
+  # Peer AS number
+  asNumber: 64513
+  
+  # Peer IP address
+  peerIP: 192.168.1.1
+  
+  # Node selector
+  nodeSelector: has(role=gateway)
+  
+  # Keep original next hop
+  keepOriginalNextHop: true
+---
+# IP Pool Configuration
+apiVersion: projectcalico.org/v3
+kind: IPPool
+metadata:
+  name: production-pool
+spec:
+  # CIDR block
+  cidr: 192.168.0.0/16
+  
+  # Block size for IP allocation
+  blockSize: 26
+  
+  # IPIP encapsulation
+  ipipMode: CrossSubnet
+  
+  # NAT outgoing traffic
+  natOutgoing: true
+  
+  # Node selector
+  nodeSelector: has(environment=production)
+---
+# Global Network Policy
+apiVersion: projectcalico.org/v3
+kind: GlobalNetworkPolicy
+metadata:
+  name: global-security-policy
+spec:
+  # Apply to all namespaces
+  namespaceSelector: all()
+  
+  # Order for policy evaluation
+  order: 100
+  
+  # Policy types
+  types:
+  - Ingress
+  - Egress
+  
+  ingress:
+  # Allow DNS
+  - action: Allow
+    protocol: UDP
+    destination:
+      ports:
+      - 53
+  
+  # Allow HTTPS
+  - action: Allow
+    protocol: TCP
+    destination:
+      ports:
+      - 443
+  
+  # Allow HTTP (if needed)
+  - action: Allow
+    protocol: TCP
+    destination:
+      ports:
+      - 80
+  
+  egress:
+  # Allow DNS
+  - action: Allow
+    protocol: UDP
+    destination:
+      ports:
+      - 53
+  
+  # Allow HTTPS
+  - action: Allow
+    protocol: TCP
+    destination:
+      ports:
+      - 443
+  
+  # Allow HTTP (if needed)
+  - action: Allow
+    protocol: TCP
+    destination:
+      ports:
+      - 80

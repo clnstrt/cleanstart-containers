@@ -1,0 +1,77 @@
+# Cortex Basic Configuration
+# This is a basic Cortex configuration for testing and development
+
+# Server configuration
+server:
+  http_listen_port: 9009
+  grpc_listen_port: 9095
+
+# Storage configuration
+storage:
+  engine: filesystem
+  filesystem:
+    dir: /tmp/cortex
+
+# Ingester configuration
+ingester:
+  lifecycler:
+    join_after: 0s
+    num_tokens: 512
+    ring:
+      kvstore:
+        store: inmemory
+      replication_factor: 1
+
+# Distributor configuration
+distributor:
+  pool:
+    health_check_ingesters: true
+
+# Querier configuration
+querier:
+  max_concurrent: 20
+
+# Query frontend configuration
+query_frontend:
+  max_outstanding_requests_per_tenant: 256
+
+# Compactor configuration
+compactor:
+  data_dir: /tmp/cortex/compactor
+  shared_store: filesystem
+
+# Limits configuration
+limits:
+  enforce_metric_name: false
+  reject_old_samples: true
+  reject_old_samples_max_age: 168h
+  max_cache_freshness_per_query: 10m
+  split_queries_by_interval: 15m
+  max_query_parallelism: 32
+  max_query_series: 100000
+  max_query_lookback: 0s
+  max_query_length: 721h
+  max_query_parallelism: 32
+  max_queriers_per_tenant: 0
+  ruler:
+    max_rules_per_rule_group: 0
+    max_rule_groups_per_tenant: 0
+
+# Table manager configuration
+table_manager:
+  retention_deletes_enabled: false
+  retention_period: 0s
+
+# Schema configuration
+schema:
+  configs:
+    - from: "2020-07-31"
+      store: boltdb-shipper
+      object_store: filesystem
+      schema: v11
+      index:
+        prefix: index_
+        period: 24h
+      chunks:
+        prefix: chunk_
+        period: 24h

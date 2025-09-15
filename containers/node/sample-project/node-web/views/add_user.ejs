@@ -1,76 +1,18 @@
-<div class="row justify-content-center">
-    <div class="col-md-8 col-lg-6">
-        <div class="card">
-            <div class="card-header">
-                <h3 class="mb-0"><i class="fas fa-user-plus me-2"></i>Add New User</h3>
-            </div>
-            <div class="card-body">
-                <form method="post" action="/add">
-                    <div class="mb-4">
-                        <label for="name" class="form-label">
-                            <i class="fas fa-user me-2"></i>Full Name
-                        </label>
-                        <input type="text" class="form-control form-control-lg" id="name" name="name" 
-                               placeholder="Enter user's full name" required>
-                        <div class="form-text">
-                            <i class="fas fa-info-circle me-1"></i>
-                            Enter the complete name of the user
-                        </div>
-                    </div>
-                    
-                    <div class="mb-4">
-                        <label for="email" class="form-label">
-                            <i class="fas fa-envelope me-2"></i>Email Address
-                        </label>
-                        <input type="email" class="form-control form-control-lg" id="email" name="email" 
-                               placeholder="Enter user's email address" required>
-                        <div class="form-text">
-                            <i class="fas fa-info-circle me-1"></i>
-                            Must be a valid email address and unique in the system
-                        </div>
-                    </div>
-                    
-                    <div class="d-grid gap-3 d-md-flex justify-content-md-end">
-                        <a href="/" class="btn btn-secondary btn-lg">
-                            <i class="fas fa-arrow-left me-2"></i>Back to Users
-                        </a>
-                        <button type="submit" class="btn btn-primary btn-lg">
-                            <i class="fas fa-save me-2"></i>Add User
-                        </button>
-                    </div>
-                </form>
-            </div>
+<%- include('layout', { title: 'Add User - Node.js Web App', body: `
+    <h1>➕ Add New User</h1>
+    
+    <form action="/add-user" method="POST">
+        <div class="form-group">
+            <label for="name">Name:</label>
+            <input type="text" id="name" name="name" required>
         </div>
         
-        <!-- Help Section -->
-        <div class="card mt-4">
-            <div class="card-header">
-                <h5 class="mb-0"><i class="fas fa-question-circle me-2"></i>Need Help?</h5>
-            </div>
-            <div class="card-body">
-                <div class="row">
-                    <div class="col-md-6">
-                        <h6 class="text-white"><i class="fas fa-lightbulb me-2 text-warning"></i>Tips:</h6>
-                        <ul class="list-unstyled">
-                            <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Use full names for better identification</li>
-                            <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Ensure email addresses are unique</li>
-                            <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Valid email format is required</li>
-                        </ul>
-                    </div>
-                    <div class="col-md-6">
-                        <h6 class="text-white"><i class="fas fa-code me-2 text-info"></i>API Alternative:</h6>
-                        <p class="text-white-50 small">
-                            You can also add users programmatically using the REST API:
-                        </p>
-                        <div class="code-block">
-                            <code class="small">
-                                POST /api/users<br>
-                                Content-Type: application/json
-                            </code>
-                        </div>
-                    </div>
-                </div>
-            </div>
+        <div class="form-group">
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required>
         </div>
-    </div>
-</div>
+        
+        <button type="submit" class="btn">Add User</button>
+        <a href="/" class="btn">Cancel</a>
+    </form>
+` }) %>
