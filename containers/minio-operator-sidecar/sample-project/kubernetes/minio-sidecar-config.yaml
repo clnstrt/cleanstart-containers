@@ -1,0 +1,82 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: minio-sidecar-config
+  namespace: minio-operator
+  labels:
+    app: minio-sidecar
+    component: config
+data:
+  # MinIO configuration
+  minio.conf: |
+    # MinIO server configuration
+    MINIO_ROOT_USER=minioadmin
+    MINIO_ROOT_PASSWORD=minioadmin123
+    MINIO_VOLUMES=/data
+    MINIO_OPTS="--console-address :9001"
+    
+    # MinIO client configuration
+    MC_ALIAS=myminio
+    MC_ENDPOINT=http://localhost:9000
+    MC_ACCESS_KEY=minioadmin
+    MC_SECRET_KEY=minioadmin123
+    
+    # Application configuration
+    APP_MINIO_ENDPOINT=http://localhost:9000
+    APP_MINIO_ACCESS_KEY=minioadmin
+    APP_MINIO_SECRET_KEY=minioadmin123
+    APP_MINIO_BUCKET=app-data
+    APP_MINIO_REGION=us-east-1
+    APP_MINIO_SECURE=false
+  
+  # MinIO client script
+  setup-minio.sh: |
+    #!/bin/bash
+    set -e
+    
+    echo "Setting up MinIO sidecar..."
+    
+    # Wait for MinIO to be ready
+    until mc alias set myminio http://localhost:9000 $MINIO_ROOT_USER $MINIO_ROOT_PASSWORD; do
+      echo "Waiting for MinIO to be ready..."
+      sleep 2
+    done
+    
+    # Create default buckets
+    mc mb myminio/app-data --ignore-existing
+    mc mb myminio/app-backups --ignore-existing
+    mc mb myminio/app-logs --ignore-existing
+    
+    # Set bucket policies
+    mc anonymous set public myminio/app-data
+    mc anonymous set download myminio/app-backups
+    
+    # Create initial data structure
+    echo "MinIO sidecar setup completed!"
+    
+  # Application integration script
+  app-integration.sh: |
+    #!/bin/bash
+    set -e
+    
+    echo "Setting up application integration with MinIO..."
+    
+    # Wait for MinIO to be ready
+    until mc alias set myminio http://localhost:9000 $MINIO_ROOT_USER $MINIO_ROOT_PASSWORD; do
+      echo "Waiting for MinIO to be ready..."
+      sleep 2
+    done
+    
+    # Test MinIO connectivity
+    mc ls myminio/
+    
+    # Create application-specific buckets
+    mc mb myminio/app-uploads --ignore-existing
+    mc mb myminio/app-exports --ignore-existing
+    mc mb myminio/app-cache --ignore-existing
+    
+    # Set up bucket policies for application
+    mc anonymous set public myminio/app-uploads
+    mc anonymous set download myminio/app-exports
+    
+    echo "Application integration with MinIO completed!"

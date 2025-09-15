@@ -1,0 +1,119 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: node-exporter
+  namespace: monitoring
+  labels:
+    app: node-exporter
+    component: monitoring
+spec:
+  selector:
+    matchLabels:
+      app: node-exporter
+  template:
+    metadata:
+      labels:
+        app: node-exporter
+        component: monitoring
+    spec:
+      serviceAccountName: prometheus-node-exporter
+      containers:
+      - name: node-exporter
+        image: prom/node-exporter:latest
+        ports:
+        - containerPort: 9100
+          name: http
+        args:
+        - '--path.sysfs=/host/sys'
+        - '--path.rootfs=/host/root'
+        - '--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($|/)'
+        - '--collector.filesystem.fs-types-exclude=^(autofs|binfmt_misc|bpf|cgroup2?|configfs|debugfs|devpts|devtmpfs|fusectl|hugetlbfs|iso9660|mqueue|nsfs|overlay|proc|procfs|pstore|rpc_pipefs|securityfs|selinuxfs|squashfs|sysfs|tracefs)$'
+        - '--collector.netclass.netlink.device-exclude=^(veth.*|docker.*|br-.*)$'
+        - '--collector.netdev.device-exclude=^(veth.*|docker.*|br-.*)$'
+        - '--collector.systemd.unit-include=^(docker|ssh|systemd-timesyncd).*'
+        - '--collector.systemd.unit-exclude=^$'
+        - '--collector.textfile.directory=/host/textfile'
+        - '--web.listen-address=0.0.0.0:9100'
+        - '--web.telemetry-path=/metrics'
+        volumeMounts:
+        - name: proc
+          mountPath: /host/proc
+          readOnly: true
+        - name: sys
+          mountPath: /host/sys
+          readOnly: true
+        - name: root
+          mountPath: /host/root
+          readOnly: true
+        - name: textfile
+          mountPath: /host/textfile
+          readOnly: true
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "50m"
+          limits:
+            memory: "128Mi"
+            cpu: "100m"
+        livenessProbe:
+          httpGet:
+            path: /metrics
+            port: 9100
+          initialDelaySeconds: 30
+          periodSeconds: 15
+          timeoutSeconds: 10
+          successThreshold: 1
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: /metrics
+            port: 9100
+          initialDelaySeconds: 5
+          periodSeconds: 5
+          timeoutSeconds: 5
+          successThreshold: 1
+          failureThreshold: 3
+      volumes:
+      - name: proc
+        hostPath:
+          path: /proc
+      - name: sys
+        hostPath:
+          path: /sys
+      - name: root
+        hostPath:
+          path: /
+      - name: textfile
+        hostPath:
+          path: /var/lib/node_exporter/textfile_collector
+      hostNetwork: true
+      hostPID: true
+      tolerations:
+      - effect: NoSchedule
+        operator: Exists
+      - effect: NoExecute
+        operator: Exists
+      - key: node-role.kubernetes.io/master
+        operator: Exists
+        effect: NoSchedule
+      - key: node-role.kubernetes.io/control-plane
+        operator: Exists
+        effect: NoSchedule
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: node-exporter
+  namespace: monitoring
+  labels:
+    app: node-exporter
+    component: monitoring
+spec:
+  type: ClusterIP
+  ports:
+  - port: 9100
+    targetPort: 9100
+    protocol: TCP
+    name: http
+  selector:
+    app: node-exporter

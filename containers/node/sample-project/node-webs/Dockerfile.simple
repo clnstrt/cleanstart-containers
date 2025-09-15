@@ -1,0 +1,25 @@
+# Use official Node LTS image
+FROM cleanstart/node:latest-dev
+
+# Set working directory
+WORKDIR /app
+
+# Copy the entire app
+COPY node-webs/ ./
+
+# Copy views from parent directory
+COPY views ./views
+
+# Add non-root user
+RUN addgroup -g 1001 -S nodeapp \
+    && adduser -u 1001 -S nodeapp -G nodeapp \
+    && chown -R nodeapp:nodeapp /app
+
+USER nodeapp
+
+# Expose port
+EXPOSE 3000
+
+# Override the entrypoint and start the app
+ENTRYPOINT ["/usr/bin/node"]
+CMD ["hello_world.js"]

@@ -1,0 +1,122 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: minio-tenant
+  labels:
+    name: minio-tenant
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: minio-tenant-secret
+  namespace: minio-tenant
+type: Opaque
+data:
+  # minioadmin / minioadmin123
+  accesskey: bWluaW9hZG1pbg==
+  secretkey: bWluaW9hZG1pbg==
+---
+apiVersion: minio.min.io/v2
+kind: Tenant
+metadata:
+  name: minio-tenant
+  namespace: minio-tenant
+  labels:
+    app: minio
+spec:
+  image: minio/minio:latest
+  imagePullPolicy: IfNotPresent
+  imagePullSecrets: []
+  podTemplate:
+    metadata: {}
+    spec:
+      containers:
+      - name: minio
+        image: minio/minio:latest
+        command:
+        - /bin/bash
+        - -c
+        - minio server --console-address ":9001" http://minio-{0...3}.minio-tenant-hl.minio-tenant.svc.cluster.local/data
+        env:
+        - name: MINIO_ROOT_USER
+          valueFrom:
+            secretKeyRef:
+              name: minio-tenant-secret
+              key: accesskey
+        - name: MINIO_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: minio-tenant-secret
+              key: secretkey
+        ports:
+        - containerPort: 9000
+          name: api
+        - containerPort: 9001
+          name: console
+        livenessProbe:
+          httpGet:
+            path: /minio/health/live
+            port: 9000
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /minio/health/ready
+            port: 9000
+          initialDelaySeconds: 5
+          periodSeconds: 5
+        resources:
+          requests:
+            cpu: 100m
+            memory: 256Mi
+          limits:
+            cpu: 500m
+            memory: 1Gi
+        volumeMounts:
+        - name: data
+          mountPath: /data
+  pools:
+  - servers: 4
+    volumesPerServer: 1
+    volumeClaimTemplate:
+      metadata:
+        name: data
+      spec:
+        accessModes:
+        - ReadWriteOnce
+        resources:
+          requests:
+            storage: 10Gi
+        storageClassName: standard
+  credentials:
+    secret:
+      name: minio-tenant-secret
+  requestAutoCert: false
+  s3:
+    bucketDNS: false
+  console:
+    image: minio/console:latest
+    imagePullPolicy: IfNotPresent
+    replicas: 1
+    resources:
+      requests:
+        cpu: 100m
+        memory: 128Mi
+      limits:
+        cpu: 200m
+        memory: 256Mi
+  serviceMetadata:
+    minioService:
+      type: LoadBalancer
+      ports:
+        api: 9000
+        console: 9001
+    consoleService:
+      type: LoadBalancer
+      ports:
+        console: 9001
+  securityContext:
+    runAsNonRoot: true
+    runAsUser: 1000
+    runAsGroup: 1000
+    fsGroup: 1000

@@ -1,0 +1,37 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: postgres-config
+  labels:
+    app: postgres
+    component: database
+data:
+  POSTGRES_DB: "helloworld"
+  POSTGRES_USER: "postgres"
+  PGDATA: "/var/lib/postgresql/data/pgdata"
+  # PostgreSQL configuration
+  postgresql.conf: |
+    # Connection Settings
+    listen_addresses = '*'
+    port = 5432
+    max_connections = 100
+    
+    # Memory Settings
+    shared_buffers = 128MB
+    effective_cache_size = 512MB
+    
+    # Logging
+    log_destination = 'stderr'
+    logging_collector = on
+    log_directory = 'log'
+    log_filename = 'postgresql-%Y-%m-%d_%H%M%S.log'
+    log_statement = 'all'
+    log_min_duration_statement = 1000
+    
+    # Checkpoint Settings
+    checkpoint_completion_target = 0.9
+    wal_buffers = 16MB
+    
+    # Query Tuning
+    random_page_cost = 1.1
+    effective_io_concurrency = 200

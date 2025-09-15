@@ -1,0 +1,66 @@
+version: '3.8'
+
+services:
+  # Nginx load balancer
+  nginx:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
+    depends_on:
+      - backend1
+      - backend2
+      - backend3
+    networks:
+      - app-network
+    restart: unless-stopped
+
+  # Backend API service 1
+  backend1:
+    build:
+      context: ./backend1
+      dockerfile: Dockerfile
+    expose:
+      - "8001"
+    networks:
+      - app-network
+    restart: unless-stopped
+    environment:
+      - PYTHONUNBUFFERED=1
+      - SERVER_ID=1
+      - PORT=8001
+
+  # Backend API service 2
+  backend2:
+    build:
+      context: ./backend2
+      dockerfile: Dockerfile
+    expose:
+      - "8002"
+    networks:
+      - app-network
+    restart: unless-stopped
+    environment:
+      - PYTHONUNBUFFERED=1
+      - SERVER_ID=2
+      - PORT=8002
+
+  # Backend API service 3
+  backend3:
+    build:
+      context: ./backend3
+      dockerfile: Dockerfile
+    expose:
+      - "8003"
+    networks:
+      - app-network
+    restart: unless-stopped
+    environment:
+      - PYTHONUNBUFFERED=1
+      - SERVER_ID=3
+      - PORT=8003
+
+networks:
+  app-network:
+    driver: bridge

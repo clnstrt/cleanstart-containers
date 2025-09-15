@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nginx Load Balancer Example</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .hero-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            min-height: 60vh;
+        }
+        .api-response {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 10px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+        }
+        .server-info {
+            background: #e9ecef;
+            border-left: 4px solid #007bff;
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 4px;
+        }
+        .load-balance-test {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        .server-indicator {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-right: 5px;
+        }
+        .server-1 { background-color: #007bff; }
+        .server-2 { background-color: #28a745; }
+        .server-3 { background-color: #dc3545; }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <i class="fas fa-balance-scale me-2"></i>
+                Nginx Load Balancer
+            </a>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section d-flex align-items-center">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-6">
+                    <h1 class="display-4 fw-bold mb-4">
+                        Nginx Load Balancer Demo
+                    </h1>
+                    <p class="lead mb-4">
+                        This demonstrates Nginx load balancing across multiple backend servers 
+                        using round-robin distribution for high availability and scalability.
+                    </p>
+                    <div class="d-flex gap-3">
+                        <button class="btn btn-light btn-lg" onclick="testLoadBalancing()">
+                            <i class="fas fa-play me-2"></i>
+                            Test Load Balancing
+                        </button>
+                        <button class="btn btn-outline-light btn-lg" onclick="loadUsers()">
+                            <i class="fas fa-users me-2"></i>
+                            Load Users
+                        </button>
+                    </div>
+                </div>
+                <div class="col-lg-6 text-center">
+                    <i class="fas fa-balance-scale display-1"></i>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <section class="py-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8">
+                    <h2 class="mb-4">Load Balancing Test Interface</h2>
+                    
+                    <!-- Load Balancing Test -->
+                    <div class="load-balance-test">
+                        <h5><i class="fas fa-cogs me-2"></i>Load Balancing Demonstration</h5>
+                        <p class="mb-3">
+                            Click the button below to make multiple API calls and see how requests are distributed across the backend servers.
+                        </p>
+                        <button class="btn btn-warning" onclick="runLoadBalanceTest()">
+                            <i class="fas fa-sync-alt me-2"></i>
+                            Run Load Balance Test (10 requests)
+                        </button>
+                    </div>
+
+                    <!-- API Response -->
+                    <div class="card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">
+                                <i class="fas fa-code me-2"></i>
+                                API Response
+                            </h5>
+                            <button class="btn btn-sm btn-outline-secondary" onclick="clearResponse()">
+                                <i class="fas fa-trash me-1"></i>
+                                Clear
+                            </button>
+                        </div>
+                        <div class="card-body">
+                            <div id="api-response" class="api-response">
+                                <em>Click "Test Load Balancing" to see responses from different backend servers.</em>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-4">
+                    <h2 class="mb-4">Quick Actions</h2>
+                    
+                    <!-- API Endpoints -->
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h5 class="mb-0">
+                                <i class="fas fa-list me-2"></i>
+                                Available Endpoints
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="list-group list-group-flush">
+                                <button class="list-group-item list-group-item-action" onclick="callAPI('GET', '/api/')">
+                                    <strong>GET /api/</strong><br>
+                                    <small class="text-muted">API Information</small>
+                                </button>
+                                <button class="list-group-item list-group-item-action" onclick="callAPI('GET', '/api/health')">
+                                    <strong>GET /api/health</strong><br>
+                                    <small class="text-muted">Health Check</small>
+                                </button>
+                                <button class="list-group-item list-group-item-action" onclick="callAPI('GET', '/api/server-info')">
+                                    <strong>GET /api/server-info</strong><br>
+                                    <small class="text-muted">Server Information</small>
+                                </button>
+                                <button class="list-group-item list-group-item-action" onclick="callAPI('GET', '/api/users')">
+                                    <strong>GET /api/users</strong><br>
+                                    <small class="text-muted">Get All Users</small>
+                                </button>
+                                <button class="list-group-item list-group-item-action" onclick="callAPI('GET', '/api/stats')">
+                                    <strong>GET /api/stats</strong><br>
+                                    <small class="text-muted">API Statistics</small>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Server Status -->
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h5 class="mb-0">
+                                <i class="fas fa-server me-2"></i>
+                                Backend Servers
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div id="server-status">
+                                <div class="server-info">
+                                    <span class="server-indicator server-1"></span>
+                                    <strong>Backend 1</strong> (Port 8001)
+                                </div>
+                                <div class="server-info">
+                                    <span class="server-indicator server-2"></span>
+                                    <strong>Backend 2</strong> (Port 8002)
+                                </div>
+                                <div class="server-info">
+                                    <span class="server-indicator server-3"></span>
+                                    <strong>Backend 3</strong> (Port 8003)
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Create User Form -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">
+                                <i class="fas fa-user-plus me-2"></i>
+                                Create User
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <form id="create-user-form">
+                                <div class="mb-3">
+                                    <label for="user-name" class="form-label">Name</label>
+                                    <input type="text" class="form-control" id="user-name" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="user-email" class="form-label">Email</label>
+                                    <input type="email" class="form-control" id="user-email" required>
+                                </div>
+                                <button type="submit" class="btn btn-primary w-100">
+                                    <i class="fas fa-plus me-2"></i>
+                                    Create User
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-light py-4">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <h5>Nginx Load Balancer Example</h5>
+                    <p class="text-muted">
+                        Demonstrating Nginx load balancing across multiple backend servers.
+                    </p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <p class="text-muted mb-0">
+                        Round-robin load balancing | High availability | Scalability
+                    </p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Global variables
+        let requestCount = 0;
+        let serverResponses = {};
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            setupFormHandlers();
+        });
+
+        // Test load balancing function
+        async function testLoadBalancing() {
+            await callAPI('GET', '/api/server-info');
+        }
+
+        // Load users function
+        async function loadUsers() {
+            await callAPI('GET', '/api/users');
+        }
+
+        // Run load balance test
+        async function runLoadBalanceTest() {
+            const responseDiv = document.getElementById('api-response');
+            responseDiv.innerHTML = '<em>Running load balance test...</em>';
+            
+            const results = [];
+            
+            // Make 10 requests to see load balancing in action
+            for (let i = 1; i <= 10; i++) {
+                try {
+                    const response = await fetch('/api/server-info');
+                    const result = await response.json();
+                    
+                    results.push({
+                        request: i,
+                        server_id: result.server_id,
+                        hostname: result.hostname,
+                        port: result.port,
+                        timestamp: result.timestamp
+                    });
+                    
+                    // Small delay between requests
+                    await new Promise(resolve => setTimeout(resolve, 100));
+                    
+                } catch (error) {
+                    results.push({
+                        request: i,
+                        error: error.message
+                    });
+                }
+            }
+            
+            // Display results
+            displayLoadBalanceResults(results);
+        }
+
+        // Display load balance test results
+        function displayLoadBalanceResults(results) {
+            const responseDiv = document.getElementById('api-response');
+            
+            // Count server responses
+            const serverCounts = {};
+            results.forEach(result => {
+                if (result.server_id) {
+                    serverCounts[result.server_id] = (serverCounts[result.server_id] || 0) + 1;
+                }
+            });
+            
+            let html = '<h6>Load Balance Test Results (10 requests):</h6>';
+            html += '<div class="mb-3">';
+            html += '<strong>Server Distribution:</strong><br>';
+            Object.entries(serverCounts).forEach(([serverId, count]) => {
+                html += `<span class="server-indicator server-${serverId}"></span>`;
+                html += `Server ${serverId}: ${count} requests<br>`;
+            });
+            html += '</div>';
+            
+            html += '<div class="mb-3"><strong>Detailed Results:</strong></div>';
+            results.forEach(result => {
+                if (result.error) {
+                    html += `<div class="text-danger">Request ${result.request}: Error - ${result.error}</div>`;
+                } else {
+                    html += `<div class="server-info">`;
+                    html += `<span class="server-indicator server-${result.server_id}"></span>`;
+                    html += `Request ${result.request}: Server ${result.server_id} (${result.hostname}:${result.port})`;
+                    html += `</div>`;
+                }
+            });
+            
+            responseDiv.innerHTML = html;
+        }
+
+        // Generic API call function
+        async function callAPI(method, endpoint, data = null) {
+            const responseDiv = document.getElementById('api-response');
+            
+            try {
+                responseDiv.innerHTML = '<em>Loading...</em>';
+                
+                const options = {
+                    method: method,
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                };
+
+                if (data) {
+                    options.body = JSON.stringify(data);
+                }
+
+                const response = await fetch(endpoint, options);
+                const result = await response.json();
+
+                // Display response with server information
+                let html = `
+                    <div class="mb-2">
+                        <strong>${method} ${endpoint}</strong>
+                        <span class="badge bg-${response.ok ? 'success' : 'danger'} ms-2">
+                            ${response.status} ${response.statusText}
+                        </span>
+                    </div>
+                `;
+                
+                // Add server info if available
+                if (result.server_id) {
+                    html += `
+                        <div class="server-info mb-2">
+                            <span class="server-indicator server-${result.server_id}"></span>
+                            <strong>Served by:</strong> Server ${result.server_id} (${result.hostname}:${result.port})
+                        </div>
+                    `;
+                }
+                
+                html += `<pre>${JSON.stringify(result, null, 2)}</pre>`;
+                responseDiv.innerHTML = html;
+
+            } catch (error) {
+                responseDiv.innerHTML = `
+                    <div class="text-danger">
+                        <strong>Error:</strong> ${error.message}
+                    </div>
+                `;
+            }
+        }
+
+        // Setup form handlers
+        function setupFormHandlers() {
+            const form = document.getElementById('create-user-form');
+            form.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                const name = document.getElementById('user-name').value;
+                const email = document.getElementById('user-email').value;
+                
+                await callAPI('POST', '/api/users', {
+                    name: name,
+                    email: email
+                });
+                
+                // Clear form
+                form.reset();
+            });
+        }
+
+        // Clear response
+        function clearResponse() {
+            document.getElementById('api-response').innerHTML = 
+                '<em>Click "Test Load Balancing" to see responses from different backend servers.</em>';
+        }
+    </script>
+</body>
+</html>

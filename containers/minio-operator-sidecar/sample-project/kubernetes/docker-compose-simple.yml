@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  # MinIO Operator
+  minio-operator:
+    image: cleanstart/minio-operator:latest
+    container_name: minio-operator-simple
+    environment:
+      WATCHED_NAMESPACE: ""
+      MINIO_OPERATOR_LOG_LEVEL: info
+    ports:
+      - "4222:4222"
+    volumes:
+      - minio_operator_data:/app/data
+    restart: unless-stopped
+
+  # MinIO Tenant
+  minio-tenant:
+    image: cleanstart/minio:latest
+    container_name: minio-tenant-simple
+    command: minio server --console-address ":9001" /data
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin123
+    ports:
+      - "9010:9000"
+      - "9011:9001"
+    volumes:
+      - minio_tenant_data:/data
+    depends_on:
+      - minio-operator
+    restart: unless-stopped
+
+volumes:
+  minio_operator_data:
+    driver: local
+  minio_tenant_data:
+    driver: local

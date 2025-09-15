@@ -1,0 +1,70 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: go-web-app
+  labels:
+    app: go-web-app
+    version: v1.0.0
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: go-web-app
+  template:
+    metadata:
+      labels:
+        app: go-web-app
+        version: v1.0.0
+    spec:
+      containers:
+      - name: go-web-app
+        image: go-web-app:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8080
+          name: http
+          protocol: TCP
+        env:
+        - name: PORT
+          value: "8080"
+        - name: DATABASE_PATH
+          value: "/app/data/users.db"
+        - name: LOG_LEVEL
+          value: "info"
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "50m"
+          limits:
+            memory: "128Mi"
+            cpu: "100m"
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 8080
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 8080
+          initialDelaySeconds: 5
+          periodSeconds: 5
+          timeoutSeconds: 3
+          failureThreshold: 3
+        volumeMounts:
+        - name: app-data
+          mountPath: /app/data
+        - name: app-config
+          mountPath: /app/config
+      volumes:
+      - name: app-data
+        persistentVolumeClaim:
+          claimName: go-web-pvc
+      - name: app-config
+        configMap:
+          name: go-web-config
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30
