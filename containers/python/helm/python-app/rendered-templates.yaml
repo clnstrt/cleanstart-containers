@@ -1,0 +1,510 @@
+---
+# Source: python-app/templates/pdb.yaml
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: python-app
+  labels:
+    helm.sh/chart: python-app-1.0.0
+    app.kubernetes.io/name: python-app
+    app.kubernetes.io/instance: python-app
+    app.kubernetes.io/version: "1.0.0"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: python-app
+      app.kubernetes.io/instance: python-app
+  minAvailable: 1
+  maxUnavailable: 1
+---
+# Source: python-app/templates/serviceaccount.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: python-app
+  labels:
+    helm.sh/chart: python-app-1.0.0
+    app.kubernetes.io/name: python-app
+    app.kubernetes.io/instance: python-app
+    app.kubernetes.io/version: "1.0.0"
+    app.kubernetes.io/managed-by: Helm
+automountServiceAccountToken: true
+---
+# Source: python-app/templates/secret.yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: python-app-secrets
+  labels:
+    helm.sh/chart: python-app-1.0.0
+    app.kubernetes.io/name: python-app
+    app.kubernetes.io/instance: python-app
+    app.kubernetes.io/version: "1.0.0"
+    app.kubernetes.io/managed-by: Helm
+type: Opaque
+data:
+  database-url: c3FsaXRlOi8vL2FwcC9kYXRhL3VzZXJzLmRi
+  database-password: cGFzc3dvcmQxMjM=
+  redis-url: cmVkaXM6Ly9yZWRpcy1zZXJ2aWNlOjYzNzA=
+  redis-password: cmVkaXNwYXNzMTIz
+  api-key: eW91ci1hcGkta2V5LWhlcmU=
+  jwt-secret: eW91ci1qd3Qtc2VjcmV0LWtleQ==
+  external-api-key: ZXh0ZXJuYWwtYXBpLWtleQ==
+  external-api-secret: ZXh0ZXJuYWwtYXBpLXNlY3JldA==
+  mail-password: eW91ci1lbWFpbC1wYXNzd29yZA==
+  smtp-username: eW91ci1lbWFpbEBleGFtcGxlLmNvbQ==
+  oauth-client-id: eW91ci1vYXV0aC1jbGllbnQtaWQ=
+  oauth-client-secret: eW91ci1vYXV0aC1jbGllbnQtc2VjcmV0
+  encryption-key: eW91ci1lbmNyeXB0aW9uLWtleS1oZXJl
+  signing-key: eW91ci1zaWduaW5nLWtleS1oZXJl
+  aws-access-key: eW91ci1hd3MtYWNjZXNzLWtleQ==
+  aws-secret-key: eW91ci1hd3Mtc2VjcmV0LWtleQ==
+  prometheus-token: eW91ci1wcm9tZXRoZXVzLXRva2Vu
+  grafana-api-key: eW91ci1ncmFmYW5hLWFwaS1rZXk=
+  backup-encryption-key: eW91ci1iYWNrdXAtZW5jcnlwdGlvbi1rZXk=
+  storage-access-key: eW91ci1zdG9yYWdlLWFjY2Vzcy1rZXk=
+  storage-secret-key: eW91ci1zdG9yYWdlLXNlY3JldC1rZXk=
+  ssl-cert: TFMwdExTMUNSVWRKVGlCRFJWSlVTVVpKUTBGVVJTMHRMUzB0
+  ssl-key: TFMwdExTMUNSVWRKVGlCUVVrbFdRVlJGSUV0RldTMHRMUzB0
+  admin-password: YWRtaW4tcGFzc3dvcmQxMjM=
+  user-default-password: dXNlci1kZWZhdWx0LXBhc3M=
+  beta-features-enabled: dHJ1ZQ==
+  debug-mode: ZmFsc2U=
+  rate-limit-key: eW91ci1yYXRlLWxpbWl0LWtleQ==
+  session-secret: eW91ci1zZXNzaW9uLXNlY3JldC1rZXk=
+  cache-password: eW91ci1jYWNoZS1wYXNzd29yZA==
+  rabbitmq-password: eW91ci1yYWJiaXRtcS1wYXNzd29yZA==
+  kafka-password: eW91ci1rYWZrYS1wYXNzd29yZA==
+  webhook-secret: eW91ci13ZWJob29rLXNlY3JldA==
+  github-webhook-secret: eW91ci1naXRodWItd2ViaG9vay1zZWNyZXQ=
+  analytics-key: eW91ci1hbmFseXRpY3Mta2V5
+  tracking-id: eW91ci10cmFja2luZy1pZA==
+  stripe-secret-key: eW91ci1zdHJpcGUtc2VjcmV0LWtleQ==
+  paypal-client-secret: eW91ci1wYXlwYWwtY2xpZW50LXNlY3JldA==
+  cdn-access-key: eW91ci1jZG4tYWNjZXNzLWtleQ==
+  media-storage-key: eW91ci1tZWRpYS1zdG9yYWdlLWtleQ==
+  push-notification-key: eW91ci1wdXNoLW5vdGlmaWNhdGlvbi1rZXk=
+  sms-api-key: eW91ci1zbXMtYXBpLWtleQ==
+  elasticsearch-password: eW91ci1lbGFzdGljc2VhcmNoLXBhc3M=
+  solr-password: eW91ci1zb2xyLXBhc3N3b3Jk
+  ml-api-key: eW91ci1tbC1hcGkta2V5
+  ai-service-token: eW91ci1haS1zZXJ2aWNlLXRva2Vu
+  audit-encryption-key: eW91ci1hdWRpdC1lbmNyeXB0aW9uLWtleQ==
+  compliance-token: eW91ci1jb21wbGlhbmNlLXRva2Vu
+---
+# Source: python-app/templates/configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: python-app-config
+  labels:
+    helm.sh/chart: python-app-1.0.0
+    app.kubernetes.io/name: python-app
+    app.kubernetes.io/instance: python-app
+    app.kubernetes.io/version: "1.0.0"
+    app.kubernetes.io/managed-by: Helm
+data:
+  ALLOWED_EXTENSIONS: "txt,pdf,png,jpg,jpeg,gif"
+  API_RATE_LIMIT: "100"
+  API_RATE_LIMIT_WINDOW: "60"
+  APP_DESCRIPTION: "Python application running on Kubernetes"
+  APP_NAME: "Python K8s App"
+  APP_VERSION: "1.0.0"
+  CACHE_DEFAULT_TIMEOUT: "300"
+  CACHE_TYPE: "simple"
+  DB_POOL_RECYCLE: "3600"
+  DB_POOL_SIZE: "10"
+  DB_POOL_TIMEOUT: "30"
+  ENABLE_CORS: "true"
+  ENABLE_DEBUG_ENDPOINTS: "false"
+  ENABLE_METRICS: "true"
+  ENABLE_PROFILING: "false"
+  EXTERNAL_API_TIMEOUT: "30"
+  EXTERNAL_API_URL: "https://api.example.com"
+  FLASK_APP: "app.py"
+  FLASK_DEBUG: "false"
+  FLASK_ENV: "production"
+  GRACEFUL_SHUTDOWN_TIMEOUT: "30"
+  GUNICORN_KEEPALIVE: "2"
+  GUNICORN_MAX_REQUESTS: "1000"
+  GUNICORN_MAX_REQUESTS_JITTER: "100"
+  GUNICORN_PRELOAD_APP: "true"
+  GUNICORN_TIMEOUT: "30"
+  GUNICORN_WORKERS: "4"
+  GUNICORN_WORKER_CLASS: "sync"
+  GUNICORN_WORKER_CONNECTIONS: "1000"
+  HEALTH_CHECK_INTERVAL: "30"
+  HEALTH_CHECK_PATH: "/health"
+  KEEPALIVE_TIMEOUT: "65"
+  LIVENESS_CHECK_PATH: "/health"
+  LOG_BACKUP_COUNT: "5"
+  LOG_FILE: "/app/logs/app.log"
+  LOG_FORMAT: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+  LOG_LEVEL: "INFO"
+  LOG_MAX_SIZE: "10485760"
+  MAIL_PASSWORD: ""
+  MAIL_PORT: "587"
+  MAIL_SERVER: "smtp.gmail.com"
+  MAIL_USERNAME: ""
+  MAIL_USE_TLS: "true"
+  MAX_CONTENT_LENGTH: "16777216"
+  MAX_FILE_SIZE: "10485760"
+  METRICS_PORT: "5000"
+  PERMANENT_SESSION_LIFETIME: "3600"
+  PYTHONDONTWRITEBYTECODE: "1"
+  PYTHONPATH: "/app"
+  PYTHONUNBUFFERED: "1"
+  READINESS_CHECK_PATH: "/ready"
+  REDIS_POOL_SIZE: "10"
+  REDIS_TIMEOUT: "5"
+  SECRET_KEY: "your-secret-key-here"
+  SHUTDOWN_HANDLERS_ENABLED: "true"
+  TZ: "UTC"
+  UPLOAD_FOLDER: "/app/uploads"
+  WORKER_CONNECTIONS: "1000"
+  WORKER_THREADS: "4"
+  WTF_CSRF_ENABLED: "true"
+  WTF_CSRF_TIME_LIMIT: "3600"
+---
+# Source: python-app/templates/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: python-app
+  labels:
+    helm.sh/chart: python-app-1.0.0
+    app.kubernetes.io/name: python-app
+    app.kubernetes.io/instance: python-app
+    app.kubernetes.io/version: "1.0.0"
+    app.kubernetes.io/managed-by: Helm
+  annotations:
+    prometheus.io/path: /metrics
+    prometheus.io/port: "5000"
+    prometheus.io/scrape: "true"
+spec:
+  type: ClusterIP
+  ports:
+    - port: 5000
+      targetPort: 5000
+      protocol: TCP
+      name: http
+  sessionAffinity: None
+  selector:
+    app.kubernetes.io/name: python-app
+    app.kubernetes.io/instance: python-app
+---
+# Source: python-app/templates/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: python-app
+  labels:
+    helm.sh/chart: python-app-1.0.0
+    app.kubernetes.io/name: python-app
+    app.kubernetes.io/instance: python-app
+    app.kubernetes.io/version: "1.0.0"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: python-app
+      app.kubernetes.io/instance: python-app
+  template:
+    metadata:
+      annotations:
+        prometheus.io/path: /metrics
+        prometheus.io/port: "5000"
+        prometheus.io/scrape: "true"
+      labels:
+        app.kubernetes.io/name: python-app
+        app.kubernetes.io/instance: python-app
+    spec:
+      serviceAccountName: python-app
+      securityContext:
+        fsGroup: 1001
+        runAsGroup: 1001
+        runAsNonRoot: true
+        runAsUser: 1001
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: python-app
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+              - ALL
+            readOnlyRootFilesystem: false
+            runAsGroup: 1001
+            runAsNonRoot: true
+            runAsUser: 1001
+          image: "cleanstart/python:latest"
+          imagePullPolicy: Always
+          ports:
+            - name: http
+              containerPort: 5000
+              protocol: TCP
+          env:
+            - name: ALLOWED_EXTENSIONS
+              value: "txt,pdf,png,jpg,jpeg,gif"
+            - name: API_RATE_LIMIT
+              value: "100"
+            - name: API_RATE_LIMIT_WINDOW
+              value: "60"
+            - name: APP_DESCRIPTION
+              value: "Python application running on Kubernetes"
+            - name: APP_NAME
+              value: "Python K8s App"
+            - name: APP_VERSION
+              value: "1.0.0"
+            - name: CACHE_DEFAULT_TIMEOUT
+              value: "300"
+            - name: CACHE_TYPE
+              value: "simple"
+            - name: DB_POOL_RECYCLE
+              value: "3600"
+            - name: DB_POOL_SIZE
+              value: "10"
+            - name: DB_POOL_TIMEOUT
+              value: "30"
+            - name: ENABLE_CORS
+              value: "true"
+            - name: ENABLE_DEBUG_ENDPOINTS
+              value: "false"
+            - name: ENABLE_METRICS
+              value: "true"
+            - name: ENABLE_PROFILING
+              value: "false"
+            - name: EXTERNAL_API_TIMEOUT
+              value: "30"
+            - name: EXTERNAL_API_URL
+              value: "https://api.example.com"
+            - name: FLASK_APP
+              value: "app.py"
+            - name: FLASK_DEBUG
+              value: "false"
+            - name: FLASK_ENV
+              value: "production"
+            - name: GRACEFUL_SHUTDOWN_TIMEOUT
+              value: "30"
+            - name: GUNICORN_KEEPALIVE
+              value: "2"
+            - name: GUNICORN_MAX_REQUESTS
+              value: "1000"
+            - name: GUNICORN_MAX_REQUESTS_JITTER
+              value: "100"
+            - name: GUNICORN_PRELOAD_APP
+              value: "true"
+            - name: GUNICORN_TIMEOUT
+              value: "30"
+            - name: GUNICORN_WORKERS
+              value: "4"
+            - name: GUNICORN_WORKER_CLASS
+              value: "sync"
+            - name: GUNICORN_WORKER_CONNECTIONS
+              value: "1000"
+            - name: HEALTH_CHECK_INTERVAL
+              value: "30"
+            - name: HEALTH_CHECK_PATH
+              value: "/health"
+            - name: KEEPALIVE_TIMEOUT
+              value: "65"
+            - name: LIVENESS_CHECK_PATH
+              value: "/health"
+            - name: LOG_BACKUP_COUNT
+              value: "5"
+            - name: LOG_FILE
+              value: "/app/logs/app.log"
+            - name: LOG_FORMAT
+              value: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+            - name: LOG_LEVEL
+              value: "INFO"
+            - name: LOG_MAX_SIZE
+              value: "10485760"
+            - name: MAIL_PASSWORD
+              value: ""
+            - name: MAIL_PORT
+              value: "587"
+            - name: MAIL_SERVER
+              value: "smtp.gmail.com"
+            - name: MAIL_USERNAME
+              value: ""
+            - name: MAIL_USE_TLS
+              value: "true"
+            - name: MAX_CONTENT_LENGTH
+              value: "16777216"
+            - name: MAX_FILE_SIZE
+              value: "10485760"
+            - name: METRICS_PORT
+              value: "5000"
+            - name: PERMANENT_SESSION_LIFETIME
+              value: "3600"
+            - name: PYTHONDONTWRITEBYTECODE
+              value: "1"
+            - name: PYTHONPATH
+              value: "/app"
+            - name: PYTHONUNBUFFERED
+              value: "1"
+            - name: READINESS_CHECK_PATH
+              value: "/ready"
+            - name: REDIS_POOL_SIZE
+              value: "10"
+            - name: REDIS_TIMEOUT
+              value: "5"
+            - name: SECRET_KEY
+              value: "your-secret-key-here"
+            - name: SHUTDOWN_HANDLERS_ENABLED
+              value: "true"
+            - name: TZ
+              value: "UTC"
+            - name: UPLOAD_FOLDER
+              value: "/app/uploads"
+            - name: WORKER_CONNECTIONS
+              value: "1000"
+            - name: WORKER_THREADS
+              value: "4"
+            - name: WTF_CSRF_ENABLED
+              value: "true"
+            - name: WTF_CSRF_TIME_LIMIT
+              value: "3600"
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: python-app-secrets
+                  key: database-url
+                  optional: true
+            - name: REDIS_URL
+              valueFrom:
+                secretKeyRef:
+                  name: python-app-secrets
+                  key: redis-url
+                  optional: true
+          envFrom:
+            - configMapRef:
+                name: python-app-config
+          resources:
+            limits:
+              cpu: 500m
+              memory: 512Mi
+            requests:
+              cpu: 250m
+              memory: 256Mi
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: 5000
+              scheme: HTTP
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 5
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /ready
+              port: 5000
+              scheme: HTTP
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            successThreshold: 1
+            timeoutSeconds: 3
+          startupProbe:
+            failureThreshold: 30
+            httpGet:
+              path: /health
+              port: 5000
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            successThreshold: 1
+            timeoutSeconds: 3
+          volumeMounts:
+            - name: app-config
+              mountPath: /app/config
+              readOnly: true
+            - name: app-logs
+              mountPath: /app/logs
+            - name: tmp-volume
+              mountPath: /tmp
+            - name: app-uploads
+              mountPath: /app/uploads
+      volumes:
+        - name: app-config
+          configMap:
+            name: python-app-config
+        - name: app-logs
+          emptyDir: {}
+        - name: tmp-volume
+          emptyDir: {}
+        - name: app-uploads
+          emptyDir: {}
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30
+      dnsPolicy: ClusterFirst
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: app
+                  operator: In
+                  values:
+                  - python-app
+              topologyKey: kubernetes.io/hostname
+            weight: 100
+---
+# Source: python-app/templates/hpa.yaml
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: python-app
+  labels:
+    helm.sh/chart: python-app-1.0.0
+    app.kubernetes.io/name: python-app
+    app.kubernetes.io/instance: python-app
+    app.kubernetes.io/version: "1.0.0"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: python-app
+  minReplicas: 2
+  maxReplicas: 10
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 70
+    - type: Resource
+      resource:
+        name: memory
+        target:
+          type: Utilization
+          averageUtilization: 80
+  behavior:
+    scaleDown:
+      policies:
+      - periodSeconds: 60
+        type: Percent
+        value: 10
+      - periodSeconds: 60
+        type: Pods
+        value: 2
+      selectPolicy: Min
+      stabilizationWindowSeconds: 300
+    scaleUp:
+      policies:
+      - periodSeconds: 60
+        type: Percent
+        value: 50
+      - periodSeconds: 60
+        type: Pods
+        value: 4
+      selectPolicy: Max
+      stabilizationWindowSeconds: 60
