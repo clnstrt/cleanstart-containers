@@ -1,8 +1,6 @@
-"""
-Models package for the CRUD sample application.
-"""
+# # Remove the incorrect import statement from this file.
+# # It should either be empty or only import things you actually need here.
+# # For this simple project, you can make this file empty.
 
-from .database import init_db, get_db_connection, get_db, reset_db
-from .user import User
-
-__all__ = ['init_db', 'get_db_connection', 'get_db', 'reset_db', 'User']
+# # If you were to import, it should match the functions in database.py
+# from .database import get_db_connection, create_database
