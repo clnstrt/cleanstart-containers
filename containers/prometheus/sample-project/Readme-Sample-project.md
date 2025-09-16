@@ -1,14 +1,3 @@
-# 🚀 Hello from Prometheus!!! 
-
-
-### Pull CleanStart Prometheus image from [Docker Hub - CleanStart](https://hub.docker.com/u/cleanstart) 
-```bash
-docker pull cleanstart/prometheus:latest
-```
-```bash
-docker pull cleanstart/prometheus:latest-dev
-```
-
 # 🚀 Hello from Prometheus!
 
 A program to run on CleanStart - Prometheus container. 
