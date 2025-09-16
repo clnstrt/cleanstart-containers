@@ -1,507 +1,279 @@
-# 🏭 Step CLI - Production PKI Setup Example
+# 🏭 Step CLI - Production PKI Example
 
-An enterprise-grade PKI setup demonstrating production-ready certificate management with security best practices, high availability, comprehensive monitoring, and compliance features.
-
-## 🎯 What This Example Demonstrates
-
-- **Production CA**: Secure, high-availability Certificate Authority
-- **Security Hardening**: Security best practices and compliance
-- **High Availability**: Multi-instance CA with load balancing
-- **Comprehensive Monitoring**: Prometheus, Grafana, and AlertManager
-- **Audit Logging**: Complete audit trails and compliance reporting
-- **Backup & Recovery**: Automated backup and disaster recovery
-- **Reverse Proxy**: Nginx for security and access control
+A production-ready PKI setup demonstrating enterprise-grade certificate management with Step CLI using the CleanStart container.
 
 ## 🚀 Quick Start
 
 ### Prerequisites
 
-- Docker and Docker Compose installed
-- Ports 80, 443, 8080, 3000, 9090, 9091, 9093, 8443 available
-- 4GB+ RAM recommended for full stack
-- Understanding of production PKI concepts
+- Docker installed
+- CleanStart Step CLI image available (`cleanstart/step-cli:latest`)
 
-### 1. Start the Production Stack
+### Step 1: Pull the CleanStart Step CLI Image
 
 ```bash
-# Navigate to the example directory
-cd images/step-cli/sample-project/production-pki
-
-# Start all services
-docker compose up -d
-
-# Check service status
-docker compose ps
-
-# View logs
-docker compose logs -f
+# Pull the latest CleanStart Step CLI image
+docker pull cleanstart/step-cli:latest
 ```
 
-### 2. Initialize the Production CA
+### Step 2: Test Production PKI Features
+
+#### Test 1: Complete Production PKI Test
 
 ```bash
-# Initialize the production CA with security hardening
-docker exec -it step-cli-production bash -c "
-  step ca init \
-    --name 'Production CA' \
-    --dns 'step-ca-production' \
-    --address ':443' \
-    --provisioner 'admin@production.com' \
-    --password-file /app/scripts/ca-password.txt \
-    --with-ca-url https://step-ca:443 \
-    --with-fingerprint \$(step certificate fingerprint /app/secrets/certs/root_ca.crt)
-"
-
-# Restart CA server
-docker compose restart step-ca
+# Run comprehensive production PKI test
+docker run --rm --entrypoint="" cleanstart/step-cli:latest /bin/busybox sh -c '
+echo "🏭 Complete Production PKI Test"
+echo "============================================================"
+echo "Timestamp: $(date)"
+echo "============================================================"
+echo ""
+echo "1️⃣ CA Initialization..."
+cd /tmp
+echo "password" > password.txt
+/step ca init --name "Production CA" --dns "localhost" --address ":8443" --provisioner "admin" --password-file password.txt --pki
+echo ""
+echo "2️⃣ Root Certificate..."
+/step certificate inspect /home/clnstrt/.step/certs/root_ca.crt | head -5
+echo ""
+echo "3️⃣ Intermediate Certificate..."
+/step certificate inspect /home/clnstrt/.step/certs/intermediate_ca.crt | head -5
+echo ""
+echo "4️⃣ Certificate Fingerprints..."
+echo "Root: $(/step certificate fingerprint /home/clnstrt/.step/certs/root_ca.crt)"
+echo "Intermediate: $(/step certificate fingerprint /home/clnstrt/.step/certs/intermediate_ca.crt)"
+echo ""
+echo "5️⃣ Step CLI Version..."
+/step version
+echo ""
+echo "============================================================"
+echo "🎉 Complete Production PKI Test completed!"
+echo "============================================================"
+'
 ```
 
-### 3. Configure Security Policies
+#### Test 2: Certificate Generation Test
 
 ```bash
-# Set up certificate policies
-docker exec -it cert-manager-production python3 /app/setup_policies.py
-
-# Configure audit logging
-docker exec -it audit-logger-production python3 /app/setup_audit.py
-
-# Set up backup policies
-docker exec -it backup-production /app/scripts/setup_backup.sh
+# Test different certificate types
+docker run --rm --entrypoint="" cleanstart/step-cli:latest /bin/busybox sh -c '
+echo "🔐 Certificate Generation Test"
+echo "============================================================"
+echo "Timestamp: $(date)"
+echo "============================================================"
+echo ""
+echo "1️⃣ Initializing CA..."
+cd /tmp
+echo "password" > password.txt
+/step ca init --name "Test CA" --dns "localhost" --address ":8443" --provisioner "admin" --password-file password.txt --pki
+echo ""
+echo "2️⃣ Testing RSA Certificate..."
+/step certificate create --kty RSA --size 2048 --ca /home/clnstrt/.step/certs/intermediate_ca.crt --ca-key /home/clnstrt/.step/secrets/intermediate_ca_key --no-password --insecure "rsa.example.com" rsa.crt rsa.key
+echo ""
+echo "3️⃣ Testing EC Certificate..."
+/step certificate create --kty EC --curve P-256 --ca /home/clnstrt/.step/certs/intermediate_ca.crt --ca-key /home/clnstrt/.step/secrets/intermediate_ca_key --no-password --insecure "ec.example.com" ec.crt ec.key
+echo ""
+echo "4️⃣ Listing Generated Certificates..."
+ls -la *.crt *.key
+echo ""
+echo "============================================================"
+echo "🎉 Certificate Generation Test completed!"
+echo "============================================================"
+'
 ```
 
-### 4. Access the Production Stack
+#### Test 3: Advanced Features Test
 
 ```bash
-# Access Nginx reverse proxy
-open http://localhost:80
-
-# Access Grafana dashboards (admin/admin123)
-open http://localhost:3000
-
-# Access Prometheus metrics
-open http://localhost:9091
-
-# Access AlertManager
-open http://localhost:9093
+# Test advanced certificate features
+docker run --rm --entrypoint="" cleanstart/step-cli:latest /bin/busybox sh -c '
+echo "🔍 Advanced Features Test"
+echo "============================================================"
+echo "Timestamp: $(date)"
+echo "============================================================"
+echo ""
+echo "1️⃣ Initializing CA for Advanced Tests..."
+cd /tmp
+echo "password" > password.txt
+/step ca init --name "Advanced Test CA" --dns "localhost" --address ":8443" --provisioner "admin" --password-file password.txt --pki
+echo ""
+echo "2️⃣ Testing Root Certificate Inspection..."
+/step certificate inspect /home/clnstrt/.step/certs/root_ca.crt | head -15
+echo ""
+echo "3️⃣ Testing Intermediate Certificate Inspection..."
+/step certificate inspect /home/clnstrt/.step/certs/intermediate_ca.crt | head -15
+echo ""
+echo "4️⃣ Testing Root Certificate Fingerprint..."
+/step certificate fingerprint /home/clnstrt/.step/certs/root_ca.crt
+echo ""
+echo "5️⃣ Testing Intermediate Certificate Fingerprint..."
+/step certificate fingerprint /home/clnstrt/.step/certs/intermediate_ca.crt
+echo ""
+echo "============================================================"
+echo "🎉 Advanced Features Test completed!"
+echo "============================================================"
+'
 ```
 
-## 📊 Access Points
+### Step 3: Test Production Help System
 
-| Service | URL | Credentials | Description |
-|---------|-----|-------------|-------------|
-| **Nginx Proxy** | `http://localhost:80` | None | Secure access to all services |
-| **Production CA** | `https://localhost:443` | None | Certificate Authority server |
-| **Certificate Manager** | `http://localhost:8080` | None | Certificate management interface |
-| **Certificate Monitor** | `http://localhost:9090` | None | Certificate monitoring dashboard |
-| **Prometheus** | `http://localhost:9091` | None | Metrics collection and querying |
-| **Grafana** | `http://localhost:3000` | admin/admin123 | Dashboards and visualization |
-| **AlertManager** | `http://localhost:9093` | None | Alert management and routing |
-
-## 🔍 Production Certificate Operations
-
-### Enterprise Certificate Generation
+#### Test 4: Step CLI Help
 
 ```bash
-# Generate production server certificate
-docker exec -it step-cli-production bash -c "
-  step certificate create \
-    --san production.example.com \
-    --san www.production.example.com \
-    --san api.production.example.com \
-    --profile server \
-    --kty RSA \
-    --size 4096 \
-    'production.example.com' \
-    /app/certs/production.crt \
-    /app/certs/production.key
-"
-
-# Generate client certificate for API access
-docker exec -it step-cli-production bash -c "
-  step certificate create \
-    --profile client \
-    --kty EC \
-    --curve P-256 \
-    'api-client@production.com' \
-    /app/certs/api-client.crt \
-    /app/certs/api-client.key
-"
+# Check Step CLI help
+docker run --rm --entrypoint="" cleanstart/step-cli:latest /step --help
 ```
 
-### Certificate Lifecycle Management
+#### Test 5: Certificate Help
 
 ```bash
-# Set up automated certificate renewal
-curl -X POST http://localhost:8080/policies/renewal \
-  -H "Content-Type: application/json" \
-  -d '{
-    "certificate": "production.example.com",
-    "renewal_days": 30,
-    "auto_renew": true,
-    "notification_days": [60, 30, 7, 1]
-  }'
-
-# Configure certificate monitoring
-curl -X POST http://localhost:8080/policies/monitoring \
-  -H "Content-Type: application/json" \
-  -d '{
-    "certificate": "production.example.com",
-    "monitoring_enabled": true,
-    "alert_thresholds": {
-      "expiry_days": 30,
-      "usage_threshold": 80
-    }
-  }'
+# Check certificate command help
+docker run --rm --entrypoint="" cleanstart/step-cli:latest /step certificate --help
 ```
 
-### Security and Compliance
+#### Test 6: CA Help
 
 ```bash
-# Set up certificate policies
-curl -X POST http://localhost:8080/policies/security \
-  -H "Content-Type: application/json" \
-  -d '{
-    "min_key_size": 2048,
-    "allowed_algorithms": ["RSA", "ECDSA"],
-    "max_validity_days": 365,
-    "require_san": true,
-    "audit_logging": true
-  }'
-
-# Configure compliance reporting
-curl -X POST http://localhost:8080/policies/compliance \
-  -H "Content-Type: application/json" \
-  -d '{
-    "compliance_standard": "SOC2",
-    "audit_retention_days": 2555,
-    "reporting_frequency": "monthly",
-    "automated_reports": true
-  }'
+# Check CA command help
+docker run --rm --entrypoint="" cleanstart/step-cli:latest /step ca --help
 ```
 
-## 📈 Understanding Production PKI
-
-### Security Architecture
-
-```
-Internet
-    ↓
-Nginx Reverse Proxy (SSL Termination)
-    ↓
-Internal Network (PKI)
-    ├── Step CA (Production)
-    ├── Certificate Manager
-    ├── Monitoring Services
-    └── Audit Logger
-
-Monitoring Network
-    ├── Prometheus
-    ├── Grafana
-    └── AlertManager
-
-Security Network
-    ├── Backup Service
-    └── Audit Storage
-```
-
-### Certificate Lifecycle Management
-
-| Phase | Description | Automation | Monitoring |
-|-------|-------------|------------|------------|
-| **Request** | Certificate request submission | Automated validation | Request tracking |
-| **Approval** | Certificate approval workflow | Automated approval rules | Approval metrics |
-| **Generation** | Certificate creation and signing | Automated generation | Generation metrics |
-| **Distribution** | Certificate deployment | Automated deployment | Distribution status |
-| **Monitoring** | Certificate health monitoring | Real-time monitoring | Health metrics |
-| **Renewal** | Certificate renewal process | Automated renewal | Renewal tracking |
-| **Revocation** | Certificate revocation | Automated revocation | Revocation logs |
-
-### Compliance and Audit
-
-- **SOC2 Compliance**: Comprehensive audit trails
-- **GDPR Compliance**: Data protection and privacy
-- **ISO 27001**: Information security management
-- **PCI DSS**: Payment card industry compliance
-- **HIPAA**: Healthcare information compliance
-
-## 🔧 Configuration Details
-
-### Production CA Configuration
-
-```json
-{
-  "root": "/app/secrets/certs/root_ca.crt",
-  "crt": "/app/secrets/certs/intermediate_ca.crt",
-  "key": "/app/secrets/certs/intermediate_ca_key",
-  "address": ":443",
-  "dnsNames": ["step-ca-production"],
-  "db": {
-    "type": "badger",
-    "dataSource": "/app/secrets/db"
-  },
-  "authority": {
-    "provisioners": [
-      {
-        "name": "admin@production.com",
-        "type": "JWK",
-        "key": {
-          "use": "sig",
-          "kty": "EC",
-          "crv": "P-256"
-        }
-      }
-    ]
-  },
-  "tls": {
-    "cipherSuites": [
-      "TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384",
-      "TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384"
-    ]
-  }
-}
-```
-
-### Nginx Configuration
-
-```nginx
-upstream step_ca {
-    server step-ca:443;
-}
-
-upstream cert_manager {
-    server cert-manager:8080;
-}
-
-upstream cert_monitor {
-    server cert-monitor:9090;
-}
-
-server {
-    listen 80;
-    server_name _;
-    
-    location / {
-        return 301 https://$host$request_uri;
-    }
-}
-
-server {
-    listen 443 ssl http2;
-    server_name _;
-    
-    ssl_certificate /etc/nginx/ssl/cert.pem;
-    ssl_certificate_key /etc/nginx/ssl/key.pem;
-    
-    ssl_protocols TLSv1.2 TLSv1.3;
-    ssl_ciphers ECDHE-RSA-AES256-GCM-SHA384:ECDHE-RSA-AES128-GCM-SHA256;
-    ssl_prefer_server_ciphers off;
-    
-    location /ca/ {
-        proxy_pass https://step_ca/;
-        proxy_ssl_verify off;
-    }
-    
-    location /manager/ {
-        proxy_pass http://cert_manager/;
-    }
-    
-    location /monitor/ {
-        proxy_pass http://cert_monitor/;
-    }
-}
-```
-
-### Prometheus Configuration
-
-```yaml
-global:
-  scrape_interval: 15s
-  evaluation_interval: 15s
-
-rule_files:
-  - "rules/*.yml"
-
-scrape_configs:
-  - job_name: 'step-ca'
-    static_configs:
-      - targets: ['step-ca:443']
-    scheme: https
-    tls_config:
-      insecure_skip_verify: true
-
-  - job_name: 'cert-manager'
-    static_configs:
-      - targets: ['cert-manager:8080']
-
-  - job_name: 'cert-monitor'
-    static_configs:
-      - targets: ['cert-monitor:9090']
-
-alerting:
-  alertmanagers:
-    - static_configs:
-        - targets:
-          - alertmanager:9093
-```
-
-## 🧪 Testing Scenarios
-
-### 1. Production Certificate Generation Test
+#### Test 7: Certificate Inspect Help
 
 ```bash
-# Generate production certificate
-docker exec -it step-cli-production bash -c "
-  step certificate create \
-    --san production.example.com \
-    --profile server \
-    --kty RSA \
-    --size 4096 \
-    'production.example.com' \
-    /app/certs/production.crt \
-    /app/certs/production.key
-"
-
-# Verify certificate
-docker exec -it step-cli-production step certificate inspect /app/certs/production.crt
-
-# Check certificate in Grafana
-open http://localhost:3000
+# Check certificate inspect help
+docker run --rm --entrypoint="" cleanstart/step-cli:latest /step certificate inspect --help
 ```
 
-### 2. Security Policy Test
+#### Test 8: Certificate Fingerprint Help
 
 ```bash
-# Test security policies
-curl -X POST http://localhost:8080/policies/validate \
-  -H "Content-Type: application/json" \
-  -d '{
-    "certificate": "production.example.com",
-    "key_size": 2048,
-    "algorithm": "RSA",
-    "validity_days": 365
-  }'
-
-# Check policy compliance
-curl http://localhost:8080/policies/compliance/status
+# Check certificate fingerprint help
+docker run --rm --entrypoint="" cleanstart/step-cli:latest /step certificate fingerprint --help
 ```
 
-### 3. Monitoring and Alerting Test
+## 📋 Expected Output
 
-```bash
-# Check certificate monitoring
-curl http://localhost:9090/metrics
+When you run these tests, you should see output similar to:
 
-# View Prometheus metrics
-curl http://localhost:9091/api/v1/query?query=certificate_expiry_days
-
-# Check AlertManager
-curl http://localhost:9093/api/v1/alerts
 ```
+🏭 Complete Production PKI Test
+============================================================
+Timestamp: Mon Sep 16 17:30:45 UTC 2025
+============================================================
 
-### 4. Backup and Recovery Test
+1️⃣ CA Initialization...
 
-```bash
-# Trigger manual backup
-docker exec -it backup-production /app/scripts/backup.sh
+Generating root certificate... done!
+Generating intermediate certificate... done!
 
-# Check backup status
-docker exec -it backup-production ls -la /app/backup/
+✔ Root certificate: /home/clnstrt/.step/certs/root_ca.crt
+✔ Root private key: /home/clnstrt/.step/secrets/root_ca_key
+✔ Root fingerprint: 1723f595f00bf2406439c6141ec02f3576f3acc42eea2765b81eeb478d98c0bc
+✔ Intermediate certificate: /home/clnstrt/.step/certs/intermediate_ca.crt
+✔ Intermediate private key: /home/clnstrt/.step/secrets/intermediate_ca_key
 
-# Test recovery
-docker exec -it backup-production /app/scripts/test_recovery.sh
+2️⃣ Root Certificate...
+Certificate:
+    Data:
+        Version: 3 (0x2)
+        Serial Number: 144665024605743293622190618056157509210
+    Signature Algorithm: ECDSA-SHA256
+
+3️⃣ Intermediate Certificate...
+Certificate:
+    Data:
+        Version: 3 (0x2)
+        Serial Number: 115633024850501358483509748893554950825
+    Signature Algorithm: ECDSA-SHA256
+
+4️⃣ Certificate Fingerprints...
+Root: 1723f595f00bf2406439c6141ec02f3576f3acc42eea2765b81eeb478d98c0bc
+Intermediate: 94ca3db744ba0993f046bfa88140ee596ec3272bdeef02e07e804ed3f949029a
+
+5️⃣ Step CLI Version...
+Smallstep CLI/0.28.7 (linux/amd64)
+Release Date: 2025-08-28 11:08 UTC
+
+============================================================
+🎉 Complete Production PKI Test completed!
+============================================================
 ```
 
 ## 🔍 Troubleshooting
 
 ### Common Issues
 
-**CA server not starting**
+**CA initialization fails**
 ```bash
-# Check CA logs
-docker compose logs step-ca
+# Check Step CLI version
+docker run --rm --entrypoint="" cleanstart/step-cli:latest /step version
 
-# Verify CA configuration
-docker exec -it step-cli-production cat /app/secrets/config/ca.json
-
-# Check CA health
-docker exec -it step-cli-production step ca health
+# Test basic CA init
+docker run --rm --entrypoint="" cleanstart/step-cli:latest /bin/busybox sh -c '
+cd /tmp
+echo "password" > password.txt
+/step ca init --name "Test CA" --dns "localhost" --address ":8443" --provisioner "admin" --password-file password.txt --pki
+echo "CA initialization successful!"
+'
 ```
 
-**Security policy violations**
+**Certificate generation fails**
 ```bash
-# Check policy logs
-docker compose logs cert-manager
-
-# Verify policy configuration
-docker exec -it cert-manager-production python3 /app/check_policies.py
-
-# Check audit logs
-docker exec -it audit-logger-production tail -f /app/logs/audit.log
+# Test certificate creation with no-password flag
+docker run --rm --entrypoint="" cleanstart/step-cli:latest /bin/busybox sh -c '
+cd /tmp
+echo "password" > password.txt
+/step ca init --name "Test CA" --dns "localhost" --address ":8443" --provisioner "admin" --password-file password.txt --pki
+/step certificate create test-cert test.crt test.key --template "{\"subject\":{\"commonName\":\"test.example.com\"}}" --ca /home/clnstrt/.step/certs/intermediate_ca.crt --ca-key /home/clnstrt/.step/secrets/intermediate_ca_key --no-password --insecure
+echo "Certificate generation successful!"
+ls -la test.*
+'
 ```
 
-**Monitoring issues**
+**Permission issues**
 ```bash
-# Check monitoring logs
-docker compose logs cert-monitor
-
-# Verify Prometheus configuration
-docker exec -it prometheus-production cat /etc/prometheus/prometheus.yml
-
-# Check Grafana connectivity
-curl http://localhost:3000/api/health
-```
-
-**Backup failures**
-```bash
-# Check backup logs
-docker compose logs backup
-
-# Verify backup configuration
-docker exec -it backup-production cat /app/scripts/backup.sh
-
-# Check backup storage
-docker exec -it backup-production ls -la /app/backup/
+# Use writable directory
+docker run --rm --entrypoint="" cleanstart/step-cli:latest /bin/busybox sh -c '
+cd /tmp
+echo "Using /tmp directory for writable access"
+echo "password" > password.txt
+/step ca init --name "Test CA" --dns "localhost" --address ":8443" --provisioner "admin" --password-file password.txt --pki
+echo "CA initialized in /tmp successfully!"
+'
 ```
 
 ### Debug Commands
 
 ```bash
-# Check all container statuses
-docker compose ps
+# Check Step CLI help
+docker run --rm --entrypoint="" cleanstart/step-cli:latest /step --help
 
-# View real-time logs
-docker compose logs -f --tail=100
+# Check CA help
+docker run --rm --entrypoint="" cleanstart/step-cli:latest /step ca --help
 
-# Check resource usage
-docker stats --no-stream
+# Check certificate help
+docker run --rm --entrypoint="" cleanstart/step-cli:latest /step certificate --help
 
-# Verify network connectivity
-docker exec -it step-cli-production ping step-ca
+# Test basic functionality
+docker run --rm --entrypoint="" cleanstart/step-cli:latest /step version
 ```
 
 ## 📚 Next Steps
 
 After mastering this production setup:
 
-1. **Try Integration Examples**: Connect with various tools and platforms
-2. **Customize Security Policies**: Modify policies for your compliance requirements
-3. **Add More Monitoring**: Implement additional monitoring and alerting
-4. **Scale to Multiple Environments**: Implement multi-environment PKI
+1. **Try Basic PKI**: Start with simple certificate generation
+2. **Explore Advanced Features**: Use custom templates and profiles
+3. **Implement Security**: Use production-grade key sizes and algorithms
+4. **Scale Operations**: Implement automated certificate management
 
 ## 🧹 Cleanup
 
 ```bash
-# Stop all services
-docker compose down
-
-# Remove containers and networks
-docker compose down --remove-orphans
-
-# Remove volumes (optional - will delete all certificates and CA data)
-docker compose down -v
-
-# Clean up images (optional)
-docker compose down --rmi all
+# No cleanup needed - all operations are containerized
+# Each test runs in isolated containers
+# No persistent data or cleanup required
 ```
 
 ---
