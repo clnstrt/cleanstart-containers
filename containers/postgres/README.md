@@ -24,13 +24,13 @@ docker run --rm -it --entrypoint /bin/sh cleanstart/postgres:latest-dev
 # Navigate to sample project
 cd sample-project/
 
-# Run hello world SQL
-docker run --rm -v $(pwd):/scripts cleanstart/postgres:latest \
-  psql -h localhost -U postgres -d postgres -f /scripts/hello_world.sql
-
 # Run complete web application
 docker-compose up --build -d
-# Access: http://localhost:5000
+
+# Access web interface
+# http://localhost:5000
+# http://localhost:5000/users
+# http://localhost:5000/add_user
 ```
 
 ## 🌟 Features

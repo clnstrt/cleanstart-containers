@@ -190,6 +190,29 @@ services:
       timeout: 10s
       retries: 3
 
+
+  # Step CA server
+  step-ca:
+    image: cleanstart/step-cli:latest
+    container_name: step-ca-basic
+    restart: unless-stopped
+    ports:
+      - "443:443"
+    volumes:
+      - step_secrets:/app/secrets
+      - ./ca-config:/app/ca-config
+    environment:
+      - STEPPATH=/app/secrets
+    networks:
+      - pki
+    command: ["sleep", "infinity"]  # Keep container running
+    healthcheck:
+      test: ["CMD", "step", "version"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+
   # Certificate generator service
   cert-generator:
     image: cleanstart/python:latest
