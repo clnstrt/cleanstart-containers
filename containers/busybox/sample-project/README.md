@@ -4,9 +4,6 @@ A simple  program to run on CleanStart - BusyBox container.
 
 ### Pull CleanStart BusyBox image from [Docker Hub - CleanStart](https://hub.docker.com/u/cleanstart) 
 ```bash
-docker pull cleanstart/busybox:latest
-```
-```bash
 docker pull cleanstart/busybox:latest-dev
 ```
 
@@ -75,4 +72,5 @@ Feel free to contribute to this project by:
 - Improving documentation
 
 ## 📄 License
+
 This project is open source and available under the [MIT License](LICENSE).
