@@ -1,4 +1,4 @@
-# 🚀 jre Web Application
+# 🚀 JRE Web Application
 
 A complete jre web application built with Spring Boot that demonstrates user management with SQLite database, web interface with Thymeleaf templates, and REST API endpoints.
 
@@ -34,4 +34,5 @@ docker run -p 8080:8080 jre-web-app
 
 ## 📚 Resources
 - [CleanStart Website](https://cleanstart.com/)
+
 - [Spring Boot Documentation](https://spring.io/projects/spring-boot)
