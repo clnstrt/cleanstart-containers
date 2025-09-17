@@ -1,21 +1,18 @@
 ## List of Sample projects 
 ## Directory structure of cleanstart-containers/argocd-extension-installer/sample-project
 
-├── LICENSE                          
-├── README.md                        # This file
-└── containers/                      # All container sample projects
-    ├── go/
-    │   ├── README.md
-    │   └── sample-project/
-    |   │   └── hell-world/
-    |   │   |    └── README.md
-    |   │   |    └── Dockerfile
-    |   │   |    └── project files
-    |   │   └── go-web/
-    |   │   |    └── README.md
-    |   │   |    └── Dockerfile
-    |   │   |    └── project files
-    ├── nginx/                      
-    ├── python/                     
-    ├── node/                       
-    └── [more containers...]
+```bash
+cleanstart-containers/
+└── argocd-extension-installer/
+    └── sample-project/                  # Root sample project folder
+        ├── README.md                    # General README for sample project
+        ├── basic-extension/             # Example extension folder
+        │   ├── Dockerfile
+        │   ├── README.md
+        │   ├── docker-compose.yml
+        │   ├── hello_world.py
+        │   ├── install.sh
+        │   ├── setup.sh
+        │   └── setup.bat
+        └── [more extensions...]
+```
