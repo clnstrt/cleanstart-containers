@@ -2,16 +2,14 @@
 
 set -eu
 
-TARGET=${1:-example.com}
+TARGET=${1:-https://cleanstart.com}
 
 echo "[Networking] Pinging $TARGET ..."
 if ping -c 1 "$TARGET" >/dev/null 2>&1; then
   echo "[Networking] Ping succeeded"
-else
-  echo "[Networking] Ping failed"
 fi
 
-URL=${2:-http://example.com}
+URL=${2:-https://cleanstart.com}
 echo "[Networking] Fetching $URL with wget ..."
 if wget -qO- "$URL" | head -n 3; then
   echo "[Networking] wget succeeded"

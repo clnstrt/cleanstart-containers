@@ -57,8 +57,8 @@ docker build --no-cache -t my-cleanstart-busybox .
 ```bash
 🚀 Cleanstart BusyBox started as user: clnstrt
 📦 BusyBox version: BusyBox v1.37.0 (2025-07-11 07:44:34 UTC) multi-call binary.
-⏳ Busybox is a combination of UNIX utilities and is a single binary! Wed Sep 17 05:25:52 UTC 2025
-⏳ Busybox is a combination of UNIX utilities and is a single binary! Wed Sep 17 05:25:57 UTC 2025
+⏳ Busybox is a combination of UNIX utilities and is a single binary! (Date)
+⏳ Busybox is a combination of UNIX utilities and is a single binary! (Date)
 ```
 
 ## 📚 Resources
