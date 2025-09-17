@@ -52,8 +52,7 @@ docker build -t go-hello-world .
 docker run --rm go-hello-world
 ```
 
-## 📁 Project Structure
-
+## 📁 Project Structure for the cleanstart-containers repo
 ```
 cleanstart-containers/
 ├── LICENSE                           # MIT License
@@ -164,23 +163,6 @@ docker run --rm cleanstart/[container-name] --version
    docker system prune -f
    ```
 
-## 📚 Learning Path
-
-### Beginner
-1. Start with hello-world examples
-2. Learn basic Docker commands
-3. Understand container concepts
-
-### Intermediate
-1. Explore sample projects
-2. Learn about Docker Compose
-3. Understand networking and volumes
-
-### Advanced
-1. Kubernetes deployments
-2. Production configurations
-3. Monitoring and logging
-
 ## 📚 Documentation
 
 Each sample project includes:
@@ -193,23 +175,6 @@ Each sample project includes:
 ## 🤝 Contributing
 
 We welcome contributions to improve these sample projects:
-
-1. **Add new sample projects** - Create new container examples
-2. **Improve existing projects** - Enhance documentation and examples
-3. **Fix bugs and issues** - Report and fix problems
-4. **Add new features** - Extend functionality
-5. **Improve documentation** - Better explanations and guides
-
-### How to Contribute:
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Test thoroughly
-5. Submit a pull request
-
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ## 🆘 Support
 
