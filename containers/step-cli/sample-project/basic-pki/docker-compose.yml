@@ -1,3 +1,109 @@
+# version: '3.8'
+
+# networks:
+#   pki:
+#     driver: bridge
+
+# volumes:
+#   step_secrets:
+#     driver: local
+#   step_certs:
+#     driver: local
+
+# services:
+#   # Step CLI for certificate operations
+#   step-cli:
+#     image: cleanstart/step-cli:latest
+#     container_name: step-cli-basic
+#     restart: unless-stopped
+#     volumes:
+#       - step_secrets:/app/secrets
+#       - step_certs:/app/certs
+#       - ./scripts:/app/scripts
+#       - ./config:/app/config
+#     environment:
+#       - STEPPATH=/app/secrets
+#       - STEP_CA_URL=https://step-ca:443
+#     networks:
+#       - pki
+#     depends_on:
+#       - step-ca
+#     command: ["tail", "-f", "/dev/null"]  # Keep container running
+#     healthcheck:
+#       test: ["CMD", "step", "version"]
+#       interval: 30s
+#       timeout: 10s
+#       retries: 3
+
+#   # Step CA server
+#   step-ca:
+#     image: smallstep/step-ca:latest
+#     container_name: step-ca-basic
+#     restart: unless-stopped
+#     ports:
+#       - "443:443"
+#     volumes:
+#       - step_secrets:/home/step/ca
+#       - ./ca-config:/app/ca-config
+#     environment:
+#       - STEPPATH=/home/step/ca
+#       - DOCKER_STEPCA_INIT_NAME=Basic PKI CA
+#       - DOCKER_STEPCA_INIT_DNS=step-ca
+#       - DOCKER_STEPCA_INIT_ADDRESS=:443
+#       - DOCKER_STEPCA_INIT_PROVISIONER=admin@example.com
+#       - DOCKER_STEPCA_INIT_PASSWORD=admin123
+#     networks:
+#       - pki
+#     healthcheck:
+#       test: ["CMD", "step", "ca", "health", "--ca-url", "https://localhost:443"]
+#       interval: 30s
+#       timeout: 10s
+#       retries: 3
+#       start_period: 60s
+
+#   # Certificate generator service
+#   cert-generator:
+#     image: cleanstart/python:latest
+#     container_name: cert-generator-basic
+#     restart: unless-stopped
+#     ports:
+#       - "8080:8080"
+#     volumes:
+#       - step_certs:/app/certs
+#       - ./cert-generator:/app
+#     networks:
+#       - pki
+#     depends_on:
+#       - step-ca
+#     command: >
+#       sh -c "pip install flask requests &&
+#              python3 /app/cert_generator.py"
+#     healthcheck:
+#       test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8080/health"]
+#       interval: 30s
+#       timeout: 10s
+#       retries: 3
+
+#   # Certificate inspector service
+#   cert-inspector:
+#     image: cleanstart/nginx:latest
+#     container_name: cert-inspector-basic
+#     restart: unless-stopped
+#     ports:
+#       - "8082:80"
+#     volumes:
+#       - step_certs:/usr/share/nginx/html/certs
+#       - ./inspector:/usr/share/nginx/html
+#     networks:
+#       - pki
+#     healthcheck:
+#       test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:80"]
+#       interval: 30s
+#       timeout: 10s
+#       retries: 3
+
+
+
 version: '3.8'
 
 networks:
@@ -11,6 +117,55 @@ volumes:
     driver: local
 
 services:
+  # One-time initializer for Step CA
+  step-ca-init:
+    image: smallstep/step-ca:latest
+    container_name: step-ca-init
+    command: >
+      sh -c "
+        if [ ! -f /home/step/ca/config/ca.json ]; then
+          echo '🔐 Initializing Step CA ...'
+          step ca init \
+            --name 'Basic PKI CA' \
+            --dns 'step-ca' \
+            --address ':443' \
+            --provisioner 'admin@example.com' \
+            --password-file <(echo 'admin123') \
+            --pki
+        else
+          echo '✅ Step CA already initialized.'
+        fi
+      "
+    environment:
+      - STEPPATH=/home/step/ca
+    volumes:
+      - step_secrets:/home/step/ca
+    networks:
+      - pki
+    restart: "no"
+
+  # Step CA server
+  step-ca:
+    image: smallstep/step-ca:latest
+    container_name: step-ca-basic
+    restart: unless-stopped
+    ports:
+      - "443:443"
+    environment:
+      - STEPPATH=/home/step/ca
+    volumes:
+      - step_secrets:/home/step/ca
+    networks:
+      - pki
+    depends_on:
+      - step-ca-init
+    healthcheck:
+      test: ["CMD", "step", "ca", "health", "--ca-url", "https://localhost:443"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
   # Step CLI for certificate operations
   step-cli:
     image: cleanstart/step-cli:latest
@@ -34,32 +189,6 @@ services:
       interval: 30s
       timeout: 10s
       retries: 3
-
-  # Step CA server
-  step-ca:
-    image: smallstep/step-ca:latest
-    container_name: step-ca-basic
-    restart: unless-stopped
-    ports:
-      - "443:443"
-    volumes:
-      - step_secrets:/home/step/ca
-      - ./ca-config:/app/ca-config
-    environment:
-      - STEPPATH=/home/step/ca
-      - DOCKER_STEPCA_INIT_NAME=Basic PKI CA
-      - DOCKER_STEPCA_INIT_DNS=step-ca
-      - DOCKER_STEPCA_INIT_ADDRESS=:443
-      - DOCKER_STEPCA_INIT_PROVISIONER=admin@example.com
-      - DOCKER_STEPCA_INIT_PASSWORD=admin123
-    networks:
-      - pki
-    healthcheck:
-      test: ["CMD", "step", "ca", "health", "--ca-url", "https://localhost:443"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 60s
 
   # Certificate generator service
   cert-generator:
