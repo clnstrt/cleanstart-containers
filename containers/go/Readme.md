@@ -13,9 +13,7 @@ Official Go programming language container image optimized for enterprise enviro
 
 **Quick Start**
 
-## Link to DockerHub 
-
-https://hub.docker.com/r/cleanstart/go
+CleanStart Image is available on DockerHub: https://hub.docker.com/r/cleanstart/go
 
 **Pull Commands**
 Download the runtime container images
@@ -77,3 +75,4 @@ docker pull --platform linux/arm64 cleanstart/go:latest
 
 
 ---
+
