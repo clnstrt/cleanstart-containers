@@ -1,63 +1,22 @@
-version: '3.8'
-
 services:
+  # A one-shot curl request to httpbin
   curl-client:
     image: cleanstart/curl:latest
     container_name: curl-client
-    volumes:
-      - ./:/workspace
-      - ./data:/workspace/data
-    environment:
-      - API_BASE_URL=https://httpbin.org
-      - TEST_MODE=true
-    working_dir: /workspace
-    command: ["tail", "-f", "/dev/null"]
-    profiles:
-      - development
-      - testing
+    command: ["https://httpbin.org/get", "--retry", "999999", "--retry-delay", "10"]
 
-  curl-interactive:
+
+  # A curl POST request
+  curl-poster:
     image: cleanstart/curl:latest
-    container_name: curl-interactive
-    volumes:
-      - ./:/workspace
-      - ./data:/workspace/data
-    environment:
-      - API_BASE_URL=https://httpbin.org
-    working_dir: /workspace
-    stdin_open: true
-    tty: true
-    profiles:
-      - interactive
+    container_name: curl-poster
+    command: ["-X", "POST", "https://httpbin.org/post", "-d", "name=komal"]
 
-  curl-test-runner:
-    image: cleanstart/curl:latest
-    container_name: curl-test-runner
-    volumes:
-      - ./:/workspace
-      - ./data:/workspace/data
-    environment:
-      - API_BASE_URL=https://httpbin.org
-      - TEST_MODE=true
-    working_dir: /workspace
-    command: ["bash", "/workspace/scripts/run-all-tests.sh"]
-    profiles:
-      - testing
 
+  # A "monitor" that repeats every 10 seconds
+  # Since no shell is available, use curl's --retry and --max-time to simulate checks
   curl-monitor:
     image: cleanstart/curl:latest
     container_name: curl-monitor
-    volumes:
-      - ./:/workspace
-      - ./data:/workspace/data
-    environment:
-      - MONITOR_URL=https://httpbin.org/health
-      - CHECK_INTERVAL=30
-    working_dir: /workspace
-    command: ["bash", "-c", "while true; do curl -s -o /dev/null -w '%{http_code}' $MONITOR_URL; echo ' - $(date)'; sleep $CHECK_INTERVAL; done"]
-    profiles:
-      - monitoring
+    command: ["--retry", "999999", "--retry-delay", "10", "-s", "-o", "/dev/null", "-w", "HTTP %{http_code}\n", "https://httpbin.org/status/200"]
 
-networks:
-  default:
-    name: curl-network
