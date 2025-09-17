@@ -4,7 +4,6 @@ A complete **PostgreSQL Web Application** demonstrating database operations with
 
 ## 🌟 Features
 
-- **Hello World SQL**: Basic PostgreSQL operations and sample data
 - **Web Application**: Flask app with user management and post system
 - **Docker Ready**: Easy deployment with Docker Compose
 - **CleanStart Integration**: Uses CleanStart PostgreSQL container
@@ -14,62 +13,44 @@ A complete **PostgreSQL Web Application** demonstrating database operations with
 ### Prerequisites
 - Docker and Docker Compose installed
 
-### Option 1: Hello World SQL Script
+### Step 1: Pull CleanStart PostgreSQL Image
 
 ```bash
-# Start CleanStart PostgreSQL using docker-compose
-docker-compose up db -d
-
-# Wait for database to start (CleanStart PostgreSQL may need more time)
-sleep 30
-
-# Check if container is running
-docker ps | grep postgres-sample-db
-
-# If container is running, copy and run the script
-docker cp hello_world.sql postgres-sample-db:/tmp/hello_world.sql
-docker-compose exec db psql -U postgres -d helloworld -f /tmp/hello_world.sql
-
-# Clean up
-docker-compose down
+# Pull the CleanStart PostgreSQL image
+docker pull cleanstart/postgres:latest
 ```
 
-**Note:** CleanStart PostgreSQL container is the only supported image for this project.
+**Why this command?** This ensures you have the latest CleanStart PostgreSQL image locally before running the application.
 
-**Expected Output:**
-```
-NOTICE:  Hello, World!
-NOTICE:  Welcome to PostgreSQL!
-NOTICE:  Database initialized successfully!
- id |    name     |      email       |         created_at         
-----+-------------+------------------+----------------------------
-  1 | John Doe    | john@example.com | 2025-09-17 08:06:55.333217
-  2 | Jane Smith  | jane@example.com | 2025-09-17 08:06:55.333217
-  3 | Bob Johnson | bob@example.com  | 2025-09-17 08:06:55.333217
- total_users 
--------------
-           3
-```
-
-### Option 2: Complete Web Application
+### Step 2: Start the Application
 
 ```bash
-# Start the full application (uses CleanStart PostgreSQL)
+# Start the full application with CleanStart PostgreSQL
 docker-compose up --build -d
 ```
 
-**Access the web interface:**
-- Open browser: `http://localhost:5000`
-- Users page: `http://localhost:5000/users`
-- Add User: `http://localhost:5000/add_user`
+**Why this command?**
+- `--build`: Rebuilds the web application container to ensure latest code
+- `-d`: Runs containers in detached mode (background)
+- Uses CleanStart PostgreSQL container as specified in docker-compose.yml
 
-**Note:** Both the hello world script and web application use CleanStart PostgreSQL container.
+### Step 3: Access the Web Interface
 
-### Stop the Application
+**Open your browser and visit:**
+- **Main page**: `http://localhost:5000`
+- **Users page**: `http://localhost:5000/users`
+- **Add User**: `http://localhost:5000/add_user`
+
+**Why these URLs?** The web application runs on port 5000, and these are the main routes for testing database operations.
+
+### Step 4: Stop the Application
 
 ```bash
+# Stop all containers and clean up
 docker-compose down
 ```
+
+**Why this command?** Gracefully stops all containers and removes the network, freeing up system resources.
 
 ## 📁 Project Structure
 
@@ -78,7 +59,6 @@ sample-project/
 ├── app.py                    # Flask web application
 ├── Dockerfile                # Web app container definition
 ├── docker-compose.yml        # Complete application setup
-├── hello_world.sql           # Hello world SQL script
 ├── requirements.txt          # Python dependencies
 └── templates/                # HTML templates
     ├── add_post.html
