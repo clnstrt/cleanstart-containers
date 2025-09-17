@@ -1,18 +1,8 @@
-# Use the cleanstart/nginx base image
-FROM cleanstart/nginx:latest
+# Use the official NGINX image
+FROM cleanstart/nginx:latest-dev
 
-# Set working directory
-WORKDIR /usr/share/nginx/html
+# Copy a local file to the default NGINX web directory in the container
+COPY index.html /usr/share/nginx/html/index.html
 
-# Copy custom HTML file
-COPY index.html .
-
-# Expose default Nginx port
+# Expose port 80 to the host machine
 EXPOSE 80
-
-# Health check using nginx configuration test
-HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-  CMD nginx -t || exit 1
-
-# Ensure Nginx runs in the foreground
-ENTRYPOINT ["nginx", "-g", "daemon off;"]

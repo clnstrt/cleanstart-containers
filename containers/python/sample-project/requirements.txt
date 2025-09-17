@@ -5,3 +5,6 @@ MarkupSafe==3.0.2
 itsdangerous==2.2.0
 click==8.2.1
 blinker==1.9.0
+pytest==7.4.3
+pytest-cov==4.1.0
+requests==2.31.0

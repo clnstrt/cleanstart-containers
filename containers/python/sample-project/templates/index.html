@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Management - CleanStart Python</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .add-user-btn {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 5px;
+            display: inline-block;
+            margin-bottom: 20px;
+        }
+        .add-user-btn:hover {
+            background-color: #0056b3;
+        }
+        .user-list {
+            list-style: none;
+            padding: 0;
+        }
+        .user-item {
+            background: #f8f9fa;
+            margin: 10px 0;
+            padding: 15px;
+            border-radius: 5px;
+            border-left: 4px solid #007bff;
+        }
+        .user-name {
+            font-weight: bold;
+            color: #333;
+        }
+        .user-email {
+            color: #666;
+            margin: 5px 0;
+        }
+        .user-date {
+            color: #999;
+            font-size: 0.9em;
+        }
+        .no-users {
+            text-align: center;
+            color: #666;
+            font-style: italic;
+            padding: 40px;
+        }
+        .api-info {
+            background: #e9ecef;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 30px;
+        }
+        .api-info h3 {
+            margin-top: 0;
+            color: #495057;
+        }
+        .api-endpoint {
+            background: #f8f9fa;
+            padding: 5px 10px;
+            border-radius: 3px;
+            font-family: monospace;
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 User Management System</h1>
+        <p style="text-align: center; color: #666;">Powered by CleanStart Python Container</p>
+        
+        <a href="{{ url_for('add_user') }}" class="add-user-btn">+ Add New User</a>
+        
+        {% if users %}
+            <ul class="user-list">
+                {% for user in users %}
+                <li class="user-item">
+                    <div class="user-name">{{ user.name }}</div>
+                    <div class="user-email">{{ user.email }}</div>
+                    <div class="user-date">Created: {{ user.created_at }}</div>
+                </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <div class="no-users">
+                <p>No users found. <a href="{{ url_for('add_user') }}">Add your first user</a>!</p>
+            </div>
+        {% endif %}
+        
+        <div class="api-info">
+            <h3>🔗 API Endpoints</h3>
+            <p>This application also provides REST API endpoints:</p>
+            <div class="api-endpoint">GET /api/users - Get all users</div>
+            <div class="api-endpoint">POST /api/users - Create new user</div>
+            <div class="api-endpoint">GET /api/users/{id} - Get specific user</div>
+            <div class="api-endpoint">DELETE /api/users/{id} - Delete user</div>
+            <div class="api-endpoint">GET /health - Health check</div>
+        </div>
+    </div>
+</body>
+</html>
