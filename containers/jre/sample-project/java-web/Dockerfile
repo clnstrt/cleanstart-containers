@@ -1,4 +1,4 @@
-FROM openjdk:17-jdk-slim
+FROM cleanstart/jdk:latest-dev
 
 # Set working directory
 WORKDIR /app
