@@ -21,6 +21,8 @@ Download the runtime container images
 
 ```bash
 docker pull cleanstart/argo-workflow-exec:latest
+```
+```bash
 docker pull cleanstart/argo-workflow-exec:latest-dev
 ```
 
@@ -48,6 +50,8 @@ docker run --rm -it --name argo-workflow-dev cleanstart/argo-workflow-exec:lates
 
 ```bash
 docker pull --platform linux/amd64 cleanstart/argo-workflow-exec:latest
+```
+```bash
 docker pull --platform linux/arm64 cleanstart/argo-workflow-exec:latest
 ```
 
@@ -57,4 +61,6 @@ docker pull --platform linux/arm64 cleanstart/argo-workflow-exec:latest
 * **CleanStart Website**: https://www.cleanstart.com
 * **Argo Workflows Official**: https://argoproj.github.io/workflows/
 
+
 ---
+
