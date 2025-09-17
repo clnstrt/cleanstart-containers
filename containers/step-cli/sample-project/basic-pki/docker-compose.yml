@@ -37,7 +37,7 @@ services:
 
   # Step CA server
   step-ca:
-    image: cleanstart/step-ca:latest
+    image: smallstep/step-ca:latest
     container_name: step-ca-basic
     restart: unless-stopped
     ports:
