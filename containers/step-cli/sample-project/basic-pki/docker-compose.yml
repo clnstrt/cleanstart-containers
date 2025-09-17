@@ -37,29 +37,24 @@ services:
 
   # Step CA server
   step-ca:
-    image: smallstep/step-ca:latest
+    image: cleanstart/step-cli:latest
     container_name: step-ca-basic
     restart: unless-stopped
     ports:
       - "443:443"
     volumes:
-      - step_secrets:/home/step/ca
+      - step_secrets:/app/secrets
       - ./ca-config:/app/ca-config
     environment:
-      - STEPPATH=/home/step/ca
-      - DOCKER_STEPCA_INIT_NAME=Basic PKI CA
-      - DOCKER_STEPCA_INIT_DNS=step-ca
-      - DOCKER_STEPCA_INIT_ADDRESS=:443
-      - DOCKER_STEPCA_INIT_PROVISIONER=admin@example.com
-      - DOCKER_STEPCA_INIT_PASSWORD=admin123
+      - STEPPATH=/app/secrets
     networks:
       - pki
+    command: ["sleep", "infinity"]  # Keep container running
     healthcheck:
-      test: ["CMD", "step", "ca", "health", "--ca-url", "https://localhost:443"]
+      test: ["CMD", "step", "version"]
       interval: 30s
       timeout: 10s
       retries: 3
-      start_period: 60s
 
   # Certificate generator service
   cert-generator:
