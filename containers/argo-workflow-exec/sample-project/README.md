@@ -105,6 +105,14 @@ Flags:
 Use "argoexec [command] --help" for more information about a command.
 ```
 
+## Use Docker-compose 
+```bash
+docker-compose down --remove-orphans
+```
+```bash
+docker-compose up --build
+```
+
 ## 📚 Resources
 
 - [Verified Docker Image Publisher - CleanStart](https://cleanstart.com/)
