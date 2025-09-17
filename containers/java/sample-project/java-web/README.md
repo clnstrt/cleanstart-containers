@@ -18,6 +18,7 @@ docker run -p 8080:8080 java-web-app
 ### Access the Application
 - **Web Interface**: http://localhost:8080
 - **REST API**: http://localhost:8080/api/users
+- **Localhost** : Use localhost in Incognito Windows to avoid cache problems
 
 ## Features
 - User management with SQLite database
