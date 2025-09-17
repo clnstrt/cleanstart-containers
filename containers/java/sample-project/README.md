@@ -12,15 +12,17 @@ docker pull cleanstart/java:latest
 docker pull cleanstart/java:latest-dev
 ```
 
-## If you have the Java image pulled, you can also run your program directly:
+## If you have the Java image pulled, you can also run your program directly without Dockerfile:
 ```bash
-docker run --rm -v $(pwd):/app -w /app cleanstart/java:latest javac HelloWorld.java && java HelloWorld
+echo 'public class HelloWorld { public static void main(String[] args) { System.out.println("Hello, World!"); } }' > HelloWorld.java
 ```
+```bash
+docker run --rm -v $(pwd):/app --entrypoint sh cleanstart/jdk:latest-dev -c "javac HelloWorld.java && java HelloWorld"
+```
+
 ## Output 
 ```bash
 Hello, World!
-Welcome to Java!
-What's your name? Nice to meet you, !
 ```
 
 ## 📚 Resources

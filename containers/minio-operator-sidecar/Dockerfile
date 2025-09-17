@@ -1,4 +1,4 @@
-FROM cleanstart/minio-operator:latest
+FROM cleanstart/minio-operator-sidecar:latest-dev
 
 # Set working directory
 WORKDIR /app
