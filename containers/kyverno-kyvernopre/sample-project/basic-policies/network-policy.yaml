@@ -1,0 +1,30 @@
+# Kyverno Network Policy Example
+# This policy ensures all pods have network policies defined
+
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: require-network-policy
+  annotations:
+    policies.kyverno.io/title: Require Network Policy
+    policies.kyverno.io/category: Network
+    policies.kyverno.io/severity: medium
+    policies.kyverno.io/description: >-
+      All pods must have a corresponding NetworkPolicy resource to control
+      network traffic. This policy helps enforce network segmentation.
+spec:
+  validationFailureAction: enforce
+  background: true
+  rules:
+  - name: check-network-policy
+    match:
+      any:
+      - resources:
+          kinds:
+          - Pod
+    validate:
+      message: "All pods must have a corresponding NetworkPolicy"
+      pattern:
+        metadata:
+          annotations:
+            "netpol.kyverno.io/require": "true"

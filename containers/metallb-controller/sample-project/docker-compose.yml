@@ -1,0 +1,119 @@
+version: '3.8'
+
+services:
+  # MetalLB Controller
+  metallb-controller:
+    image: cleanstart/metallb-controller:latest
+    container_name: metallb-controller
+    restart: unless-stopped
+    volumes:
+      - ./config:/app/config
+      - ./manifests:/app/manifests
+      - ./basic-layer2:/app/basic-layer2
+      - ./bgp-setup:/app/bgp-setup
+      - ./multi-pool:/app/multi-pool
+    environment:
+      - METALLB_NAMESPACE=metallb-system
+      - METALLB_LOG_LEVEL=info
+    command: ["controller", "--help"]
+    networks:
+      - metallb-network
+
+  # Sample Web Application
+  nginx-web:
+    image: nginx:1.21
+    container_name: nginx-web
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    volumes:
+      - ./basic-layer2/nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - metallb-controller
+    networks:
+      - metallb-network
+
+  # Sample API Application
+  nginx-api:
+    image: nginx:1.21
+    container_name: nginx-api
+    restart: unless-stopped
+    ports:
+      - "8081:80"
+    volumes:
+      - ./multi-pool/api.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - metallb-controller
+    networks:
+      - metallb-network
+
+  # Sample Database
+  postgres-db:
+    image: postgres:13
+    container_name: postgres-db
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_DB=testdb
+      - POSTGRES_USER=testuser
+      - POSTGRES_PASSWORD=testpass
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    depends_on:
+      - metallb-controller
+    networks:
+      - metallb-network
+
+  # Monitoring with Prometheus
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    restart: unless-stopped
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--storage.tsdb.retention.time=200h'
+      - '--web.enable-lifecycle'
+    depends_on:
+      - metallb-controller
+    networks:
+      - metallb-network
+
+  # Grafana for visualization
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./monitoring/grafana/dashboards:/etc/grafana/provisioning/dashboards:ro
+      - ./monitoring/grafana/datasources:/etc/grafana/provisioning/datasources:ro
+    depends_on:
+      - prometheus
+    networks:
+      - metallb-network
+
+networks:
+  metallb-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 192.168.1.0/24
+          gateway: 192.168.1.1
+
+volumes:
+  postgres_data:
+  prometheus_data:
+  grafana_data:

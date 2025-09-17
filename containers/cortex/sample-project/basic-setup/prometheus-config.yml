@@ -1,0 +1,47 @@
+# Prometheus Configuration for Cortex
+# This configures Prometheus to scrape metrics from Cortex
+
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+rule_files:
+  # Add any rule files here
+  # - "rules/*.yml"
+
+scrape_configs:
+  # Cortex metrics
+  - job_name: 'cortex'
+    static_configs:
+      - targets: ['cortex:9009']
+    metrics_path: '/metrics'
+    scrape_interval: 30s
+    
+  # Cortex ingester metrics
+  - job_name: 'cortex-ingester'
+    static_configs:
+      - targets: ['cortex:9095']
+    metrics_path: '/metrics'
+    scrape_interval: 30s
+    
+  # Cortex distributor metrics
+  - job_name: 'cortex-distributor'
+    static_configs:
+      - targets: ['cortex:9009']
+    metrics_path: '/distributor/metrics'
+    scrape_interval: 30s
+    
+  # Cortex querier metrics
+  - job_name: 'cortex-querier'
+    static_configs:
+      - targets: ['cortex:9009']
+    metrics_path: '/querier/metrics'
+    scrape_interval: 30s
+
+# Remote write configuration to send metrics to Cortex
+remote_write:
+  - url: 'http://cortex:9009/api/v1/push'
+    write_relabel_configs:
+      - source_labels: [__name__]
+        regex: 'up|prometheus_.*'
+        action: keep

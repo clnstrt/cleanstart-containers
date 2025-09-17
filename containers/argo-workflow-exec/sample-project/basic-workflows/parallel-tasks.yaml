@@ -1,0 +1,44 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Workflow
+metadata:
+  generateName: parallel-tasks-
+  annotations:
+    description: "Demonstrates parallel task execution in Argo Workflows"
+spec:
+  entrypoint: parallel-demo
+  templates:
+  - name: parallel-demo
+    steps:
+    - - name: step1
+        template: whalesay
+        arguments:
+          parameters:
+          - name: message
+            value: "Task 1 - Processing data"
+    - - name: step2
+        template: whalesay
+        arguments:
+          parameters:
+          - name: message
+            value: "Task 2 - Running tests"
+    - - name: step3
+        template: whalesay
+        arguments:
+          parameters:
+          - name: message
+            value: "Task 3 - Building artifacts"
+  - name: whalesay
+    inputs:
+      parameters:
+      - name: message
+    container:
+      image: docker/whalesay
+      command: [cowsay]
+      args: ["{{inputs.parameters.message}}"]
+      resources:
+        requests:
+          memory: "32Mi"
+          cpu: "100m"
+        limits:
+          memory: "64Mi"
+          cpu: "200m"

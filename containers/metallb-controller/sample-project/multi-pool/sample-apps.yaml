@@ -1,0 +1,151 @@
+---
+# Web Service
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web-app
+  labels:
+    app: web-app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: web-app
+  template:
+    metadata:
+      labels:
+        app: web-app
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.21
+        ports:
+        - containerPort: 80
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "250m"
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: web-service
+  labels:
+    app: web-app
+  annotations:
+    metallb.universe.tf/address-pool: web-pool
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 80
+    targetPort: 80
+    protocol: TCP
+    name: http
+  selector:
+    app: web-app
+---
+# API Service
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api-app
+  labels:
+    app: api-app
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: api-app
+  template:
+    metadata:
+      labels:
+        app: api-app
+    spec:
+      containers:
+      - name: api
+        image: nginx:1.21
+        ports:
+        - containerPort: 80
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "250m"
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: api-service
+  labels:
+    app: api-app
+  annotations:
+    metallb.universe.tf/address-pool: api-pool
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 8080
+    targetPort: 80
+    protocol: TCP
+    name: http
+  selector:
+    app: api-app
+---
+# Database Service
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: database-app
+  labels:
+    app: database-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: database-app
+  template:
+    metadata:
+      labels:
+        app: database-app
+    spec:
+      containers:
+      - name: postgres
+        image: postgres:13
+        ports:
+        - containerPort: 5432
+        env:
+        - name: POSTGRES_DB
+          value: "testdb"
+        - name: POSTGRES_USER
+          value: "testuser"
+        - name: POSTGRES_PASSWORD
+          value: "testpass"
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "250m"
+          limits:
+            memory: "256Mi"
+            cpu: "500m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: database-service
+  labels:
+    app: database-app
+  annotations:
+    metallb.universe.tf/address-pool: database-pool
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 5432
+    targetPort: 5432
+    protocol: TCP
+    name: postgres
+  selector:
+    app: database-app

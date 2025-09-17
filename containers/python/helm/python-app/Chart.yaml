@@ -1,0 +1,23 @@
+apiVersion: v2
+name: python-app
+description: A Helm chart for CleanStart Python application
+type: application
+version: 1.0.0
+appVersion: "1.0.0"
+home: https://www.cleanstart.com
+sources:
+  - https://github.com/cleanstart/cleanstart-containers
+maintainers:
+  - name: CleanStart Team
+    email: support@cleanstart.com
+keywords:
+  - python
+  - flask
+  - web-application
+  - cleanstart
+  - kubernetes
+  - helm
+annotations:
+  category: Web Application
+  licenses: Apache-2.0
+dependencies: []

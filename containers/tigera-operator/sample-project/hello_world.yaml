@@ -1,0 +1,188 @@
+# Tigera Operator Hello World Example
+# This demonstrates basic Tigera Operator and Calico functionality
+
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: hello-world-namespace
+---
+# Simple Network Policy for Hello World
+apiVersion: projectcalico.org/v3
+kind: NetworkPolicy
+metadata:
+  name: hello-world-policy
+  namespace: hello-world-namespace
+spec:
+  # Allow DNS traffic
+  ingress:
+  - action: Allow
+    protocol: UDP
+    source:
+      namespaceSelector: has(projectcalico.org/name)
+    destination:
+      ports:
+      - 53
+  - action: Allow
+    protocol: TCP
+    source:
+      namespaceSelector: has(projectcalico.org/name)
+    destination:
+      ports:
+      - 53
+  
+  # Allow HTTP traffic
+  - action: Allow
+    protocol: TCP
+    source:
+      namespaceSelector: has(projectcalico.org/name)
+    destination:
+      ports:
+      - 80
+      - 443
+  
+  egress:
+  # Allow DNS
+  - action: Allow
+    protocol: UDP
+    destination:
+      ports:
+      - 53
+  - action: Allow
+    protocol: TCP
+    destination:
+      ports:
+      - 53
+  
+  # Allow HTTP/HTTPS
+  - action: Allow
+    protocol: TCP
+    destination:
+      ports:
+      - 80
+      - 443
+---
+# Hello World Application
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hello-world-app
+  namespace: hello-world-namespace
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: hello-world-app
+  template:
+    metadata:
+      labels:
+        app: hello-world-app
+    spec:
+      containers:
+      - name: hello-world
+        image: nginx:latest
+        ports:
+        - containerPort: 80
+        resources:
+          requests:
+            cpu: 100m
+            memory: 128Mi
+          limits:
+            cpu: 200m
+            memory: 256Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: hello-world-service
+  namespace: hello-world-namespace
+spec:
+  selector:
+    app: hello-world-app
+  ports:
+  - port: 80
+    targetPort: 80
+    protocol: TCP
+  type: ClusterIP
+---
+# Global Network Policy for Hello World
+apiVersion: projectcalico.org/v3
+kind: GlobalNetworkPolicy
+metadata:
+  name: hello-world-global-policy
+spec:
+  # Apply to all namespaces
+  namespaceSelector: all()
+  
+  # Order for policy evaluation
+  order: 100
+  
+  # Policy types
+  types:
+  - Ingress
+  - Egress
+  
+  ingress:
+  # Allow traffic within the same namespace
+  - action: Allow
+    source:
+      namespaceSelector: has(projectcalico.org/name)
+  
+  # Allow traffic from hello-world namespace
+  - action: Allow
+    source:
+      namespaceSelector: projectcalico.org/name == "hello-world-namespace"
+  
+  egress:
+  # Allow DNS
+  - action: Allow
+    protocol: UDP
+    destination:
+      ports:
+      - 53
+  
+  # Allow HTTP/HTTPS
+  - action: Allow
+    protocol: TCP
+    destination:
+      ports:
+      - 80
+      - 443
+---
+# Test script to demonstrate Calico functionality
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: hello-world-test-script
+  namespace: hello-world-namespace
+data:
+  test-calico.sh: |
+    #!/bin/bash
+    echo "🚀 Testing Tigera Operator Hello World"
+    echo "====================================="
+    
+    # Wait for deployment to be ready
+    echo "⏳ Waiting for deployment to be ready..."
+    kubectl wait --for=condition=available deployment/hello-world-app -n hello-world-namespace --timeout=60s
+    
+    # Check pods
+    echo "📋 Hello World pods:"
+    kubectl get pods -n hello-world-namespace -l app=hello-world-app
+    
+    # Check network policies
+    echo "🛡️  Network policies:"
+    kubectl get networkpolicies -n hello-world-namespace
+    
+    # Check global network policies
+    echo "🌐 Global network policies:"
+    kubectl get globalnetworkpolicies
+    
+    # Test connectivity
+    echo "🔍 Testing connectivity..."
+    kubectl run test-pod --image=busybox:latest --rm -i --restart=Never -n hello-world-namespace -- nslookup kubernetes.default.svc.cluster.local
+    
+    # Show Calico status
+    echo "📊 Calico status:"
+    kubectl get pods -n calico-system
+    
+    echo "✅ Tigera Operator Hello World test completed!"
+    echo "   Calico networking is working correctly."

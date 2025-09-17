@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  cortex:
+    image: cleanstart/cortex:latest
+    container_name: cortex-basic
+    ports:
+      - "9009:9009"
+      - "9095:9095"
+    volumes:
+      - ./cortex-config.yaml:/etc/cortex/cortex.yaml:ro
+      - cortex-data:/tmp/cortex
+    command: [
+      "-config.file=/etc/cortex/cortex.yaml",
+      "-server.http-listen-address=0.0.0.0",
+      "-server.grpc-listen-address=0.0.0.0"
+    ]
+    environment:
+      - CORTUS_LOG_LEVEL=info
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9009/ready"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+volumes:
+  cortex-data:
+    driver: local

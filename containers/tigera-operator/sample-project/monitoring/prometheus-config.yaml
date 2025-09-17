@@ -1,0 +1,128 @@
+# Prometheus Configuration for Calico Monitoring
+# This configures Prometheus to scrape Calico metrics
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: prometheus-config
+  namespace: monitoring
+data:
+  prometheus.yml: |
+    global:
+      scrape_interval: 15s
+      evaluation_interval: 15s
+
+    rule_files:
+      - "calico_rules.yml"
+
+    scrape_configs:
+      # Calico Node metrics
+      - job_name: 'calico-node'
+        kubernetes_sd_configs:
+        - role: endpoints
+          namespaces:
+            names:
+            - calico-system
+        relabel_configs:
+        - source_labels: [__meta_kubernetes_service_name]
+          action: keep
+          regex: calico-node-metrics
+        - source_labels: [__meta_kubernetes_endpoint_port_name]
+          action: keep
+          regex: metrics
+
+      # Calico Typha metrics
+      - job_name: 'calico-typha'
+        kubernetes_sd_configs:
+        - role: endpoints
+          namespaces:
+            names:
+            - calico-system
+        relabel_configs:
+        - source_labels: [__meta_kubernetes_service_name]
+          action: keep
+          regex: calico-typha-metrics
+        - source_labels: [__meta_kubernetes_endpoint_port_name]
+          action: keep
+          regex: metrics
+
+      # Tigera Operator metrics
+      - job_name: 'tigera-operator'
+        kubernetes_sd_configs:
+        - role: endpoints
+          namespaces:
+            names:
+            - tigera-operator
+        relabel_configs:
+        - source_labels: [__meta_kubernetes_service_name]
+          action: keep
+          regex: tigera-operator-metrics
+        - source_labels: [__meta_kubernetes_endpoint_port_name]
+          action: keep
+          regex: metrics
+
+  calico_rules.yml: |
+    groups:
+    - name: calico
+      rules:
+      - alert: CalicoNodeDown
+        expr: up{job="calico-node"} == 0
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Calico node is down"
+          description: "Calico node {{ $labels.instance }} has been down for more than 5 minutes."
+
+      - alert: CalicoTyphaDown
+        expr: up{job="calico-typha"} == 0
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Calico Typha is down"
+          description: "Calico Typha {{ $labels.instance }} has been down for more than 5 minutes."
+
+      - alert: TigeraOperatorDown
+        expr: up{job="tigera-operator"} == 0
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Tigera Operator is down"
+          description: "Tigera Operator {{ $labels.instance }} has been down for more than 5 minutes."
+
+      - alert: CalicoHighMemoryUsage
+        expr: calico_node_memory_usage_bytes / calico_node_memory_limit_bytes > 0.8
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Calico node high memory usage"
+          description: "Calico node {{ $labels.instance }} memory usage is above 80%."
+
+      - alert: CalicoHighCPUUsage
+        expr: rate(calico_node_cpu_usage_seconds_total[5m]) > 0.8
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Calico node high CPU usage"
+          description: "Calico node {{ $labels.instance }} CPU usage is above 80%."
+---
+# ServiceMonitor for Calico
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: calico-monitor
+  namespace: monitoring
+  labels:
+    app: calico
+spec:
+  selector:
+    matchLabels:
+      app: calico-node
+  endpoints:
+  - port: metrics
+    interval: 30s
+    path: /metrics

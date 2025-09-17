@@ -1,8 +1,6 @@
-# 🚀 Hello World!!! 
+# 🚀 Hello from Minio-Operator-Sidecar!!! 
 
-A simple **HELLO WORLD** program to run on CleanStart - MinIO Operator Sidecar container. 
-
-## To run the Hello World without Dockerfile to avoid making simple things complex
+A simple program to run on CleanStart - MinIO Operator Sidecar container. 
 
 ### Pull CleanStart MinIO Operator Sidecar image from [Docker Hub - CleanStart](https://hub.docker.com/u/cleanstart) 
 ```bash
@@ -12,32 +10,54 @@ docker pull cleanstart/minio-operator-sidecar:latest
 docker pull cleanstart/minio-operator-sidecar:latest-dev
 ```
 
-## If you have the MinIO Operator Sidecar image pulled, you can also run your program directly:
-```bash
-docker run --rm -v $(pwd):/app -w /app cleanstart/minio-operator-sidecar:latest python hello_world.py
-```
+##Build with Dockerfile and run basic verification of Minio Operator sidecar
 ## Output 
 ```bash
-============================================================
-🏢 MinIO Operator Sidecar - Hello World
-============================================================
-Timestamp: 2024-01-15 10:30:45
-Python Version: 3.11.0 (main, Oct 24 2023, 00:00:00) [GCC 11.2.0]
-Working Directory: /app
-============================================================
+FROM cleanstart/minio-operator-sidecar:latest-dev
 
-🔍 Checking Environment...
-✅ Running in Docker container
-✅ kubectl is available
-✅ Kubernetes cluster is accessible
-✅ MinIO operator pod found
-✅ Found MinIO tenants
-✅ MinIO API is accessible at http://localhost:9000
-✅ MinIO Console is accessible at http://localhost:9001
+# Switch to root temporarily
+USER root
 
-============================================================
-🎉 MinIO Operator Sidecar Hello World completed!
-============================================================
+# Update and install only lightweight tools available in custom repo
+RUN apk update && apk add --no-cache bash curl
+
+
+# Switch back to the non-root user already defined in base
+USER clnstrt
+
+# Default to bash shell for debugging
+ENTRYPOINT ["/minio-operator-sidecar"]
+```
+## Docker build command 
+```bash
+docker build --no-cache -t my-minio-sidecar-debug .
+```
+## Docker run command
+```bash
+docker run -it --rm my-minio-sidecar-debug
+```
+
+## Output
+```bash
+NAME:
+ minio-operator-sidecar - MinIO Operator Sidecar
+
+DESCRIPTION:
+ MinIO Operator automates the orchestration of MinIO Tenants on Kubernetes.
+
+USAGE:
+ minio-operator-sidecar [FLAGS] COMMAND [ARGS...]
+
+COMMANDS:
+ sidecar, s   Start MinIO Operator Sidecar
+ validate, v  Start MinIO Operator Config Validator
+ 
+FLAGS:
+ --help, -h     show help
+ --version, -v  print the version
+ 
+VERSION:
+ (dev) - (dev)
 ```
 
 ## 📚 Resources

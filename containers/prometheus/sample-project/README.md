@@ -46,6 +46,7 @@ docker run --rm -p 9090:9090  prometheus-app
 ```
 ## Access the application
 http://localhost:9090/
+You should see the Prometheus web interface where you can query metrics and explore the monitoring system.
 
 ## Output 
 ```bash
@@ -66,10 +67,7 @@ time=2025-09-16T11:50:25.036Z level=INFO source=head.go:825 msg="WAL segment loa
 time=2025-09-16T11:50:25.036Z level=INFO source=head.go:862 msg="WAL replay completed" component=tsdb checkpoint_replay_duration=61.591µs wal_replay_duration=1.721596ms 
 ```
 
-## Access the Prometheus UI
-Open your browser and go to: **http://localhost:9090**
 
-You should see the Prometheus web interface where you can query metrics and explore the monitoring system.
 
 ## 📚 Resources
 
@@ -89,25 +87,3 @@ Feel free to contribute to this project by:
 This project is open source and available under the [MIT License](LICENSE).
 
 
-
-## Access the Prometheus UI
-Open your browser and go to: **http://localhost:9090**
-
-You should see the Prometheus web interface where you can query metrics and explore the monitoring system.
-
-## 📚 Resources
-
-- [Verified Docker Image Publisher - CleanStart](https://cleanstart.com/)
-- [Prometheus Official Documentation](https://prometheus.io/docs/)
-- [Prometheus Configuration Guide](https://prometheus.io/docs/prometheus/latest/configuration/configuration/)
-
-## 🤝 Contributing
-
-Feel free to contribute to this project by:
-- Reporting bugs
-- Suggesting new features
-- Submitting pull requests
-- Improving documentation
-
-## 📄 License
-This project is open source and available under the [MIT License](LICENSE).

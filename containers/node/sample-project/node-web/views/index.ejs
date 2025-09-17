@@ -1,0 +1,28 @@
+<%- include('layout', { title: 'Node.js Web App - Home', body: `
+    <h1>🚀 Welcome to Node.js Web App</h1>
+    
+    <p>This is a simple Node.js web application built with Express and EJS templates.</p>
+    
+    <a href="/add-user" class="btn">Add New User</a>
+    <a href="/api/users" class="btn">View API</a>
+    
+    <h2>👥 Users</h2>
+    <ul class="user-list">
+        <% users.forEach(user => { %>
+            <li class="user-item">
+                <strong><%= user.name %></strong><br>
+                <small><%= user.email %></small>
+            </li>
+        <% }); %>
+    </ul>
+    
+    <h2>🔗 API Endpoints</h2>
+    <ul>
+        <li><code>GET /</code> - Home page</li>
+        <li><code>GET /add-user</code> - Add user form</li>
+        <li><code>POST /add-user</code> - Create user</li>
+        <li><code>GET /api/users</code> - Get all users (JSON)</li>
+        <li><code>POST /api/users</code> - Create user (JSON)</li>
+        <li><code>GET /health</code> - Health check</li>
+    </ul>
+` }) %>

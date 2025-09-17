@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Java Database Web Application</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        .btn-primary {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            border: none;
+            border-radius: 25px;
+        }
+        .btn-danger {
+            border-radius: 20px;
+        }
+        .table {
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .alert {
+            border-radius: 10px;
+            border: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <div class="card">
+                    <div class="card-header bg-primary text-white text-center py-4">
+                        <h1 class="mb-0">
+                            <i class="fas fa-database me-2"></i>
+                            Java Database Web Application
+                        </h1>
+                        <p class="mb-0 mt-2">SQLite Database Management with Spring Boot</p>
+                    </div>
+                    <div class="card-body p-4">
+                        <!-- Flash Messages -->
+                        <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+                            <i class="fas fa-check-circle me-2"></i>
+                            <span th:text="${success}"></span>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                        <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <i class="fas fa-exclamation-circle me-2"></i>
+                            <span th:text="${error}"></span>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <a href="/add" class="btn btn-primary btn-lg">
+                                    <i class="fas fa-plus me-2"></i>Add New User
+                                </a>
+                            </div>
+                            <div class="col-md-6 text-end">
+                                <form th:action="@{/reset}" method="post" style="display: inline;">
+                                    <button type="submit" class="btn btn-warning btn-lg" 
+                                            onclick="return confirm('Are you sure you want to reset the database?')">
+                                        <i class="fas fa-redo me-2"></i>Reset Database
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+
+                        <!-- Users Table -->
+                        <div class="table-responsive">
+                            <table class="table table-striped table-hover">
+                                <thead class="table-dark">
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Name</th>
+                                        <th>Email</th>
+                                        <th>Created At</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="user : ${users}">
+                                        <td th:text="${user.id}"></td>
+                                        <td th:text="${user.name}"></td>
+                                        <td th:text="${user.email}"></td>
+                                        <td th:text="${user.createdAt}"></td>
+                                        <td>
+                                            <form th:action="@{/delete/{id}(id=${user.id})}" method="post" style="display: inline;">
+                                                <button type="submit" class="btn btn-danger btn-sm" 
+                                                        onclick="return confirm('Are you sure you want to delete this user?')">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                    <tr th:if="${#lists.isEmpty(users)}">
+                                        <td colspan="5" class="text-center text-muted py-4">
+                                            <i class="fas fa-inbox fa-2x mb-3"></i>
+                                            <br>No users found. Add some users to get started!
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- API Testing Section -->
+                        <div class="mt-5">
+                            <h3 class="text-center mb-4">
+                                <i class="fas fa-code me-2"></i>API Testing
+                            </h3>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <button class="btn btn-outline-primary w-100 mb-2" onclick="testGetUsers()">
+                                        <i class="fas fa-list me-2"></i>GET /api/users
+                                    </button>
+                                </div>
+                                <div class="col-md-4">
+                                    <button class="btn btn-outline-success w-100 mb-2" onclick="testAddUser()">
+                                        <i class="fas fa-plus me-2"></i>POST /api/users
+                                    </button>
+                                </div>
+                                <div class="col-md-4">
+                                    <button class="btn btn-outline-danger w-100 mb-2" onclick="testDeleteUser()">
+                                        <i class="fas fa-trash me-2"></i>DELETE /api/users/1
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="mt-3">
+                                <textarea id="apiResult" class="form-control" rows="5" placeholder="API responses will appear here..." readonly></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function testGetUsers() {
+            fetch('/api/users')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('apiResult').value = JSON.stringify(data, null, 2);
+                })
+                .catch(error => {
+                    document.getElementById('apiResult').value = 'Error: ' + error.message;
+                });
+        }
+
+        function testAddUser() {
+            const userData = {
+                name: 'Test User ' + Date.now(),
+                email: 'test' + Date.now() + '@example.com'
+            };
+
+            fetch('/api/users', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(userData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('apiResult').value = JSON.stringify(data, null, 2);
+                if (data.success) {
+                    setTimeout(() => location.reload(), 1000);
+                }
+            })
+            .catch(error => {
+                document.getElementById('apiResult').value = 'Error: ' + error.message;
+            });
+        }
+
+        function testDeleteUser() {
+            fetch('/api/users/1', {
+                method: 'DELETE'
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('apiResult').value = JSON.stringify(data, null, 2);
+                if (data.success) {
+                    setTimeout(() => location.reload(), 1000);
+                }
+            })
+            .catch(error => {
+                document.getElementById('apiResult').value = 'Error: ' + error.message;
+            });
+        }
+    </script>
+</body>
+</html>

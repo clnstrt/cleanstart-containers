@@ -1,0 +1,6 @@
+https://httpbin.org/get
+https://httpbin.org/json
+https://httpbin.org/xml
+https://httpbin.org/robots.txt
+https://httpbin.org/user-agent
+https://httpbin.org/headers
