@@ -1,8 +1,6 @@
-# 🚀 Hello World!!! 
+# 🚀 Hello from Busybox!!! 
 
-A simple **HELLO WORLD** program to run on CleanStart - BusyBox container. 
-
-## To run the Hello World without Dockerfile to avoid making simple things complex
+A simple  program to run on CleanStart - BusyBox container. 
 
 ### Pull CleanStart BusyBox image from [Docker Hub - CleanStart](https://hub.docker.com/u/cleanstart) 
 ```bash
@@ -12,24 +10,55 @@ docker pull cleanstart/busybox:latest
 docker pull cleanstart/busybox:latest-dev
 ```
 
-## If you have the BusyBox image pulled, you can also run your program directly:
+## Have sh script 
 ```bash
-docker run --rm -v $(pwd):/app -w /app cleanstart/busybox:latest sh basic-examples/filesystem.sh
+#!/bin/sh
+echo "🚀 Cleanstart BusyBox started as user: $(whoami)"
+echo "📦 BusyBox version: $(busybox | head -n 1)"
+
+# heartbeat logs every 5 sec
+while true; do
+  echo "⏳ Busybox is a combination of UNIX utilities and is a single binary! $(date)"
+  sleep 5
+done
 ```
+
+### Build with Dockerfile
+```bash
+FROM cleanstart/busybox:latest-dev
+
+# Switch to root to copy and chmod
+USER root
+
+# Copy the script
+COPY start.sh /usr/local/bin/busybox.sh
+
+# Give execution permission
+RUN chmod +x /usr/local/bin/busybox.sh
+
+# Switch back to the original user
+USER clnstrt
+
+# Run the script by default
+ENTRYPOINT ["/usr/local/bin/busybox.sh"]
+```
+
+## Build with dockerfile
+```bash
+docker build --no-cache -t my-cleanstart-busybox .
+```
+
+## Run with dockerfile
+```bash
+ docker run --rm my-cleanstart-busybox
+ ```
+
 ## Output 
 ```bash
-=== BusyBox Filesystem Demo ===
-Creating sample files...
-Sample files created successfully!
-Listing files in /tmp/busybox-sample:
--rw-r--r--    1 1001     1001           12 Jan 15 10:30:45 2024 file1.txt
--rw-r--r--    1 1001     1001           12 Jan 15 10:30:45 2024 file2.txt
--rw-r--r--    1 1001     1001           12 Jan 15 10:30:45 2024 file3.txt
-Searching for files containing 'sample':
-/tmp/busybox-sample/file1.txt:This is sample file 1
-/tmp/busybox-sample/file2.txt:This is sample file 2
-/tmp/busybox-sample/file3.txt:This is sample file 3
-Filesystem demo completed!
+🚀 Cleanstart BusyBox started as user: clnstrt
+📦 BusyBox version: BusyBox v1.37.0 (2025-07-11 07:44:34 UTC) multi-call binary.
+⏳ Busybox is a combination of UNIX utilities and is a single binary! Wed Sep 17 05:25:52 UTC 2025
+⏳ Busybox is a combination of UNIX utilities and is a single binary! Wed Sep 17 05:25:57 UTC 2025
 ```
 
 ## 📚 Resources
