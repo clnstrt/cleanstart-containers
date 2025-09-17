@@ -50,6 +50,8 @@ docker run --rm -it --name argo-workflow-dev cleanstart/argo-workflow-exec:lates
 
 ```bash
 docker pull --platform linux/amd64 cleanstart/argo-workflow-exec:latest
+```
+```bash
 docker pull --platform linux/arm64 cleanstart/argo-workflow-exec:latest
 ```
 
@@ -61,3 +63,4 @@ docker pull --platform linux/arm64 cleanstart/argo-workflow-exec:latest
 
 
 ---
+
