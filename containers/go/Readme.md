@@ -22,6 +22,8 @@ Download the runtime container images
 
 ```bash
 docker pull cleanstart/go:latest
+```
+```bash
 docker pull cleanstart/go:latest-dev
 ```
 
@@ -30,6 +32,19 @@ Start interactive session for development
 
 ```bash
 docker run --rm -it --entrypoint /bin/sh cleanstart/go:latest-dev
+```
+You shoudl be inside container shell, execute commands like 
+```bash
+whoami
+```
+```bash
+pwd
+```
+```bash
+ls
+```
+```bash
+exit
 ```
 
 **Container Start**
@@ -49,6 +64,8 @@ docker run --rm -it --name go-web-dev cleanstart/go:latest
 
 ```bash
 docker pull --platform linux/amd64 cleanstart/go:latest
+```
+```bash
 docker pull --platform linux/arm64 cleanstart/go:latest
 ```
 
@@ -57,5 +74,6 @@ docker pull --platform linux/arm64 cleanstart/go:latest
 **Essential Links**
 * **CleanStart Website**: https://www.cleanstart.com
 * **Go Official**: https://go.dev/
+
 
 ---
