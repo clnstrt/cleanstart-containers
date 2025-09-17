@@ -30,13 +30,13 @@ docker pull cleanstart/jdk:latest-dev
 Start interactive session for development
 
 ```bash
-docker run --rm -it --entrypoint /bin/sh cleanstart/java:latest-dev
+docker run --rm -it --entrypoint /bin/sh cleanstart/jdk:latest-dev
 ```
 
 **Container Start**
 Start the container
 ```bash
-docker run --rm -it --name java-dev cleanstart/java:latest
+docker run --rm -it --name java-dev cleanstart/jdk:latest
 ```
 
 **Best Practices**
@@ -49,10 +49,10 @@ docker run --rm -it --name java-dev cleanstart/java:latest
 **Multi-Platform Images**
 
 ```bash
-docker pull --platform linux/amd64 cleanstart/java:latest
+docker pull --platform linux/amd64 cleanstart/jdk:latest
 ```
 ```bash
-docker pull --platform linux/arm64 cleanstart/java:latest
+docker pull --platform linux/arm64 cleanstart/jdk:latest
 ```
 
 **Resources & Documentation**
@@ -63,3 +63,4 @@ docker pull --platform linux/arm64 cleanstart/java:latest
 
 
 ---
+
