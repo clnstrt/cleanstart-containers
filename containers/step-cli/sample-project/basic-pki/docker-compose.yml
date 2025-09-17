@@ -1,5 +1,3 @@
-version: '3.8'
-
 networks:
   pki:
     driver: bridge
@@ -28,9 +26,10 @@ services:
       - pki
     depends_on:
       - step-ca
-    command: ["tail", "-f", "/dev/null"]  # Keep container running
+    entrypoint: ["/bin/busybox", "sh", "-c"]
+    command: ["while true; do sleep 30; done"]  # Keep container running
     healthcheck:
-      test: ["CMD", "step", "version"]
+      test: ["CMD", "/step", "version"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -49,9 +48,10 @@ services:
       - STEPPATH=/app/secrets
     networks:
       - pki
-    command: ["sleep", "infinity"]  # Keep container running
+    entrypoint: ["/bin/busybox", "sh", "-c"]
+    command: ["while true; do sleep 30; done"]  # Keep container running
     healthcheck:
-      test: ["CMD", "step", "version"]
+      test: ["CMD", "/step", "version"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -70,9 +70,8 @@ services:
       - pki
     depends_on:
       - step-ca
-    command: >
-      sh -c "pip install flask requests &&
-             python3 /app/cert_generator.py"
+    entrypoint: ["/bin/busybox", "sh", "-c"]
+    command: ["pip install flask requests && python3 /app/cert_generator.py"]
     healthcheck:
       test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8080/health"]
       interval: 30s
