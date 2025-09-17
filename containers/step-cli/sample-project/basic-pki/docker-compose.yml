@@ -1,13 +1,13 @@
 networks:
   pki:
     driver: bridge
-
+ 
 volumes:
   step_secrets:
     driver: local
   step_certs:
     driver: local
-
+ 
 services:
   # Step CLI for certificate operations
   step-cli:
@@ -33,7 +33,7 @@ services:
       interval: 30s
       timeout: 10s
       retries: 3
-
+ 
   # Step CA server
   step-ca:
     image: cleanstart/step-cli:latest
@@ -55,7 +55,7 @@ services:
       interval: 30s
       timeout: 10s
       retries: 3
-
+ 
   # Certificate generator service
   cert-generator:
     image: cleanstart/python:latest
@@ -77,7 +77,7 @@ services:
       interval: 30s
       timeout: 10s
       retries: 3
-
+ 
   # Certificate inspector service
   cert-inspector:
     image: cleanstart/nginx:latest

@@ -129,9 +129,10 @@ echo "Intermediate CA Fingerprint:"
 
 ```bash
 # Generate a self-signed certificate
+
 docker run --rm --entrypoint="" cleanstart/step-cli:latest /bin/busybox sh -c '
 echo "📜 Generating Self-Signed Certificate..."
-/step certificate create --self-signed --no-password --insecure "My Test Certificate" /tmp/test.crt /tmp/test.key
+/step certificate create "test.local" /tmp/test.crt /tmp/test.key --profile self-signed --subtle --no-password --insecure
 echo "✅ Self-signed certificate generated!"
 echo "Certificate details:"
 /step certificate inspect /tmp/test.crt
@@ -144,9 +145,12 @@ echo "Certificate details:"
 
 ```bash
 # Generate a certificate with multiple SANs
+
 docker run --rm --entrypoint="" cleanstart/step-cli:latest /bin/busybox sh -c '
 echo "🌐 Generating Certificate with SANs..."
-/step certificate create --san example.com --san www.example.com --san api.example.com "example.com" /tmp/example.crt /tmp/example.key
+/step certificate create "example.com" /tmp/example.crt /tmp/example.key \
+  --san example.com --san www.example.com --san api.example.com \
+  --profile self-signed --subtle --no-password --insecure
 echo "✅ Certificate with SANs generated!"
 echo "Certificate details:"
 /step certificate inspect /tmp/example.crt
