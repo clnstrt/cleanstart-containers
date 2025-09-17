@@ -20,8 +20,10 @@ https://hub.docker.com/r/cleanstart/java
 Download the runtime container images
 
 ```bash
-docker pull cleanstart/java:latest
-docker pull cleanstart/java:latest-dev
+docker pull cleanstart/jdk:latest
+```
+```bash
+docker pull cleanstart/jdk:latest-dev
 ```
 
 **Interactive Development**
@@ -48,6 +50,8 @@ docker run --rm -it --name java-dev cleanstart/java:latest
 
 ```bash
 docker pull --platform linux/amd64 cleanstart/java:latest
+```
+```bash
 docker pull --platform linux/arm64 cleanstart/java:latest
 ```
 
@@ -56,5 +60,6 @@ docker pull --platform linux/arm64 cleanstart/java:latest
 **Essential Links**
 * **CleanStart Website**: https://www.cleanstart.com
 * **Java Official**: https://www.oracle.com/java/
+
 
 ---
