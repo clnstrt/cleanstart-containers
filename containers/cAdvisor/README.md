@@ -23,6 +23,8 @@ Download the container image from the registry
 
 ```bash
 docker pull cleanstart/cadvisor:latest
+```
+```bash
 docker pull cleanstart/cadvisor:latest-dev
 ```
 
@@ -64,47 +66,14 @@ Run with metrics endpoint exposed
 docker run -d -p 8080:8080 cleanstart/cadvisor:latest
 ```
 
-**Configuration**
-
-**Environment Variables**
-
-| Variable | Default | Description |
-|----------|---------|-------------|
-| PATH | /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin | System PATH configuration |
-| CADVISOR_PORT | 8080 | Port for the cAdvisor metrics endpoint |
-| CADVISOR_STORAGE_DURATION | 2m0s | How long to keep data in memory |
-
-**Security & Best Practices**
-
-**Recommended Security Context**
-
-```yaml
-securityContext:
-  runAsNonRoot: true
-  runAsUser: 1000
-  runAsGroup: 1000
-  readOnlyRootFilesystem: true
-  allowPrivilegeEscalation: false
-  capabilities:
-    drop: ['ALL']
-```
-
-**Best Practices**
-* Use specific image tags for production (avoid latest)
-* Configure resource limits: memory and CPU constraints
-* Enable read-only root filesystem when possible
-* Run containers with non-root user (--user 1000:1000)
-* Use --security-opt=no-new-privileges flag
-* Regularly update container images for security patches
-* Implement proper network segmentation
-* Monitor container metrics for anomalies
-
 **Architecture Support**
 
 **Multi-Platform Images**
 
 ```bash
 docker pull --platform linux/amd64 cleanstart/cadvisor:latest
+```
+```bash
 docker pull --platform linux/arm64 cleanstart/cadvisor:latest
 ```
 
