@@ -1,3 +1,5 @@
+## Directory Structure of JDK Sample projects
+```bash
 cleanstart-containers/
 └── jdk/
     └── sample-project/
@@ -10,5 +12,5 @@ cleanstart-containers/
         |       └── README.md
         │   └── README.md
         │---README.md
-        │         
-        │       
+```  
+
