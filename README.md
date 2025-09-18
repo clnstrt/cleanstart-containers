@@ -1,6 +1,17 @@
-# CleanStart Containers
+# CleanStart
+CleanStart is dedicated to reshaping the landscape of software supply chain security. With seamless integration, combined with continuous monitoring and vulnerability intelligence, CleanStart provides a platform that secures every step from development to delivery.
 
-A comprehensive collection of Docker container images and sample projects for learning containerization, web development, and DevOps practices. Each container includes practical examples, setup scripts, and detailed documentation to help you learn and implement containerized solutions.
+Our main goal is to make security easy for users while taking on the hard work of finding and fixing security issues. Here's how we do it:
+
+Developer Harmony: We try to make security fit seamlessly into developers' work so they can keep moving fast without sacrificing safety.
+
+Security Empowerment: With our tools, security teams can set up strong security rules and make sure they're followed, keeping the whole supply chain safe.
+
+We are committed to enabling faster detection and response to threats, increasing trust, and empowering organizations to develop software with confidence by minimizing developer disruption and empowering security teams.
+
+## CleanStart Container Images
+CleanStart have built community edition of Docker container images available at [Docker Hub](https://hub.docker.com/u/cleanstart). CleanStart Community team is continuously building sample applications, how-to guides for running CleanStart images and making them available on [GitHub Repo](https://github.com/clnstrt/cleanstart-containers). The aim of such sample projects is learning containerization, web development, and DevOps practices. Each container includes practical examples, setup scripts, and detailed documentation to help you learn and implement containerized solutions.
+
 
 ## 🚀 Quick Start
 
@@ -8,28 +19,13 @@ A comprehensive collection of Docker container images and sample projects for le
 - Docker installed and running
 - Basic command line knowledge
 
-### Available Containers
-
-| Container | Description | Port | Sample Project |
-|-----------|-------------|------|----------------|
-| **Go** | Modern programming language | 8080 | Web application with database |
-| **Node.js** | JavaScript runtime | 3000 | Express.js web app |
-| **Python** | High-level programming language | 5000 | Flask web application |
-| **Nginx** | Web server and reverse proxy | 80/8080 | Static site, reverse proxy, load balancer |
-| **PostgreSQL** | Relational database | 5432 | Database web application |
-| **Prometheus** | Monitoring and alerting | 9090 | Metrics collection and visualization |
-| **MinIO Operator** | Object storage operator | - | Kubernetes operator examples |
-| **Step CLI** | PKI and certificate management | - | Certificate authority examples |
-
-## 🎯 Getting Started
-
-### 1. Clone the Repository
+### 1. Clone the GitHub Repository 
 ```bash
 git clone https://github.com/your-username/cleanstart-containers.git
 cd cleanstart-containers
 ```
 
-### 2. Pull a Container Image
+### 2. Pull a CleanStart Container Image
 ```bash
 # Example: Pull the Go container
 docker pull cleanstart/go:latest
@@ -52,24 +48,26 @@ docker build -t go-hello-world .
 docker run --rm go-hello-world
 ```
 
-## 📁 Project Structure
-
+## 📁 Project Structure for the cleanstart-containers repo
 ```
 cleanstart-containers/
-├── LICENSE                           # MIT License
-├── README.md                         # This file
+├── LICENSE                          
+├── README.md                        # This file
 └── containers/                      # All container sample projects
-    ├── step-cli/                    # 🔐 PKI & Certificate Management
-    │   ├── Dockerfile
+    ├── go/
     │   ├── README.md
     │   └── sample-project/
-    ├── nginx/                       # 🌐 Web Server & Load Balancing
-    ├── python/                      # 🐍 Python Web Applications
-    ├── node/                        # 🟢 Node.js Applications
-    ├── go/                          # 🐹 Go Web Applications
-    ├── postgres/                    # 🗄️ PostgreSQL Database
-    ├── prometheus/                  # 📊 Monitoring and Alerting
-    ├── minio-operator-sidecar/      # 🗃️ Object Storage Operator
+    |   │   └── hell-world/
+    |   │   |    └── README.md
+    |   │   |    └── Dockerfile
+    |   │   |    └── project files
+    |   │   └── go-web/
+    |   │   |    └── README.md
+    |   │   |    └── Dockerfile
+    |   │   |    └── project files
+    ├── nginx/                      
+    ├── python/                     
+    ├── node/                       
     └── [more containers...]
 ```
 
@@ -131,55 +129,6 @@ docker-compose --version
 docker run --rm cleanstart/[container-name] --version
 ```
 
-## 🛠️ Troubleshooting
-
-### Common Issues:
-
-1. **Port Conflicts**
-   ```bash
-   # Check what's using a port
-   lsof -i :8080  # macOS/Linux
-   netstat -ano | findstr :8080  # Windows
-   
-   # Kill the process
-   kill -9 <PID>  # macOS/Linux
-   taskkill /PID <PID> /F  # Windows
-   ```
-
-2. **Permission Issues**
-   ```bash
-   # Make scripts executable
-   chmod +x setup.sh
-   chmod +x test-setup.sh
-   ```
-
-3. **Docker Issues**
-   ```bash
-   # Restart Docker
-   sudo systemctl restart docker  # Linux
-   # Or restart Docker Desktop on macOS/Windows
-   
-   # Clean up containers
-   docker-compose down
-   docker system prune -f
-   ```
-
-## 📚 Learning Path
-
-### Beginner
-1. Start with hello-world examples
-2. Learn basic Docker commands
-3. Understand container concepts
-
-### Intermediate
-1. Explore sample projects
-2. Learn about Docker Compose
-3. Understand networking and volumes
-
-### Advanced
-1. Kubernetes deployments
-2. Production configurations
-3. Monitoring and logging
 
 ## 📚 Documentation
 
@@ -192,24 +141,7 @@ Each sample project includes:
 
 ## 🤝 Contributing
 
-We welcome contributions to improve these sample projects:
-
-1. **Add new sample projects** - Create new container examples
-2. **Improve existing projects** - Enhance documentation and examples
-3. **Fix bugs and issues** - Report and fix problems
-4. **Add new features** - Extend functionality
-5. **Improve documentation** - Better explanations and guides
-
-### How to Contribute:
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Test thoroughly
-5. Submit a pull request
-
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+We welcome contributions to improve these sample projects. Please fork the repository, make your sample projects, or changes. Commit, push and send PR request. CleanStart community team will review the your changes and once approved, your changes will be merged. 
 
 ## 🆘 Support
 

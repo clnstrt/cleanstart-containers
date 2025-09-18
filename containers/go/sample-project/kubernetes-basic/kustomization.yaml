@@ -1,0 +1,65 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+# Namespace for all resources
+namespace: go-sample
+
+# Resources to include
+# Note: deployment.yaml can be deployed standalone but requires namespace and configmap first
+resources:
+- namespace.yaml
+- configmap.yaml
+- deployment.yaml
+- service.yaml
+- hpa.yaml
+# - ingress.yaml  # Uncomment if you have an ingress controller
+
+# Common labels applied to all resources
+commonLabels:
+  app: cleanstart-go-sample
+  managed-by: kustomize
+  version: v1.0.0
+
+# Image configuration
+images:
+- name: cleanstart/go
+  newTag: latest
+
+# ConfigMap generator (alternative to static configmap)
+# configMapGenerator:
+# - name: go-sample-config
+#   literals:
+#   - APP_VERSION=1.0.0
+#   - PORT=8080
+#   - ENVIRONMENT=production
+
+# Secret generator (if needed for sensitive data)
+# secretGenerator:
+# - name: go-sample-secrets
+#   literals:
+#   - DATABASE_PASSWORD=secret123
+
+# Replica configuration
+replicas:
+- name: go-sample-deployment
+  count: 3
+
+# Resource patches (commented out since resources are already defined in deployment.yaml)
+# patchesStrategicMerge:
+# - |-
+#   apiVersion: apps/v1
+#   kind: Deployment
+#   metadata:
+#     name: go-sample-deployment
+#   spec:
+#     template:
+#       spec:
+#         containers:
+#         - name: go-sample
+#           resources:
+#             requests:
+#               memory: "64Mi"
+#               cpu: "100m"
+#             limits:
+#               memory: "128Mi"
+#               cpu: "200m"

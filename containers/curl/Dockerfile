@@ -1,12 +1,12 @@
-# Use Alpine Linux as base image for Curl Docker Image
-FROM alpine:3.18
+# Use CleanStart base image for Curl Docker Image
+FROM cleanstart/glibc:latest
 
 # Set environment variables
 ENV CURL_VERSION=8.4.0
 ENV JQ_VERSION=1.7.1
 
 # Install essential packages
-RUN apk add --no-cache \
+RUN apt-get update && apt-get install -y \
     curl \
     wget \
     jq \
@@ -14,14 +14,14 @@ RUN apk add --no-cache \
     git \
     ca-certificates \
     openssl \
-    && rm -rf /var/cache/apk/*
+    && rm -rf /var/lib/apt/lists/*
 
 # Create working directory
 WORKDIR /workspace
 
 # Create a non-root user
-RUN addgroup -g 1001 -S curluser && \
-    adduser -u 1001 -S curluser -G curluser
+RUN groupadd -g 1001 curluser && \
+    useradd -u 1001 -g curluser -s /bin/bash curluser
 
 # Change ownership of workspace
 RUN chown -R curluser:curluser /workspace

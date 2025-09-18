@@ -14,7 +14,7 @@ docker pull cleanstart/go:latest-dev
 
 ## If you  have the Go image pulled, you can also run your program directly:
 ```bash
-docker run --rm -v $(pwd):/app -w /app cleanstart/go:latest go run hello_world.go
+docker run --rm -v $(pwd):/app -w /app cleanstart/go:latest  run hello_world.go
 ```
 ## Output 
 ```bash
@@ -38,3 +38,4 @@ Feel free to contribute to this project by:
 
 ## 📄 License
 This project is open source and available under the [MIT License](LICENSE).
+

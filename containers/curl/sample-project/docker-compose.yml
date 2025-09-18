@@ -19,4 +19,3 @@ services:
     image: cleanstart/curl:latest
     container_name: curl-monitor
     command: ["--retry", "999999", "--retry-delay", "10", "-s", "-o", "/dev/null", "-w", "HTTP %{http_code}\n", "https://httpbin.org/status/200"]
-

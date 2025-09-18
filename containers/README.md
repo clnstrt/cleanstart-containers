@@ -1,110 +1,50 @@
-# CleanStart Containers
+### Container Management
+This section covers common container images and best practices for managing them.
 
-This directory contains Docker container images and their sample projects. Each container includes practical examples, setup scripts, and detailed documentation to help you learn and implement containerized solutions.
-
-## Available Containers
-
-| Container | Description | Sample Projects |
-|-----------|-------------|-----------------|
-| **Go** | Modern programming language | Web applications, microservices |
-| **Node.js** | JavaScript runtime | Express.js web apps, APIs |
-| **Python** | High-level programming language | Flask/Django web applications |
-| **Nginx** | Web server and reverse proxy | Static sites, load balancing |
-| **PostgreSQL** | Relational database | Database applications |
-| **Prometheus** | Monitoring and alerting | Metrics collection |
-| **MinIO Operator** | Object storage operator | Kubernetes operators |
-| **Step CLI** | PKI and certificate management | Certificate authorities |
-
-## Hello World Programs
-
-Each container includes simple "Hello World" programs to get you started quickly.
-
-### Available Languages
-
-- **Python**: `hello_world.py`
-- **Go**: `hello_world.go`
-- **Node.js**: `hello_world.js`
-
-## How to Run Sample Projects
-
-### Using Docker (Recommended)
+Container Images Index
 ```bash
-# Navigate to any container directory
-cd containers/go/sample-project
+Container Image	Use Case
+Argocd-installion-extension | Continuous Deployment (CD)
+argo-workflow	| Workflow Automation
+busyboxcLightweight Utility
+curl	| Data Transfer
+jre	| Java Runtime
+jdk	| Java Development Kit
+go |	Web Applications & Microservices
+python	| Data Science & Web Apps
+nginx	|  Web Server & Reverse Proxy
+node |	JavaScript Runtime
+postgres	| Relational Database
+prometheus	| Monitoring & Alerting
+step-cli	| PKI & Certificates
+```
+### Best Practices
+Resolving Port Conflicts
+Bash
 
-# Build and run the sample project
-docker build -t go-sample .
-docker run --rm go-sample
+Find the Process ID (PID) using a specific port (e.g., 8080)
+For Linux/macOS:
+```bash
+lsof -i :8080
 ```
 
-### Using Docker Compose
+For Windows (PowerShell):
+#Get-Process -Id (Get-NetTCPConnection -LocalPort 8080).OwningProcess
+
+Kill the process using its PID
+For Linux/macOS:
 ```bash
-# Navigate to any sample project
-cd containers/go/sample-project
-
-# Start all services
-docker-compose up -d
-
-# View logs
-docker-compose logs -f
-
-# Stop services
-docker-compose down
+kill -9 <PID>
 ```
 
-### Direct Execution (if language is installed)
+ For Windows:
+Stop-Process -Id <PID>
+Clear Docker Build Cache
+Bash
+
+Build a new image, ignoring the local cache
 ```bash
-# Python
-cd containers/python/sample-project
-python3 hello_world.py
-
-# Go
-cd containers/go/sample-project
-go run hello_world.go
-
-# Node.js
-cd containers/node/sample-project
-node hello_world.js
+docker build --no-cache -t my-image .
 ```
 
-## Features
 
-Each sample project includes:
-- **Hello World programs** - Simple examples to get started
-- **Web applications** - Full-featured applications
-- **Database integration** - Examples with PostgreSQL
-- **Docker configurations** - Ready-to-use Dockerfiles
-- **Kubernetes manifests** - Production deployment examples
-
-## Prerequisites
-
-- **Docker**: Docker installed and running
-- **Docker Compose**: For multi-container applications
-- **Basic command line knowledge**
-
-## Quick Test with Docker
-
-You can test all programs using Docker:
-
-```bash
-# Python
-docker run --rm -v $(pwd)/containers/python/sample-project:/app -w /app python:3.9 python3 hello_world.py
-
-# Go
-docker run --rm -v $(pwd)/containers/go/sample-project:/app -w /app golang:1.19 go run hello_world.go
-
-# Node.js
-docker run --rm -v $(pwd)/containers/node/sample-project:/app -w /app node:16 node hello_world.js
-```
-
-## Getting Started
-
-1. **Choose a container** that interests you
-2. **Navigate to its directory** (`cd containers/[container-name]`)
-3. **Read the README** for specific instructions
-4. **Try the sample projects** to learn by doing
-5. **Build your own applications** using the examples as templates
-
----
-
-**Happy Containerizing! 🐳**

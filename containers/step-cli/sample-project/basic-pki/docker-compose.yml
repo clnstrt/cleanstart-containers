@@ -1,15 +1,13 @@
-version: '3.8'
-
 networks:
   pki:
     driver: bridge
-
+ 
 volumes:
   step_secrets:
     driver: local
   step_certs:
     driver: local
-
+ 
 services:
   # Step CLI for certificate operations
   step-cli:
@@ -28,39 +26,36 @@ services:
       - pki
     depends_on:
       - step-ca
-    command: ["tail", "-f", "/dev/null"]  # Keep container running
+    entrypoint: ["/bin/busybox", "sh", "-c"]
+    command: ["while true; do sleep 30; done"]  # Keep container running
     healthcheck:
-      test: ["CMD", "step", "version"]
+      test: ["CMD", "/step", "version"]
       interval: 30s
       timeout: 10s
       retries: 3
-
+ 
   # Step CA server
   step-ca:
-    image: cleanstart/step-ca:latest
+    image: cleanstart/step-cli:latest
     container_name: step-ca-basic
     restart: unless-stopped
     ports:
       - "443:443"
     volumes:
-      - step_secrets:/home/step/ca
+      - step_secrets:/app/secrets
       - ./ca-config:/app/ca-config
     environment:
-      - STEPPATH=/home/step/ca
-      - DOCKER_STEPCA_INIT_NAME=Basic PKI CA
-      - DOCKER_STEPCA_INIT_DNS=step-ca
-      - DOCKER_STEPCA_INIT_ADDRESS=:443
-      - DOCKER_STEPCA_INIT_PROVISIONER=admin@example.com
-      - DOCKER_STEPCA_INIT_PASSWORD=admin123
+      - STEPPATH=/app/secrets
     networks:
       - pki
+    entrypoint: ["/bin/busybox", "sh", "-c"]
+    command: ["while true; do sleep 30; done"]  # Keep container running
     healthcheck:
-      test: ["CMD", "step", "ca", "health", "--ca-url", "https://localhost:443"]
+      test: ["CMD", "/step", "version"]
       interval: 30s
       timeout: 10s
       retries: 3
-      start_period: 60s
-
+ 
   # Certificate generator service
   cert-generator:
     image: cleanstart/python:latest
@@ -75,15 +70,14 @@ services:
       - pki
     depends_on:
       - step-ca
-    command: >
-      sh -c "pip install flask requests &&
-             python3 /app/cert_generator.py"
+    entrypoint: ["/bin/busybox", "sh", "-c"]
+    command: ["pip install flask requests && python3 /app/cert_generator.py"]
     healthcheck:
       test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8080/health"]
       interval: 30s
       timeout: 10s
       retries: 3
-
+ 
   # Certificate inspector service
   cert-inspector:
     image: cleanstart/nginx:latest
