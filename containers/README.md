@@ -13,3 +13,23 @@
 | 11    | postgres          | Relational Database             | Yes                       | No                        | no                 |
 | 12    | prometheus        | Monitoring & Alerting           | Yes                       | no                        | no                 |
 | 13    | step-cli          | PKI & Certificates              | Yes                       | no                        | no                 |
+
+ Find the Process ID (PID) using a specific port (e.g., 8080)
+ For Linux/macOS:
+ ```bash
+lsof -i :8080
+```
+
+# For Windows (PowerShell):
+Get-Process -Id (Get-NetTCPConnection -LocalPort 8080).OwningProcess
+
+ Kill the process using its PID
+ For Linux/macOS:
+ ```bash
+kill -9 <PID>
+```
+
+# For Windows:
+```bash
+Stop-Process -Id <PID>
+```
