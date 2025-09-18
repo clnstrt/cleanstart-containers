@@ -23,15 +23,19 @@ Resolving Port Conflicts
 Bash
 
  Find the Process ID (PID) using a specific port (e.g., 8080)
- For Linux/macOS:
+For Linux/macOS:
+```bash
 lsof -i :8080
+```
 
- For Windows (PowerShell):
-Get-Process -Id (Get-NetTCPConnection -LocalPort 8080).OwningProcess
+For Windows (PowerShell):
+#Get-Process -Id (Get-NetTCPConnection -LocalPort 8080).OwningProcess
 
 #Kill the process using its PID
 #For Linux/macOS:
+```bash
 kill -9 <PID>
+```
 
  For Windows:
 Stop-Process -Id <PID>
@@ -39,5 +43,7 @@ Clear Docker Build Cache
 Bash
 
 #Build a new image, ignoring the local cache
+```bash
 docker build --no-cache -t my-image .
+```
 
