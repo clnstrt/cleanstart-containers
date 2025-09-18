@@ -14,6 +14,9 @@
 | 12    | prometheus        | Monitoring & Alerting           | Yes                       | no                        | no                 |
 | 13    | step-cli          | PKI & Certificates              | Yes                       | no                        | no                 |
 
+
+## BEST PRACTICE BEFORE RUNNING ANY PROJECT
+
  Find the Process ID (PID) using a specific port (e.g., 8080)
  For Linux/macOS:
  ```bash
@@ -33,3 +36,4 @@ kill -9 <PID>
 ```bash
 Stop-Process -Id <PID>
 ```
+
