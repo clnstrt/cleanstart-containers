@@ -1,19 +1,28 @@
-# Memcached Demo Project (Standalone Docker)
+# Memcached Demo Project
 
-A comprehensive demonstration of Memcached caching patterns using Docker without Docker Compose.
-
-## Prerequisites
-
-- Docker installed
-- Python 3.7+ installed
-- pip (Python package manager)
+A comprehensive demonstration of Memcached caching patterns using Docker without Docker Compose
 
 ## Quick Start
 
 ### 1. Clone or create the project
 ```bash
-mkdir memcached-demo
-cd memcached-demo
+cd cleanstart-containers/containers/memcached/sample-project
+```
 
-# Create all the files from this project
-# Or download them from your repository
+# Execute the command
+```bash
+docker run -d --name memcached-demo -p 11211:11211 cleanstart/memcached:latest-dev memcached -m 128 -p 11211 -u memcache -l 0.0.0.0 -vv
+```
+
+# Execute the requirements.txt first 
+```bash
+pip install -r requirements.txt
+```
+# Execute the actual python script
+python3 app.py
+
+# Execute the another python script to check cache related logs!
+python3 test_memcached.py
+
+# Exit the script after the execution and close the localhost!
+
