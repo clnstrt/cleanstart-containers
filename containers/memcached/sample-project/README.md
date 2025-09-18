@@ -1,4 +1,4 @@
-# Memcached Demo Project (Standalone Docker)
+# Memcached Demo Project
 
 A comprehensive demonstration of Memcached caching patterns using Docker without Docker Compose
 
@@ -25,3 +25,4 @@ python3 app.py
 python3 test_memcached.py
 
 # Exit the script after the execution and close the localhost!
+
