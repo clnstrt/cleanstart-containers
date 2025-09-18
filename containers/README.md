@@ -4,19 +4,19 @@ This section covers common container images and best practices for managing them
 Container Images Index
 ```bash
 Container Image	Use Case
-Argocd	Continuous Deployment (CD)
-argo-workflow	Workflow Automation
-busybox	Lightweight Utility
-curl	Data Transfer
-jre	Java Runtime
-jdk	Java Development Kit
-go	Web Applications & Microservices
-python	Data Science & Web Apps
-nginx	Web Server & Reverse Proxy
-node	JavaScript Runtime
-postgres	Relational Database
-prometheus	Monitoring & Alerting
-step-cli	PKI & Certificates
+Argocd-installion-extension | Continuous Deployment (CD)
+argo-workflow	| Workflow Automation
+busyboxcLightweight Utility
+curl	| Data Transfer
+jre	| Java Runtime
+jdk	| Java Development Kit
+go |	Web Applications & Microservices
+python	| Data Science & Web Apps
+nginx	|  Web Server & Reverse Proxy
+node |	JavaScript Runtime
+postgres	| Relational Database
+prometheus	| Monitoring & Alerting
+step-cli	| PKI & Certificates
 ```
 ### Best Practices
 Resolving Port Conflicts
