@@ -35,30 +35,6 @@ Run the container with basic configuration
 docker run -d --name cadvisor -v /:/rootfs:ro -v /var/run:/var/run:ro -v /sys:/sys:ro -v /var/lib/docker/:/var/lib/docker:ro -v /dev/disk/:/dev/disk:ro -p 8080:8080 cleanstart/cadvisor:latest
 ```
 
-**Production Deployment**
-Deploy with production security settings
-
-```bash
-docker run -d --name cadvisor-prod \
-  --read-only \
-  --security-opt=no-new-privileges \
-  --user 1000:1000 \
-  -v /:/rootfs:ro \
-  -v /var/run:/var/run:ro \
-  -v /sys:/sys:ro \
-  -v /var/lib/docker/:/var/lib/docker:ro \
-  -v /dev/disk/:/dev/disk:ro \
-  -p 8080:8080 \
-  cleanstart/cadvisor:latest
-```
-
-**Volume Mount**
-Mount required system directories for monitoring
-
-```bash
-docker run -d -v /:/rootfs:ro -v /var/run:/var/run:ro -v /sys:/sys:ro cleanstart/cadvisor:latest
-```
-
 **Port Forwarding**
 Run with metrics endpoint exposed
 
