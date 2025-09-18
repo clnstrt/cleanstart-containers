@@ -17,11 +17,13 @@ docker pull cleanstart/cadvisor:latest
  FROM cleanstart/cadvisor:latest-dev
 
  USER clnstrt
+
  ENV LD_PRELOAD=
+
  ENV SSL_CERT_FILE=/etc/ssl/certs/ca-certificates.crt
 
- `/usr/bin/cadvisor -logtostderr`
  ENTRYPOINT ["/usr/bin/cadvisor"]
+
  CMD ["-logtostderr"]
 
  COPY --from=builder /path/to/cadvisor /usr/bin/cadvisor
