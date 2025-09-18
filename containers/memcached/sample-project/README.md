@@ -19,10 +19,15 @@ docker run -d --name memcached-demo -p 11211:11211 cleanstart/memcached:latest-d
 pip install -r requirements.txt
 ```
 # Execute the actual python script
+```bash
 python3 app.py
+```
 
 # Execute the another python script to check cache related logs!
+```bash
 python3 test_memcached.py
+```
 
 # Exit the script after the execution and close the localhost!
+
 
