@@ -54,9 +54,10 @@ kubectl get pods -n postgres-sample
 
 You should see the Postgres pod in Running state:
 
+```bash
 NAME                                   READY   STATUS    RESTARTS   AGE
 postgres-deployment-xxxxxx-yyyyy       1/1     Running   0          1m
-
+```
 💻 3. Connect with a PostgreSQL Client
 
 Launch a temporary PostgreSQL client pod to connect to your database:
