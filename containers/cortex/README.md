@@ -23,6 +23,8 @@ Download the container image from the registry
 
 ```bash
 docker pull cleanstart/cortex:latest
+```
+```bash
 docker pull cleanstart/cortex:latest-dev
 ```
 
@@ -33,24 +35,6 @@ Run the container with basic configuration
 docker run -it --name cortex-test cleanstart/cortex:latest-dev
 ```
 
-**Production Deployment**
-Deploy with production security settings
-
-```bash
-docker run -d --name cortex-prod \
-  --read-only \
-  --security-opt=no-new-privileges \
-  --user 1000:1000 \
-  cleanstart/cortex:latest
-```
-
-**Volume Mount**
-Mount local directory for persistent data
-
-```bash
-docker run -v $(pwd)/data:/data cleanstart/cortex:latest
-```
-
 **Port Forwarding**
 Run with custom port mappings
 
@@ -58,46 +42,14 @@ Run with custom port mappings
 docker run -p 8080:80 cleanstart/cortex:latest
 ```
 
-**Configuration**
-
-**Environment Variables**
-
-| Variable | Default | Description |
-|----------|---------|-------------|
-| PATH | /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin | System PATH configuration |
-| CORTEX_OPERATOR_ENDPOINT | localhost:8888 | Endpoint for the Cortex operator service |
-
-**Security & Best Practices**
-
-**Recommended Security Context**
-
-```yaml
-securityContext:
-  runAsNonRoot: true
-  runAsUser: 1000
-  runAsGroup: 1000
-  readOnlyRootFilesystem: true
-  allowPrivilegeEscalation: false
-  capabilities:
-    drop: ['ALL']
-```
-
-**Best Practices**
-* Use specific image tags for production (avoid latest)
-* Configure resource limits: memory and CPU constraints
-* Enable read-only root filesystem when possible
-* Run containers with non-root user (--user 1000:1000)
-* Use --security-opt=no-new-privileges flag
-* Regularly update container images for security patches
-* Implement proper network segmentation
-* Monitor container metrics for anomalies
-
 **Architecture Support**
 
 **Multi-Platform Images**
 
 ```bash
 docker pull --platform linux/amd64 cleanstart/cortex:latest
+```
+```bash
 docker pull --platform linux/arm64 cleanstart/cortex:latest
 ```
 
