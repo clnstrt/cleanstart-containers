@@ -6,18 +6,18 @@ The aim is to create sample projects for all CleanStart community images.
 | Sr No | Image Name        | Use Case                        | Dockerfile-Based Projects | Kubernetes-Based Projects | Helm-Based Projects |
 |-------|-------------------|---------------------------------|---------------------------|---------------------------|----------------------|
 | 1     | argocd            | Continuous Deployment (CD)      | Yes                       | No                        | No                   |
-| 2     | argo-workflow      | Workflow Automation             | Yes                       | No                       | no                 |
-| 3     | busybox           | Lightweight Utility             | Yes                       | No                       | no                  |
-| 4     | curl              | Data Transfer                   | Yes                       | No                       | no                 |
-| 5     | jre               | Java Runtime                    | Yes                       | No                        | no                 |
-| 6     | jdk               | Java Development Kit            | Yes                       | No                       | no                 |
-| 7     | go                | Web Applications & Microservices| Yes                       | Yes                       | no                 |
+| 2     | argo-workflow      | Workflow Automation             | Yes                       | No                       | No                 |
+| 3     | busybox           | Lightweight Utility             | Yes                       | No                       | No                  |
+| 4     | curl              | Data Transfer                   | Yes                       | No                       | No                 |
+| 5     | jre               | Java Runtime                    | Yes                       | No                        | No                 |
+| 6     | jdk               | Java Development Kit            | Yes                       | No                       | No                 |
+| 7     | go                | Web Applications & Microservices| Yes                       | Yes                       | No                 |
 | 8     | python            | Data Science & Web Apps         | Yes                       | Yes                       | Yes                 |
-| 9     | nginx             | Web Server & Reverse Proxy      | Yes                       | No                        | no                 |
-| 10    | node              | JavaScript Runtime              | Yes                       | No                        | no                 |
-| 11    | postgres          | Relational Database             | Yes                       | No                        | no                 |
-| 12    | prometheus        | Monitoring & Alerting           | Yes                       | no                        | no                 |
-| 13    | step-cli          | PKI & Certificates              | Yes                       | no                        | no                 |
+| 9     | nginx             | Web Server & Reverse Proxy      | Yes                       | No                        | No                 |
+| 10    | node              | JavaScript Runtime              | Yes                       | No                        | No                 |
+| 11    | postgres          | Relational Database             | Yes                       | No                        | No                 |
+| 12    | prometheus        | Monitoring & Alerting           | Yes                       | No                        | No                 |
+| 13    | step-cli          | PKI & Certificates              | Yes                       | No                        | No                 |
 
 
 ## BEST PRACTICE BEFORE RUNNING ANY PROJECT
@@ -41,5 +41,6 @@ kill -9 <PID>
 ```bash
 Stop-Process -Id <PID>
 ```
+
 
 
