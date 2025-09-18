@@ -1,8 +1,6 @@
-# 🚀 Hello World!!! 
+# 🚀 Hello from Prometheus!
 
-A simple **HELLO WORLD** program to run on CleanStart - Prometheus container. 
-
-## To run the Hello World without Dockerfile to avoid making simple things complex
+A program to run on CleanStart - Prometheus container. 
 
 ### Pull CleanStart Prometheus image from [Docker Hub - CleanStart](https://hub.docker.com/u/cleanstart) 
 ```bash
