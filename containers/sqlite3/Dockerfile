@@ -1,4 +1,7 @@
-FROM alpine:3.18
+FROM cleanstart/sqlite3:latest-dev
+
+# Switch to root to install packages
+USER root
 
 # Install SQLite3 and essential tools
 RUN apk add --no-cache \
@@ -23,6 +26,9 @@ RUN mkdir -p /app/data /app/scripts /app/logs && \
 # Copy sample projects and scripts
 COPY sample-project/ /app/sample-project/
 COPY README.md /app/README.md
+
+# Fix ownership of copied files
+RUN chown -R sqlite:sqlite /app
 
 # Switch to non-root user
 USER sqlite
