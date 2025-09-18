@@ -16,8 +16,7 @@ The aim is to create sample projects for all CleanStart community images.
 | 9     | nginx             | Web Server & Reverse Proxy      | Yes                       | No                        | no                 |
 | 10    | node              | JavaScript Runtime              | Yes                       | No                        | no                 |
 | 11    | postgres          | Relational Database             | Yes                       | No                        | no                 |
-| 12    | prometheus        | Monitoring & Alerting           | Yes                       | no                        | no                 |
-| 13    | step-cli          | PKI & Certificates              | Yes                       | no                        | no                 |
+| 12    | step-cli          | PKI & Certificates              | Yes                       | no                        | no                 |
 
 
 ## BEST PRACTICE BEFORE RUNNING ANY PROJECT
@@ -41,5 +40,6 @@ kill -9 <PID>
 ```bash
 Stop-Process -Id <PID>
 ```
+
 
 
