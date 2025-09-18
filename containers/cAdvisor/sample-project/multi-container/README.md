@@ -38,6 +38,7 @@ docker build --no-cache -t my-cadvisor .
 ```bash
 docker run --rm my-cadvisor
 ```
+Access the Application on http://localhost:8080/
 
 ### Step-by-Step Testing Instructions
 
