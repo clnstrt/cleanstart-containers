@@ -1,3 +1,8 @@
+## CleanStart Containers Samples Projects
+The aim is to create sample projects for all CleanStart community images. 
+
+## Index images, Use Cases and their sample projects
+
 | Sr No | Image Name        | Use Case                        | Dockerfile-Based Projects | Kubernetes-Based Projects | Helm-Based Projects |
 |-------|-------------------|---------------------------------|---------------------------|---------------------------|----------------------|
 | 1     | argocd            | Continuous Deployment (CD)      | Yes                       | No                        | No                   |
@@ -36,4 +41,5 @@ kill -9 <PID>
 ```bash
 Stop-Process -Id <PID>
 ```
+
 
