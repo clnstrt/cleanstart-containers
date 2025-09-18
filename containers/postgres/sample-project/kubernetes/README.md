@@ -1,4 +1,4 @@
-🚀 PostgreSQL on Kubernetes with Cleanstart Lightweight Image
+🚀 PostgreSQL on Kubernetes with Cleanstart Image
 
 A comprehensive Kubernetes deployment solution for PostgreSQL using the cleanstart/postgres:latest image. This repository provides production-ready manifests and examples for deploying PostgreSQL in Kubernetes environments.
 
@@ -30,7 +30,10 @@ Apply the Kubernetes manifests to create all necessary resources:
 Docker/Container registry access
 
 🛠️ 1. Apply Kubernetes Manifests
+
+```bash
 kubectl apply -f deployment.yaml
+```
 
 This command creates the following resources in the `postgres-sample` namespace:
 
@@ -72,41 +75,54 @@ kubectl run -it --rm pg-client \
 Once connected to the PostgreSQL shell, you can perform basic CRUD operations:
 
 -- Create a database
+```bash
 CREATE DATABASE sampledb;
 \c sampledb;
-
+```
 -- Create a sample table
+```bash
 CREATE TABLE employees (
     id SERIAL PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
     role VARCHAR(50),
     salary NUMERIC
 );
+```
 
 -- Insert data
+```bash
 INSERT INTO employees (name, role, salary) VALUES
   ('Alice', 'Engineer', 75000),
   ('Bob', 'Manager', 90000),
   ('Charlie', 'Intern', 30000);
+```
 
 -- Read data
+```bash
 SELECT * FROM employees;
+```
 
 -- Update data
+```bash
 UPDATE employees SET salary = 80000 WHERE name = 'Alice';
+```
 
 -- Delete data
+```bash
 DELETE FROM employees WHERE name = 'Charlie';
+```
 
 -- Verify changes
+```bash
 SELECT * FROM employees;
+```
 
 -- Exit
+```bash
 \q
+```
 
 ## Troubleshooting
-
-### Common Issues
 
 1. **Pod not starting**: Check resource limits and storage availability
 2. **Connection refused**: Verify service and pod status
