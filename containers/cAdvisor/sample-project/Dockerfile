@@ -18,27 +18,3 @@ ENV SSL_CERT_FILE=/etc/ssl/certs/ca-certificates.crt
 # `/usr/bin/cadvisor -logtostderr`
 ENTRYPOINT ["/usr/bin/cadvisor"]
 CMD ["-logtostderr"]
-
-# The `Size` field is the total size of the image, including all layers.
-# The `RootFS` section shows the hashes of the layers.
-# This implies that the application binary and its dependencies were added
-# in one or more layers, likely via a `COPY` or `ADD` command.
-# For example, something like this:
-# COPY --from=builder /path/to/cadvisor /usr/bin/cadvisor
-# COPY --from=builder /path/to/certs /etc/ssl/certs/ca-certificates.crt
-
-# # Use a slim Python image as the base
-# FROM cleanstart/cadvisor:latest-dev
-
-# # Set the working directory inside the container
-# WORKDIR /app
-
-# # Copy the requirements file and install dependencies
-# COPY requirements.txt .
-# RUN pip install --no-cache-dir -r requirements.txt
-
-# # Copy the Python script into the container
-# COPY cadvisor_demo.py .
-
-# # The command to run the script when the container starts
-# CMD ["python", "cadvisor_demo.py"]
