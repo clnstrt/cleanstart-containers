@@ -11,7 +11,7 @@ It includes:
 
 ✅ Ingress for routing
 
-✅ ConfigMap with a custom index.html
+✅ ConfigMap
 
 **📂 Project Structure**
 ```bash
