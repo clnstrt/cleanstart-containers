@@ -1,0 +1,120 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "go-web-app.fullname" . }}
+  labels:
+    {{- include "go-web-app.labels" . | nindent 4 }}
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "go-web-app.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "go-web-app.selectorLabels" . | nindent 8 }}
+        {{- with .Values.podLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "go-web-app.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.service.targetPort }}
+              protocol: TCP
+          env:
+            {{- range $key, $value := .Values.env }}
+            - name: {{ $key }}
+              value: {{ $value | quote }}
+            {{- end }}
+            {{- if .Values.secrets.database.url }}
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "go-web-app.fullname" . }}-secrets
+                  key: database-url
+                  optional: true
+            {{- end }}
+          envFrom:
+            - configMapRef:
+                name: {{ include "go-web-app.fullname" . }}-config
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          {{- with .Values.healthCheck.livenessProbe }}
+          livenessProbe:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.healthCheck.readinessProbe }}
+          readinessProbe:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.healthCheck.startupProbe }}
+          startupProbe:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          volumeMounts:
+            - name: app-config
+              mountPath: {{ .Values.volumes.config.mountPath }}
+              readOnly: {{ .Values.volumes.config.readOnly }}
+            - name: app-logs
+              mountPath: {{ .Values.volumes.logs.mountPath }}
+            - name: tmp-volume
+              mountPath: {{ .Values.volumes.tmp.mountPath }}
+            {{- if .Values.persistence.enabled }}
+            - name: app-data
+              mountPath: /app/data
+            {{- end }}
+            {{- if .Values.volumes.uploads }}
+            - name: app-uploads
+              mountPath: {{ .Values.volumes.uploads.mountPath }}
+            {{- end }}
+      volumes:
+        - name: app-config
+          configMap:
+            name: {{ include "go-web-app.fullname" . }}-config
+        - name: app-logs
+          emptyDir: {}
+        - name: tmp-volume
+          emptyDir: {}
+        {{- if .Values.persistence.enabled }}
+        - name: app-data
+          persistentVolumeClaim:
+            claimName: {{ include "go-web-app.fullname" . }}-pvc
+        {{- end }}
+        {{- if .Values.volumes.uploads }}
+        - name: app-uploads
+          emptyDir: {}
+        {{- end }}
+      restartPolicy: Always
+      terminationGracePeriodSeconds: {{ .Values.terminationGracePeriodSeconds }}
+      dnsPolicy: {{ .Values.dnsPolicy }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

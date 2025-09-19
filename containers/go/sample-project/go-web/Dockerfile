@@ -1,14 +1,13 @@
 # Base image with Go pre-installed
 FROM cleanstart/go:latest
 
-# Install dependencies
-RUN apk add --no-cache git ca-certificates wget
+# CleanStart Go image already has git, wget, and curl pre-installed
 
 # Set working directory
 WORKDIR /app
 
-# Copy go.mod and go.sum first (for caching dependencies)
-COPY go.mod go.sum ./
+# Copy go.mod first (for caching dependencies)
+COPY go.mod ./
 
 # Download dependencies
 RUN go mod download
@@ -16,8 +15,8 @@ RUN go mod download
 # Copy the source code
 COPY . .
 
-# Build the Go application
-RUN CGO_ENABLED=0 GOOS=linux go build -o go-web-app main.go
+# Generate go.sum and build the Go application
+RUN go mod tidy && CGO_ENABLED=0 GOOS=linux go build -o go-web-app main.go
 
 # Expose port
 EXPOSE 8080
