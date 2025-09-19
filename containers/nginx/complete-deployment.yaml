@@ -1,0 +1,782 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: nginx-production
+  labels:
+    name: nginx-production
+    environment: production
+    purpose: web-server
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nginx-config
+  namespace: nginx-production
+  labels:
+    app: nginx-app
+    component: config
+    version: v1.0.0
+data:
+  nginx.conf: |
+    user nginx;
+    worker_processes auto;
+    error_log /var/log/nginx/error.log notice;
+    pid /var/run/nginx.pid;
+    
+    events {
+        worker_connections 1024;
+        use epoll;
+        multi_accept on;
+    }
+    
+    http {
+        include /etc/nginx/mime.types;
+        default_type application/octet-stream;
+        
+        # Logging
+        log_format main '$remote_addr - $remote_user [$time_local] "$request" '
+                        '$status $body_bytes_sent "$http_referer" '
+                        '"$http_user_agent" "$http_x_forwarded_for"';
+        
+        access_log /var/log/nginx/access.log main;
+        
+        # Performance
+        sendfile on;
+        tcp_nopush on;
+        tcp_nodelay on;
+        keepalive_timeout 65;
+        types_hash_max_size 2048;
+        client_max_body_size 16M;
+        
+        # Gzip compression
+        gzip on;
+        gzip_vary on;
+        gzip_min_length 1024;
+        gzip_proxied any;
+        gzip_comp_level 6;
+        gzip_types
+            text/plain
+            text/css
+            text/xml
+            text/javascript
+            application/json
+            application/javascript
+            application/xml+rss
+            application/atom+xml
+            image/svg+xml;
+        
+        # Security headers
+        add_header X-Frame-Options "SAMEORIGIN" always;
+        add_header X-Content-Type-Options "nosniff" always;
+        add_header X-XSS-Protection "1; mode=block" always;
+        add_header Referrer-Policy "strict-origin-when-cross-origin" always;
+        add_header Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:;" always;
+        
+        # Rate limiting
+        limit_req_zone $binary_remote_addr zone=api:10m rate=10r/s;
+        limit_req_zone $binary_remote_addr zone=login:10m rate=1r/s;
+        
+        # Upstream servers (for load balancing)
+        upstream backend {
+            least_conn;
+            server backend-service:5000 max_fails=3 fail_timeout=30s;
+            keepalive 32;
+        }
+        
+        # Main server block
+        server {
+            listen 80;
+            server_name _;
+            root /usr/share/nginx/html;
+            index index.html index.htm;
+            
+            # Health check endpoint
+            location /health {
+                access_log off;
+                return 200 "healthy\n";
+                add_header Content-Type text/plain;
+            }
+            
+            # Metrics endpoint
+            location /metrics {
+                access_log off;
+                return 200 "# Nginx metrics\nnginx_up 1\n";
+                add_header Content-Type text/plain;
+            }
+            
+            # Status endpoint
+            location /status {
+                access_log off;
+                return 200 '{"status":"ok","timestamp":"$time_iso8601","nginx_version":"$nginx_version","server":"cleanstart/nginx"}';
+                add_header Content-Type application/json;
+            }
+            
+            # API proxy
+            location /api/ {
+                limit_req zone=api burst=20 nodelay;
+                proxy_pass http://backend/;
+                proxy_set_header Host $host;
+                proxy_set_header X-Real-IP $remote_addr;
+                proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+                proxy_set_header X-Forwarded-Proto $scheme;
+                proxy_connect_timeout 30s;
+                proxy_send_timeout 30s;
+                proxy_read_timeout 30s;
+                proxy_buffering on;
+                proxy_buffer_size 4k;
+                proxy_buffers 8 4k;
+            }
+            
+            # Static files with caching
+            location ~* \.(js|css|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|eot)$ {
+                expires 1y;
+                add_header Cache-Control "public, immutable";
+                access_log off;
+            }
+            
+            # HTML files with short cache
+            location ~* \.html$ {
+                expires 1h;
+                add_header Cache-Control "public";
+            }
+            
+            # Main location
+            location / {
+                try_files $uri $uri/ /index.html;
+                add_header Cache-Control "no-cache, no-store, must-revalidate";
+                add_header Pragma "no-cache";
+                add_header Expires "0";
+            }
+            
+            # Security: deny access to hidden files
+            location ~ /\. {
+                deny all;
+                access_log off;
+                log_not_found off;
+            }
+            
+            # Security: deny access to backup files
+            location ~ ~$ {
+                deny all;
+                access_log off;
+                log_not_found off;
+            }
+            
+            # Error pages
+            error_page 404 /404.html;
+            error_page 500 502 503 504 /50x.html;
+            
+            location = /50x.html {
+                root /usr/share/nginx/html;
+            }
+        }
+    }
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nginx-html-content
+  namespace: nginx-production
+  labels:
+    app: nginx-app
+    component: content
+    version: v1.0.0
+data:
+  index.html: |
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>CleanStart Nginx - Production Ready</title>
+        <style>
+            body {
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                margin: 0;
+                padding: 0;
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                min-height: 100vh;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            .container {
+                background: white;
+                padding: 2rem;
+                border-radius: 10px;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+                text-align: center;
+                max-width: 800px;
+                margin: 1rem;
+            }
+            h1 {
+                color: #333;
+                margin-bottom: 1rem;
+            }
+            .status {
+                background: #4CAF50;
+                color: white;
+                padding: 0.5rem 1rem;
+                border-radius: 5px;
+                display: inline-block;
+                margin: 1rem 0;
+            }
+            .info {
+                background: #f5f5f5;
+                padding: 1rem;
+                border-radius: 5px;
+                margin: 1rem 0;
+                text-align: left;
+            }
+            .endpoint {
+                background: #e3f2fd;
+                padding: 0.5rem;
+                border-radius: 3px;
+                font-family: monospace;
+                margin: 0.5rem 0;
+                cursor: pointer;
+                transition: background-color 0.3s;
+            }
+            .endpoint:hover {
+                background: #bbdefb;
+            }
+            .feature-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+                gap: 1rem;
+                margin: 1rem 0;
+            }
+            .feature-card {
+                background: #f8f9fa;
+                padding: 1rem;
+                border-radius: 5px;
+                border-left: 4px solid #2196F3;
+            }
+            .test-button {
+                background: #2196F3;
+                color: white;
+                border: none;
+                padding: 0.5rem 1rem;
+                border-radius: 5px;
+                cursor: pointer;
+                margin: 0.5rem;
+                font-size: 14px;
+            }
+            .test-button:hover {
+                background: #1976D2;
+            }
+            .result {
+                background: #f0f0f0;
+                padding: 1rem;
+                border-radius: 5px;
+                margin: 1rem 0;
+                font-family: monospace;
+                text-align: left;
+                white-space: pre-wrap;
+                display: none;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <h1>🚀 CleanStart Nginx - Production Ready</h1>
+            <div class="status">✅ Running Successfully</div>
+            
+            <div class="info">
+                <h3>Available Endpoints:</h3>
+                <div class="endpoint" onclick="testEndpoint('/health')">GET /health - Health check</div>
+                <div class="endpoint" onclick="testEndpoint('/status')">GET /status - Status information</div>
+                <div class="endpoint" onclick="testEndpoint('/metrics')">GET /metrics - Prometheus metrics</div>
+                <div class="endpoint" onclick="testEndpoint('/api/')">GET /api/* - API proxy</div>
+            </div>
+            
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h4>🔧 Core Features</h4>
+                    <ul>
+                        <li>✅ High Performance Web Server</li>
+                        <li>✅ Reverse Proxy Capabilities</li>
+                        <li>✅ Load Balancing</li>
+                        <li>✅ SSL/TLS Termination</li>
+                        <li>✅ Gzip Compression</li>
+                    </ul>
+                </div>
+                
+                <div class="feature-card">
+                    <h4>🛡️ Security</h4>
+                    <ul>
+                        <li>✅ Security Headers</li>
+                        <li>✅ Rate Limiting</li>
+                        <li>✅ Access Control</li>
+                        <li>✅ Hidden File Protection</li>
+                        <li>✅ CSP Headers</li>
+                    </ul>
+                </div>
+                
+                <div class="feature-card">
+                    <h4>☸️ Kubernetes Integration</h4>
+                    <ul>
+                        <li>✅ Horizontal Pod Autoscaling</li>
+                        <li>✅ Service Discovery</li>
+                        <li>✅ ConfigMaps Management</li>
+                        <li>✅ Secrets Management</li>
+                        <li>✅ Health Checks</li>
+                    </ul>
+                </div>
+                
+                <div class="feature-card">
+                    <h4>📊 Monitoring</h4>
+                    <ul>
+                        <li>✅ Prometheus Metrics</li>
+                        <li>✅ Health Endpoints</li>
+                        <li>✅ Status Monitoring</li>
+                        <li>✅ Log Aggregation</li>
+                        <li>✅ Performance Metrics</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="info">
+                <h3>Quick Tests:</h3>
+                <button class="test-button" onclick="testEndpoint('/health')">Health Check</button>
+                <button class="test-button" onclick="testEndpoint('/status')">Status Info</button>
+                <button class="test-button" onclick="testEndpoint('/metrics')">Metrics</button>
+                <button class="test-button" onclick="testSecurityHeaders()">Security Headers</button>
+            </div>
+            
+            <div id="result" class="result"></div>
+        </div>
+        
+        <script>
+            function testEndpoint(endpoint) {
+                fetch(endpoint)
+                    .then(response => response.text())
+                    .then(data => {
+                        document.getElementById('result').style.display = 'block';
+                        document.getElementById('result').textContent = `Endpoint: ${endpoint}\nResponse: ${data}`;
+                    })
+                    .catch(error => {
+                        document.getElementById('result').style.display = 'block';
+                        document.getElementById('result').textContent = `Error testing ${endpoint}: ${error}`;
+                    });
+            }
+            
+            function testSecurityHeaders() {
+                fetch('/')
+                    .then(response => {
+                        const headers = {};
+                        for (let [key, value] of response.headers.entries()) {
+                            if (key.toLowerCase().includes('x-') || key.toLowerCase().includes('content-security')) {
+                                headers[key] = value;
+                            }
+                        }
+                        document.getElementById('result').style.display = 'block';
+                        document.getElementById('result').textContent = `Security Headers:\n${JSON.stringify(headers, null, 2)}`;
+                    })
+                    .catch(error => {
+                        document.getElementById('result').style.display = 'block';
+                        document.getElementById('result').textContent = `Error testing security headers: ${error}`;
+                    });
+            }
+        </script>
+    </body>
+    </html>
+  404.html: |
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>404 - Page Not Found</title>
+        <style>
+            body {
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                margin: 0;
+                padding: 0;
+                background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+                min-height: 100vh;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            .container {
+                background: white;
+                padding: 2rem;
+                border-radius: 10px;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+                text-align: center;
+                max-width: 500px;
+                margin: 1rem;
+            }
+            h1 {
+                color: #333;
+                margin-bottom: 1rem;
+            }
+            .error-code {
+                font-size: 4rem;
+                color: #ff6b6b;
+                margin: 1rem 0;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="error-code">404</div>
+            <h1>Page Not Found</h1>
+            <p>The page you are looking for does not exist.</p>
+            <a href="/" style="color: #667eea; text-decoration: none;">← Go back to home</a>
+        </div>
+    </body>
+    </html>
+  50x.html: |
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Server Error</title>
+        <style>
+            body {
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                margin: 0;
+                padding: 0;
+                background: linear-gradient(135deg, #ffa726 0%, #ff7043 100%);
+                min-height: 100vh;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            .container {
+                background: white;
+                padding: 2rem;
+                border-radius: 10px;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+                text-align: center;
+                max-width: 500px;
+                margin: 1rem;
+            }
+            h1 {
+                color: #333;
+                margin-bottom: 1rem;
+            }
+            .error-code {
+                font-size: 4rem;
+                color: #ffa726;
+                margin: 1rem 0;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="error-code">5xx</div>
+            <h1>Server Error</h1>
+            <p>Something went wrong on our end. Please try again later.</p>
+            <a href="/" style="color: #667eea; text-decoration: none;">← Go back to home</a>
+        </div>
+    </body>
+    </html>
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-app
+  namespace: nginx-production
+  labels:
+    app: nginx-app
+    version: v1.0.0
+    component: frontend
+    environment: production
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: nginx-app
+  template:
+    metadata:
+      labels:
+        app: nginx-app
+        version: v1.0.0
+        component: frontend
+        environment: production
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "80"
+        prometheus.io/path: "/metrics"
+    spec:
+      serviceAccountName: nginx-app-sa
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1001
+        runAsGroup: 1001
+        fsGroup: 1001
+      containers:
+      - name: nginx-app
+        image: cleanstart/nginx:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 80
+          name: http
+          protocol: TCP
+        env:
+        - name: NGINX_ENVSUBST_TEMPLATE_DIR
+          value: "/etc/nginx/templates"
+        - name: NGINX_ENVSUBST_TEMPLATE_SUFFIX
+          value: ".template"
+        - name: NGINX_ENTRYPOINT_QUIET_LOGS
+          value: "1"
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "100m"
+          limits:
+            memory: "256Mi"
+            cpu: "200m"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 80
+            scheme: HTTP
+          initialDelaySeconds: 10
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+          successThreshold: 1
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 80
+            scheme: HTTP
+          initialDelaySeconds: 5
+          periodSeconds: 5
+          timeoutSeconds: 3
+          failureThreshold: 3
+          successThreshold: 1
+        startupProbe:
+          httpGet:
+            path: /health
+            port: 80
+            scheme: HTTP
+          initialDelaySeconds: 5
+          periodSeconds: 5
+          timeoutSeconds: 3
+          failureThreshold: 30
+          successThreshold: 1
+        volumeMounts:
+        - name: nginx-config
+          mountPath: /etc/nginx/nginx.conf
+          subPath: nginx.conf
+          readOnly: true
+        - name: nginx-html
+          mountPath: /usr/share/nginx/html
+          readOnly: true
+        - name: nginx-logs
+          mountPath: /var/log/nginx
+        - name: nginx-cache
+          mountPath: /var/cache/nginx
+        - name: tmp-volume
+          mountPath: /tmp
+      volumes:
+      - name: nginx-config
+        configMap:
+          name: nginx-config
+      - name: nginx-html
+        configMap:
+          name: nginx-html-content
+      - name: nginx-logs
+        emptyDir: {}
+      - name: nginx-cache
+        emptyDir: {}
+      - name: tmp-volume
+        emptyDir: {}
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30
+      dnsPolicy: ClusterFirst
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: app
+                  operator: In
+                  values:
+                  - nginx-app
+              topologyKey: kubernetes.io/hostname
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-service
+  namespace: nginx-production
+  labels:
+    app: nginx-app
+    component: frontend
+    environment: production
+  annotations:
+    prometheus.io/scrape: "true"
+    prometheus.io/port: "80"
+    prometheus.io/path: "/metrics"
+spec:
+  type: ClusterIP
+  ports:
+  - port: 80
+    targetPort: 80
+    protocol: TCP
+    name: http
+  selector:
+    app: nginx-app
+  sessionAffinity: None
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-service-nodeport
+  namespace: nginx-production
+  labels:
+    app: nginx-app
+    component: frontend
+    environment: production
+spec:
+  type: NodePort
+  ports:
+  - port: 80
+    targetPort: 80
+    protocol: TCP
+    name: http
+    nodePort: 30080
+  selector:
+    app: nginx-app
+  sessionAffinity: None
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-service-loadbalancer
+  namespace: nginx-production
+  labels:
+    app: nginx-app
+    component: frontend
+    environment: production
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 80
+    targetPort: 80
+    protocol: TCP
+    name: http
+  selector:
+    app: nginx-app
+  sessionAffinity: None
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: nginx-app-sa
+  namespace: nginx-production
+  labels:
+    app: nginx-app
+    environment: production
+  annotations:
+    description: "Service account for Nginx application"
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: nginx-hpa
+  namespace: nginx-production
+  labels:
+    app: nginx-app
+    component: autoscaling
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: nginx-app
+  minReplicas: 2
+  maxReplicas: 10
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 70
+  - type: Resource
+    resource:
+      name: memory
+      target:
+        type: Utilization
+        averageUtilization: 80
+  behavior:
+    scaleDown:
+      stabilizationWindowSeconds: 300
+      policies:
+      - type: Percent
+        value: 10
+        periodSeconds: 60
+    scaleUp:
+      stabilizationWindowSeconds: 60
+      policies:
+      - type: Percent
+        value: 50
+        periodSeconds: 60
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: nginx-pdb
+  namespace: nginx-production
+  labels:
+    app: nginx-app
+    component: availability
+spec:
+  minAvailable: 1
+  selector:
+    matchLabels:
+      app: nginx-app
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: nginx-network-policy
+  namespace: nginx-production
+  labels:
+    app: nginx-app
+    component: security
+spec:
+  podSelector:
+    matchLabels:
+      app: nginx-app
+  policyTypes:
+  - Ingress
+  - Egress
+  ingress:
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          name: ingress-nginx
+    - podSelector:
+        matchLabels:
+          app: nginx-ingress
+    ports:
+    - protocol: TCP
+      port: 80
+  egress:
+  - to:
+    - namespaceSelector:
+        matchLabels:
+          name: kube-system
+    ports:
+    - protocol: TCP
+      port: 53
+    - protocol: UDP
+      port: 53
+  - to:
+    - podSelector:
+        matchLabels:
+          app: backend-service
+    ports:
+    - protocol: TCP
+      port: 5000

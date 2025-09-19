@@ -1,55 +1,101 @@
-# 🚀 Nginx - Kubernetes Deployment
+**🚀 Nginx Sample Project on Kubernetes**
 
-Deploy Nginx web server on Kubernetes using CleanStart container images.
+This project deploys a sample nginx app on Kubernetes using the image cleanstart/nginx:latest.
+It includes:
 
-## Quick Start
+✅ Deployment with 2 replicas
 
-### Prerequisites
-- Kubernetes cluster (minikube, kind, or cloud provider)
-- kubectl configured to access your cluster
+✅ Service (ClusterIP) for access
 
-### Deploy Nginx
+✅ Horizontal Pod Autoscaler (HPA)
+
+✅ Ingress for routing
+
+✅ ConfigMap
+
+**📂 Project Structure**
 ```bash
-# 1. Deploy the application
-kubectl apply -f nginx-deployment.yaml
-
-# 2. Deploy services
-kubectl apply -f nginx-service.yaml
-
-# 3. Deploy configuration
-kubectl apply -f nginx-configmap.yaml
+deployment.yaml   # Kubernetes manifests (Deployment, Service, HPA, Ingress, ConfigMap)
+README.md         # This guide
 ```
 
-### Access the Application
-```bash
-# Port forward to access the app
-kubectl port-forward svc/nginx-service 8080:80
+**⚡ Prerequisites**
 
-# Access: http://localhost:8080
+Kubernetes cluster (minikube / kind / k3s / any cloud)
+
+kubectl installed and configured
+
+
+**🚀 Deploy the Application**
+
+Apply the manifests:
+
+```bash
+kubectl apply -f deployment.yaml
 ```
 
-### Check Status
-```bash
-# Check deployment status
-kubectl get pods -l app=nginx-app
+This creates:
 
-# Check services
-kubectl get services -l app=nginx-app
+nginx-sample namespace
+
+nginx-deployment (2 pods)
+
+nginx-service (ClusterIP service on port 80)
+
+nginx-hpa (auto-scale between 2–5 pods)
+
+nginx-ingress (Ingress resource for external access)
+
+nginx-html (ConfigMap with index.html)
+
+🔍 Verify Deployment
+1. Check all resources
+```bash
+kubectl get all -n nginx-sample
 ```
 
-## 📚 Resources
+Expected Output:
 
-- [Verified Docker Image Publisher - CleanStart](https://cleanstart.com/)
-- [Nginx Official Documentation](https://nginx.org/en/docs/)
-- [Kubernetes Official Documentation](https://kubernetes.io/docs/)
+2 running pods
 
-## 🤝 Contributing
+ClusterIP service
 
-Feel free to contribute to this project by:
-- Reporting bugs
-- Suggesting new features
-- Submitting pull requests
-- Improving documentation
+HPA configured
 
-## 📄 License
-This project is open source and available under the [MIT License](LICENSE).
+2. Watch pod status
+```bash
+kubectl get pods -n nginx-sample -w
+```
+
+3. Check logs
+```bash
+kubectl logs -n nginx-sample <pod-name>
+```
+
+🌐 Access the App
+Option 1: Port Forward
+
+```bash
+kubectl port-forward svc/nginx-service -n nginx-sample 8080:80
+```
+
+Now open **http://localhost:8080**
+
+Note: The cleanstart/nginx:latest image does not include a default index.html file. As a result, the Nginx welcome page is not displayed. However, the Nginx server itself is running as expected.
+
+
+To delete everything:
+
+```bash
+kubectl delete -f deployment.yaml
+```
+
+Or delete namespace:
+
+```bash
+kubectl delete namespace nginx-sample
+```
+
+✅ Expected Output
+
+Deletes all the services
