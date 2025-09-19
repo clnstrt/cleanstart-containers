@@ -1,0 +1,576 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: nginx-test
+  labels:
+    name: nginx-test
+    purpose: testing
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nginx-config
+  namespace: nginx-test
+  labels:
+    app: nginx-test
+    component: config
+data:
+  nginx.conf: |
+    user nginx;
+    worker_processes auto;
+    error_log /var/log/nginx/error.log notice;
+    pid /var/run/nginx.pid;
+    
+    events {
+        worker_connections 1024;
+        use epoll;
+        multi_accept on;
+    }
+    
+    http {
+        include /etc/nginx/mime.types;
+        default_type application/octet-stream;
+        
+        # Logging
+        log_format main '$remote_addr - $remote_user [$time_local] "$request" '
+                        '$status $body_bytes_sent "$http_referer" '
+                        '"$http_user_agent" "$http_x_forwarded_for"';
+        
+        access_log /var/log/nginx/access.log main;
+        
+        # Performance
+        sendfile on;
+        tcp_nopush on;
+        tcp_nodelay on;
+        keepalive_timeout 65;
+        types_hash_max_size 2048;
+        client_max_body_size 16M;
+        
+        # Gzip compression
+        gzip on;
+        gzip_vary on;
+        gzip_min_length 1024;
+        gzip_proxied any;
+        gzip_comp_level 6;
+        gzip_types
+            text/plain
+            text/css
+            text/xml
+            text/javascript
+            application/json
+            application/javascript
+            application/xml+rss
+            application/atom+xml
+            image/svg+xml;
+        
+        # Security headers
+        add_header X-Frame-Options "SAMEORIGIN" always;
+        add_header X-Content-Type-Options "nosniff" always;
+        add_header X-XSS-Protection "1; mode=block" always;
+        add_header Referrer-Policy "strict-origin-when-cross-origin" always;
+        
+        # Main server block
+        server {
+            listen 80;
+            server_name _;
+            root /usr/share/nginx/html;
+            index index.html index.htm;
+            
+            # Health check endpoint
+            location /health {
+                access_log off;
+                return 200 "healthy\n";
+                add_header Content-Type text/plain;
+            }
+            
+            # Status endpoint for testing
+            location /status {
+                access_log off;
+                return 200 '{"status":"ok","timestamp":"$time_iso8601","nginx_version":"$nginx_version"}';
+                add_header Content-Type application/json;
+            }
+            
+            # Test endpoint for various HTTP methods
+            location /test {
+                access_log off;
+                if ($request_method = GET) {
+                    return 200 '{"method":"GET","message":"GET request successful"}';
+                }
+                if ($request_method = POST) {
+                    return 200 '{"method":"POST","message":"POST request successful"}';
+                }
+                if ($request_method = PUT) {
+                    return 200 '{"method":"PUT","message":"PUT request successful"}';
+                }
+                if ($request_method = DELETE) {
+                    return 200 '{"method":"DELETE","message":"DELETE request successful"}';
+                }
+                return 405 '{"error":"Method not allowed"}';
+                add_header Content-Type application/json;
+            }
+            
+            # Static files with caching
+            location ~* \.(js|css|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|eot)$ {
+                expires 1y;
+                add_header Cache-Control "public, immutable";
+                access_log off;
+            }
+            
+            # HTML files with short cache
+            location ~* \.html$ {
+                expires 1h;
+                add_header Cache-Control "public";
+            }
+            
+            # Main location
+            location / {
+                try_files $uri $uri/ /index.html;
+                add_header Cache-Control "no-cache, no-store, must-revalidate";
+                add_header Pragma "no-cache";
+                add_header Expires "0";
+            }
+            
+            # Security: deny access to hidden files
+            location ~ /\. {
+                deny all;
+                access_log off;
+                log_not_found off;
+            }
+            
+            # Error pages
+            error_page 404 /404.html;
+            error_page 500 502 503 504 /50x.html;
+            
+            location = /50x.html {
+                root /usr/share/nginx/html;
+            }
+        }
+    }
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nginx-html-content
+  namespace: nginx-test
+  labels:
+    app: nginx-test
+    component: content
+data:
+  index.html: |
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>CleanStart Nginx Test Page</title>
+        <style>
+            body {
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                margin: 0;
+                padding: 0;
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                min-height: 100vh;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            .container {
+                background: white;
+                padding: 2rem;
+                border-radius: 10px;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+                text-align: center;
+                max-width: 700px;
+                margin: 1rem;
+            }
+            h1 {
+                color: #333;
+                margin-bottom: 1rem;
+            }
+            .status {
+                background: #4CAF50;
+                color: white;
+                padding: 0.5rem 1rem;
+                border-radius: 5px;
+                display: inline-block;
+                margin: 1rem 0;
+            }
+            .info {
+                background: #f5f5f5;
+                padding: 1rem;
+                border-radius: 5px;
+                margin: 1rem 0;
+                text-align: left;
+            }
+            .endpoint {
+                background: #e3f2fd;
+                padding: 0.5rem;
+                border-radius: 3px;
+                font-family: monospace;
+                margin: 0.5rem 0;
+                cursor: pointer;
+                transition: background-color 0.3s;
+            }
+            .endpoint:hover {
+                background: #bbdefb;
+            }
+            .test-button {
+                background: #2196F3;
+                color: white;
+                border: none;
+                padding: 0.5rem 1rem;
+                border-radius: 5px;
+                cursor: pointer;
+                margin: 0.5rem;
+                font-size: 14px;
+            }
+            .test-button:hover {
+                background: #1976D2;
+            }
+            .result {
+                background: #f0f0f0;
+                padding: 1rem;
+                border-radius: 5px;
+                margin: 1rem 0;
+                font-family: monospace;
+                text-align: left;
+                white-space: pre-wrap;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <h1>🚀 CleanStart Nginx Test Page</h1>
+            <div class="status">✅ Running Successfully</div>
+            
+            <div class="info">
+                <h3>Test Endpoints:</h3>
+                <div class="endpoint" onclick="testEndpoint('/health')">GET /health - Health check</div>
+                <div class="endpoint" onclick="testEndpoint('/status')">GET /status - Status information</div>
+                <div class="endpoint" onclick="testEndpoint('/test')">GET /test - Test endpoint</div>
+            </div>
+            
+            <div class="info">
+                <h3>HTTP Method Tests:</h3>
+                <button class="test-button" onclick="testMethod('GET', '/test')">Test GET</button>
+                <button class="test-button" onclick="testMethod('POST', '/test')">Test POST</button>
+                <button class="test-button" onclick="testMethod('PUT', '/test')">Test PUT</button>
+                <button class="test-button" onclick="testMethod('DELETE', '/test')">Test DELETE</button>
+            </div>
+            
+            <div class="info">
+                <h3>Features Being Tested:</h3>
+                <ul style="text-align: left;">
+                    <li>✅ CleanStart Nginx Image</li>
+                    <li>✅ Kubernetes Deployment</li>
+                    <li>✅ ConfigMap Configuration</li>
+                    <li>✅ Service Discovery</li>
+                    <li>✅ Health Checks</li>
+                    <li>✅ HTTP Method Handling</li>
+                    <li>✅ Security Headers</li>
+                    <li>✅ Gzip Compression</li>
+                    <li>✅ Static File Serving</li>
+                    <li>✅ Error Handling</li>
+                </ul>
+            </div>
+            
+            <div id="result" class="result" style="display: none;"></div>
+        </div>
+        
+        <script>
+            function testEndpoint(endpoint) {
+                fetch(endpoint)
+                    .then(response => response.text())
+                    .then(data => {
+                        document.getElementById('result').style.display = 'block';
+                        document.getElementById('result').textContent = `Endpoint: ${endpoint}\nResponse: ${data}`;
+                    })
+                    .catch(error => {
+                        document.getElementById('result').style.display = 'block';
+                        document.getElementById('result').textContent = `Error testing ${endpoint}: ${error}`;
+                    });
+            }
+            
+            function testMethod(method, endpoint) {
+                fetch(endpoint, {
+                    method: method,
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                })
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById('result').style.display = 'block';
+                    document.getElementById('result').textContent = `Method: ${method} ${endpoint}\nResponse: ${data}`;
+                })
+                .catch(error => {
+                    document.getElementById('result').style.display = 'block';
+                    document.getElementById('result').textContent = `Error testing ${method} ${endpoint}: ${error}`;
+                });
+            }
+        </script>
+    </body>
+    </html>
+  404.html: |
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>404 - Page Not Found</title>
+        <style>
+            body {
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                margin: 0;
+                padding: 0;
+                background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+                min-height: 100vh;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            .container {
+                background: white;
+                padding: 2rem;
+                border-radius: 10px;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+                text-align: center;
+                max-width: 500px;
+                margin: 1rem;
+            }
+            h1 {
+                color: #333;
+                margin-bottom: 1rem;
+            }
+            .error-code {
+                font-size: 4rem;
+                color: #ff6b6b;
+                margin: 1rem 0;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="error-code">404</div>
+            <h1>Page Not Found</h1>
+            <p>The page you are looking for does not exist.</p>
+            <a href="/" style="color: #667eea; text-decoration: none;">← Go back to home</a>
+        </div>
+    </body>
+    </html>
+  50x.html: |
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Server Error</title>
+        <style>
+            body {
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                margin: 0;
+                padding: 0;
+                background: linear-gradient(135deg, #ffa726 0%, #ff7043 100%);
+                min-height: 100vh;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            .container {
+                background: white;
+                padding: 2rem;
+                border-radius: 10px;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+                text-align: center;
+                max-width: 500px;
+                margin: 1rem;
+            }
+            h1 {
+                color: #333;
+                margin-bottom: 1rem;
+            }
+            .error-code {
+                font-size: 4rem;
+                color: #ffa726;
+                margin: 1rem 0;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="error-code">5xx</div>
+            <h1>Server Error</h1>
+            <p>Something went wrong on our end. Please try again later.</p>
+            <a href="/" style="color: #667eea; text-decoration: none;">← Go back to home</a>
+        </div>
+    </body>
+    </html>
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-test-deployment
+  namespace: nginx-test
+  labels:
+    app: nginx-test
+    version: v1.0.0
+    component: frontend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: nginx-test
+  template:
+    metadata:
+      labels:
+        app: nginx-test
+        version: v1.0.0
+        component: frontend
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "80"
+        prometheus.io/path: "/status"
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1001
+        runAsGroup: 1001
+        fsGroup: 1001
+      containers:
+      - name: nginx-test
+        image: cleanstart/nginx:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 80
+          name: http
+          protocol: TCP
+        env:
+        - name: NGINX_ENVSUBST_TEMPLATE_DIR
+          value: "/etc/nginx/templates"
+        - name: NGINX_ENVSUBST_TEMPLATE_SUFFIX
+          value: ".template"
+        - name: NGINX_ENTRYPOINT_QUIET_LOGS
+          value: "1"
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "100m"
+          limits:
+            memory: "256Mi"
+            cpu: "200m"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 80
+            scheme: HTTP
+          initialDelaySeconds: 10
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+          successThreshold: 1
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 80
+            scheme: HTTP
+          initialDelaySeconds: 5
+          periodSeconds: 5
+          timeoutSeconds: 3
+          failureThreshold: 3
+          successThreshold: 1
+        startupProbe:
+          httpGet:
+            path: /health
+            port: 80
+            scheme: HTTP
+          initialDelaySeconds: 5
+          periodSeconds: 5
+          timeoutSeconds: 3
+          failureThreshold: 30
+          successThreshold: 1
+        volumeMounts:
+        - name: nginx-config
+          mountPath: /etc/nginx/nginx.conf
+          subPath: nginx.conf
+          readOnly: true
+        - name: nginx-html
+          mountPath: /usr/share/nginx/html
+          readOnly: true
+        - name: nginx-logs
+          mountPath: /var/log/nginx
+        - name: nginx-cache
+          mountPath: /var/cache/nginx
+        - name: tmp-volume
+          mountPath: /tmp
+      volumes:
+      - name: nginx-config
+        configMap:
+          name: nginx-config
+      - name: nginx-html
+        configMap:
+          name: nginx-html-content
+      - name: nginx-logs
+        emptyDir: {}
+      - name: nginx-cache
+        emptyDir: {}
+      - name: tmp-volume
+        emptyDir: {}
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30
+      dnsPolicy: ClusterFirst
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: app
+                  operator: In
+                  values:
+                  - nginx-test
+              topologyKey: kubernetes.io/hostname
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-test-service
+  namespace: nginx-test
+  labels:
+    app: nginx-test
+    component: frontend
+  annotations:
+    prometheus.io/scrape: "true"
+    prometheus.io/port: "80"
+    prometheus.io/path: "/status"
+spec:
+  type: ClusterIP
+  ports:
+  - port: 80
+    targetPort: 80
+    protocol: TCP
+    name: http
+  selector:
+    app: nginx-test
+  sessionAffinity: None
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-test-service-nodeport
+  namespace: nginx-test
+  labels:
+    app: nginx-test
+    component: frontend
+spec:
+  type: NodePort
+  ports:
+  - port: 80
+    targetPort: 80
+    protocol: TCP
+    name: http
+    nodePort: 30080
+  selector:
+    app: nginx-test
+  sessionAffinity: None
