@@ -1,0 +1,12 @@
+CREATE TABLE IF NOT EXISTS users (
+    id INTEGER PRIMARY KEY,
+    username TEXT NOT NULL,
+    email TEXT NOT NULL UNIQUE
+);
+
+CREATE TABLE IF NOT EXISTS products (
+    id INTEGER PRIMARY KEY,
+    name TEXT NOT NULL,
+    price REAL NOT NULL,
+    stock INTEGER NOT NULL
+);
