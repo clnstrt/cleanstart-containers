@@ -31,11 +31,17 @@ Start interactive session for development
 docker run --rm -it --entrypoint /bin/sh cleanstart/stakater-reloader:latest-dev
 ```
 
+**Build**
+
+```bash
+docker build -t cleanstart/stakater-reloader:latest .
+```
+
 **Container Start**
 Start the container
 ```bash
-docker run --rm -it --name stakater-reloader-dev cleanstart/stakater-reloader:latest
-```
+ docker run --rm  cleanstart/stakater-reloader:latest
+ ```
 
 **Best Practices**
 * Use specific image tags for production (avoid latest)

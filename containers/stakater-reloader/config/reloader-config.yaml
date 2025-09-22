@@ -1,0 +1,83 @@
+# Stakater Reloader Configuration
+# This is a basic configuration file for testing the Reloader
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: reloader-config
+  namespace: default
+data:
+  config.yaml: |
+    # Reloader configuration
+    logLevel: info
+    watchNamespace: ""
+    ignoreSecrets: false
+    
+    # Webhook configuration
+    webhook:
+      enabled: false
+      port: 9090
+      
+    # Resource configuration
+    resources:
+      requests:
+        cpu: 100m
+        memory: 128Mi
+      limits:
+        cpu: 200m
+        memory: 256Mi
+
+---
+# Sample application to test reloader
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: test-app-config
+  namespace: default
+  annotations:
+    reloader.stakater.com/auto: "true"
+data:
+  app.properties: |
+    app.name=Test Application
+    app.version=1.0.0
+    app.message=Hello from Test App!
+    server.port=8080
+    logging.level=INFO
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: test-app
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: test-app
+  template:
+    metadata:
+      labels:
+        app: test-app
+      annotations:
+        configmap.reloader.stakater.com/reload: "test-app-config"
+    spec:
+      containers:
+      - name: test-app
+        image: nginx:latest
+        ports:
+        - containerPort: 80
+        volumeMounts:
+        - name: config-volume
+          mountPath: /etc/config
+        resources:
+          requests:
+            cpu: 100m
+            memory: 128Mi
+          limits:
+            cpu: 200m
+            memory: 256Mi
+      volumes:
+      - name: config-volume
+        configMap:
+          name: test-app-config

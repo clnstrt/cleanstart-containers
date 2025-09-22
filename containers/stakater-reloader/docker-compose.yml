@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  stakater-reloader:
+    image: cleanstart/stakater-reloader:latest
+    container_name: stakater-reloader-test
+    ports:
+      - "8080:8080"
+    environment:
+      - RELOADER_LOG_LEVEL=info
+      - RELOADER_WATCH_NAMESPACE=""
+      - RELOADER_IGNORE_SECRETS=false
+    volumes:
+      - ./sample-project:/app/sample-project:ro
+      - ./config:/app/config:ro
+    command: ["/usr/bin/Reloader", "--help"]
+    restart: "no"
+    
+  stakater-reloader-interactive:
+    image: cleanstart/stakater-reloader:latest
+    container_name: stakater-reloader-interactive
+    stdin_open: true
+    tty: true
+    environment:
+      - RELOADER_LOG_LEVEL=debug
+      - RELOADER_WATCH_NAMESPACE=""
+      - RELOADER_IGNORE_SECRETS=false
+    volumes:
+      - ./sample-project:/app/sample-project:ro
+      - ./config:/app/config:ro
+    entrypoint: ["/bin/sh"]
+    restart: "no"
