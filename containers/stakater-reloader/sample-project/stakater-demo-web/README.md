@@ -12,3 +12,6 @@ docker build -t stakater-demo-web .
 ```bash
 docker run --rm -p 8080:8080 stakater-demo-web
 ```
+
+Then visit http://localhost:8080 
+

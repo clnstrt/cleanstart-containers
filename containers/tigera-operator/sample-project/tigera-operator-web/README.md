@@ -10,8 +10,12 @@ docker build -t tigera-operator-web .
 docker run -d --name tigera-op -p 8080:8080 tigera-operator-web
 ```
 
+Then visit http://localhost:8080 
+
+
 ## View Logs
 
 ```bash
 docker logs -f tigera-op
 ```
+
