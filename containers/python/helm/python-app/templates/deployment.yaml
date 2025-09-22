@@ -19,9 +19,6 @@ spec:
       {{- end }}
       labels:
         {{- include "python-app.selectorLabels" . | nindent 8 }}
-        {{- with .Values.podLabels }}
-        {{- toYaml . | nindent 8 }}
-        {{- end }}
     spec:
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
@@ -38,82 +35,107 @@ spec:
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
             - name: http
-              containerPort: {{ .Values.service.targetPort }}
+              containerPort: 5000
               protocol: TCP
-          env:
-            {{- range $key, $value := .Values.env }}
-            - name: {{ $key }}
-              value: {{ $value | quote }}
-            {{- end }}
-            {{- if .Values.secrets.database.url }}
-            - name: DATABASE_URL
-              valueFrom:
-                secretKeyRef:
-                  name: {{ include "python-app.fullname" . }}-secrets
-                  key: database-url
-                  optional: true
-            {{- end }}
-            {{- if .Values.secrets.redis.url }}
-            - name: REDIS_URL
-              valueFrom:
-                secretKeyRef:
-                  name: {{ include "python-app.fullname" . }}-secrets
-                  key: redis-url
-                  optional: true
-            {{- end }}
-          envFrom:
-            - configMapRef:
-                name: {{ include "python-app.fullname" . }}-config
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: http
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: http
+            initialDelaySeconds: 5
+            periodSeconds: 5
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
-          {{- with .Values.healthCheck.livenessProbe }}
-          livenessProbe:
-            {{- toYaml . | nindent 12 }}
-          {{- end }}
-          {{- with .Values.healthCheck.readinessProbe }}
-          readinessProbe:
-            {{- toYaml . | nindent 12 }}
-          {{- end }}
-          {{- with .Values.healthCheck.startupProbe }}
-          startupProbe:
-            {{- toYaml . | nindent 12 }}
-          {{- end }}
-          volumeMounts:
-            - name: app-config
-              mountPath: {{ .Values.volumes.config.mountPath }}
-              readOnly: {{ .Values.volumes.config.readOnly }}
-            - name: app-logs
-              mountPath: {{ .Values.volumes.logs.mountPath }}
-            - name: tmp-volume
-              mountPath: {{ .Values.volumes.tmp.mountPath }}
-            {{- if .Values.persistence.enabled }}
-            - name: app-data
-              mountPath: /app/data
-            {{- end }}
-            {{- if .Values.volumes.uploads }}
-            - name: app-uploads
-              mountPath: {{ .Values.volumes.uploads.mountPath }}
-            {{- end }}
-      volumes:
-        - name: app-config
-          configMap:
-            name: {{ include "python-app.fullname" . }}-config
-        - name: app-logs
-          emptyDir: {}
-        - name: tmp-volume
-          emptyDir: {}
-        {{- if .Values.persistence.enabled }}
-        - name: app-data
-          persistentVolumeClaim:
-            claimName: {{ include "python-app.fullname" . }}-pvc
-        {{- end }}
-        {{- if .Values.volumes.uploads }}
-        - name: app-uploads
-          emptyDir: {}
-        {{- end }}
-      restartPolicy: Always
-      terminationGracePeriodSeconds: {{ .Values.terminationGracePeriodSeconds }}
-      dnsPolicy: {{ .Values.dnsPolicy }}
+          command: ["python3", "-c"]
+          args:
+            - |
+              import http.server
+              import socketserver
+              import json
+              import os
+              import sys
+              import time
+              from datetime import datetime
+              
+              start_time = datetime.now()
+              request_count = 0
+              
+              class CleanStartHandler(http.server.BaseHTTPRequestHandler):
+                  def do_GET(self):
+                      global request_count
+                      request_count += 1
+                      
+                      if self.path == '/':
+                          self.send_response(200)
+                          self.send_header('Content-type', 'text/html')
+                          self.send_header('X-Content-Type-Options', 'nosniff')
+                          self.send_header('X-Frame-Options', 'DENY')
+                          self.end_headers()
+                          uptime = str(datetime.now() - start_time).split('.')[0]
+                          html = f'''<html><head><title>CleanStart Python Container</title></head>
+              <body><h1>CleanStart Secure Python Container</h1>
+              <p>Enterprise-grade security demonstration</p>
+              <ul><li>Uptime: {uptime}</li><li>Requests: {request_count}</li>
+              <li>Python: {sys.version_info.major}.{sys.version_info.minor}</li>
+              <li>Security: Non-root (UID {os.getuid()})</li></ul>
+              <h3>Features:</h3><ul>
+              <li><a href="/health">Health Check</a></li>
+              <li><a href="/security">Security Status</a></li>
+              <li><a href="/performance">Performance Demo</a></li>
+              <li><a href="/system">System Info</a></li></ul></body></html>'''
+                          self.wfile.write(html.encode())
+              
+                      elif self.path == '/health':
+                          self.send_response(200)
+                          self.send_header('Content-type', 'application/json')
+                          self.end_headers()
+                          response = {'status': 'healthy', 'uptime': str(datetime.now() - start_time)}
+                          self.wfile.write(json.dumps(response).encode())
+              
+                      elif self.path == '/security':
+                          self.send_response(200)
+                          self.send_header('Content-type', 'application/json')
+                          self.end_headers()
+                          response = {'running_as_root': os.getuid() == 0, 'uid': os.getuid(), 'gid': os.getgid(), 'python_version': sys.version, 'timestamp': datetime.now().isoformat()}
+                          self.wfile.write(json.dumps(response, indent=2).encode())
+              
+                      elif self.path == '/performance':
+                          self.send_response(200)
+                          self.send_header('Content-type', 'application/json')
+                          self.end_headers()
+                          start = time.time()
+                          result = sum(i*i for i in range(100000))
+                          duration = time.time() - start
+                          response = {'test': 'CPU calculation', 'result': result, 'duration_ms': round(duration * 1000, 2), 'timestamp': datetime.now().isoformat()}
+                          self.wfile.write(json.dumps(response, indent=2).encode())
+              
+                      elif self.path == '/system':
+                          self.send_response(200)
+                          self.send_header('Content-type', 'application/json')
+                          self.end_headers()
+                          import platform
+                          response = {'platform': platform.system(), 'python_version': sys.version, 'container_id': os.uname().nodename, 'working_dir': os.getcwd(), 'uptime': str(datetime.now() - start_time)}
+                          self.wfile.write(json.dumps(response, indent=2).encode())
+              
+                      else:
+                          self.send_response(404)
+                          self.send_header('Content-type', 'text/plain')
+                          self.end_headers()
+                          self.wfile.write(b'Not Found')
+              
+                  def log_message(self, format, *args):
+                      pass
+              
+              print('CleanStart Python showcase starting on port 5000')
+              print(f'Running as UID: {os.getuid()}, GID: {os.getgid()}')
+              
+              with socketserver.TCPServer(('0.0.0.0', 5000), CleanStartHandler) as httpd:
+                  httpd.serve_forever()
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
