@@ -26,8 +26,8 @@ public class SimpleHttpServer {
         server.setExecutor(null);
         server.start();
         
-        System.out.println("Server started on http://localhost:8080");
-        System.out.println("Available endpoints:");
+        System.out.println("CleanStart Java JDK Image");  
+        System.out.println("There are available endpoints:");
         System.out.println("  GET / - Welcome message");
         System.out.println("  GET /health - Health check");
         System.out.println("  GET /api/time - Current time");
