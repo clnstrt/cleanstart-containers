@@ -1,0 +1,6 @@
+http.host: "0.0.0.0"
+xpack.monitoring.enabled: true
+xpack.monitoring.elasticsearch.hosts: []
+path.config: /usr/share/logstash/pipeline
+path.logs: /usr/share/logstash/logs
+log.level: info

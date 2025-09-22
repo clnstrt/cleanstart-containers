@@ -1,0 +1,46 @@
+version: '3.8'
+
+networks:
+  minio-network:
+    driver: bridge
+
+volumes:
+  minio_data:
+
+services:
+  # MinIO server for object storage
+  minio:
+    image: minio/minio:latest
+    container_name: minio-server
+    restart: unless-stopped
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - minio_data:/data
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin123
+    networks:
+      - minio-network
+    command: ["server", "/data", "--console-address", ":9001"]
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # The MinIO Operator sidecar as a standalone container
+  minio-operator-sidecar:
+    image: cleanstart/minio-operator-sidecar:latest-dev
+    container_name: minio-operator-sidecar
+    restart: unless-stopped
+    # The ports below are for the operator, not for MinIO's S3 API.
+    # They are likely used for inter-operator communication or metrics.
+    ports:
+      - "4222:4222"
+    networks:
+      - minio-network
+    depends_on:
+      - minio
+    # Removing the `command` to let the container run its default entrypoint
