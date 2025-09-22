@@ -31,6 +31,18 @@ Start interactive session for development
 docker run --rm -it --entrypoint /bin/sh cleanstart/velero-plugin-for-aws:latest-dev
 ```
 
+**Build and Run**
+
+# Build the wrapper image
+```bash
+docker build -t velero-aws-test .
+```
+
+# Run the container
+```bash
+docker run --rm velero-aws-test
+```
+
 **Container Start**
 Start the container
 ```bash

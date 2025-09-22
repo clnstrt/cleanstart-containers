@@ -14,4 +14,4 @@ docker run -d --name tigera-op -p 8080:8080 tigera-operator-web
 
 ```bash
 docker logs -f tigera-op
-```bash
+```
