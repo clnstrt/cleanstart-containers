@@ -21,6 +21,8 @@ Download the runtime container images
 
 ```bash
 docker pull cleanstart/argocd-extension-installer:latest
+```
+```bash
 docker pull cleanstart/argocd-extension-installer:latest-dev
 ```
 
@@ -48,6 +50,8 @@ docker run --rm -it --name argocd-extension-dev cleanstart/argocd-extension-inst
 
 ```bash
 docker pull --platform linux/amd64 cleanstart/argocd-extension-installer:latest
+```
+```bash
 docker pull --platform linux/arm64 cleanstart/argocd-extension-installer:latest
 ```
 
@@ -56,5 +60,6 @@ docker pull --platform linux/arm64 cleanstart/argocd-extension-installer:latest
 **Essential Links**
 * **CleanStart Website**: https://www.cleanstart.com
 * **ArgoCD Official**: https://argo-cd.readthedocs.io/
+
 
 ---

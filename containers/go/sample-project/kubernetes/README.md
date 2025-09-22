@@ -29,8 +29,7 @@ kubectl apply -f go-pvc.yaml
 ### Access the Application
 ```bash
 # Port forward to access the app
-kubectl port-forward service/go-web-service 8080:80
-
+kubectl port-forward deployment/go-sample-deployment 8080:8080 -n go-sample
 # Access: http://localhost:8080
 ```
 
@@ -42,6 +41,11 @@ kubectl get pods -l app=go-web-app
 # Check services
 kubectl get services -l app=go-web-app
 ```
+
+# Delete deployment
+kubectl delete deployment go-sample-deployment -n go-sample
+
+
 
 ## 📚 Resources
 
