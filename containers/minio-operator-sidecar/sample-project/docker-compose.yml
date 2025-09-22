@@ -1,77 +1,28 @@
 version: '3.8'
 
 networks:
-  minio-operator:
+  minio-network:
     driver: bridge
 
 volumes:
   minio_data:
-    driver: local
-  operator_data:
-    driver: local
 
 services:
-  # MinIO Operator Sidecar
-  minio-operator:
-    image: cleanstart/minio-operator:latest
-    container_name: minio-operator-sidecar
-    restart: unless-stopped
-    ports:
-      - "4222:4222"
-      - "4223:4223"
-    volumes:
-      - operator_data:/app/data
-      - ./config:/app/config
-      - ./manifests:/app/manifests
-    environment:
-      - MINIO_OPERATOR_NAMESPACE=minio-operator
-      - MINIO_OPERATOR_LOG_LEVEL=info
-      - MINIO_OPERATOR_WATCH_NAMESPACE=""
-    networks:
-      - minio-operator
-    command: ["operator", "--help"]
-    healthcheck:
-      test: ["CMD", "kubectl", "version", "--client"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 60s
-
-  # MinIO Console for testing
-  minio-console:
-    image: cleanstart/minio-console:latest
-    container_name: minio-console-test
-    restart: unless-stopped
-    ports:
-      - "9001:9001"
-    environment:
-      - MINIO_SERVER_URL=http://minio:9000
-      - MINIO_SERVER_ACCESS_KEY=minioadmin
-      - MINIO_SERVER_SECRET_KEY=minioadmin123
-    networks:
-      - minio-operator
-    depends_on:
-      - minio
-    healthcheck:
-      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:9001"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-
-  # MinIO server for testing
+  # MinIO server for object storage
   minio:
-    image: cleanstart/minio:latest
-    container_name: minio-test
+    image: minio/minio:latest
+    container_name: minio-server
     restart: unless-stopped
     ports:
       - "9000:9000"
+      - "9001:9001"
     volumes:
       - minio_data:/data
     environment:
-      - MINIO_ROOT_USER=minioadmin
-      - MINIO_ROOT_PASSWORD=minioadmin123
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin123
     networks:
-      - minio-operator
+      - minio-network
     command: ["server", "/data", "--console-address", ":9001"]
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
@@ -79,57 +30,17 @@ services:
       timeout: 10s
       retries: 3
 
-  # Prometheus for monitoring
-  prometheus:
-    image: cleanstart/prometheus:latest
-    container_name: prometheus-test
+  # The MinIO Operator sidecar as a standalone container
+  minio-operator-sidecar:
+    image: cleanstart/minio-operator-sidecar:latest-dev
+    container_name: minio-operator-sidecar
     restart: unless-stopped
+    # The ports below are for the operator, not for MinIO's S3 API.
+    # They are likely used for inter-operator communication or metrics.
     ports:
-      - "9090:9090"
-    volumes:
-      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
-      - prometheus_data:/prometheus
-    command:
-      - '--config.file=/etc/prometheus/prometheus.yml'
-      - '--storage.tsdb.path=/prometheus'
-      - '--web.console.libraries=/etc/prometheus/console_libraries'
-      - '--web.console.templates=/etc/prometheus/consoles'
-      - '--storage.tsdb.retention.time=200h'
-      - '--web.enable-lifecycle'
+      - "4222:4222"
     networks:
-      - minio-operator
-    healthcheck:
-      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:9090/-/healthy"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-
-  # Grafana for visualization
-  grafana:
-    image: cleanstart/grafana:latest
-    container_name: grafana-test
-    restart: unless-stopped
-    ports:
-      - "3000:3000"
-    volumes:
-      - grafana_data:/var/lib/grafana
-      - ./monitoring/grafana/dashboards:/etc/grafana/provisioning/dashboards
-      - ./monitoring/grafana/datasources:/etc/grafana/provisioning/datasources
-    environment:
-      - GF_SECURITY_ADMIN_PASSWORD=admin
-      - GF_USERS_ALLOW_SIGN_UP=false
-    networks:
-      - minio-operator
+      - minio-network
     depends_on:
-      - prometheus
-    healthcheck:
-      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000/api/health"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-
-volumes:
-  minio_data:
-  operator_data:
-  prometheus_data:
-  grafana_data:
+      - minio
+    # Removing the `command` to let the container run its default entrypoint
