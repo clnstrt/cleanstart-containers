@@ -23,6 +23,8 @@ Download the container image from the registry
 
 ```bash
 docker pull cleanstart/glibc:latest
+```
+```bash
 docker pull cleanstart/glibc:latest-dev
 ```
 
@@ -61,5 +63,6 @@ docker pull --platform linux/arm64 cleanstart/glibc:latest
 **Essential Links**
 * **CleanStart Website**: https://www.cleanstart.com
 * **GNU C Library Documentation**: https://www.gnu.org/software/libc/
+
 
 ---
