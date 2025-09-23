@@ -21,53 +21,18 @@
   kubectl --namespace {{ .Release.Namespace }} port-forward $POD_NAME 8080:$CONTAINER_PORT
 {{- end }}
 
-2. Check the application status:
-  kubectl get pods --namespace {{ .Release.Namespace }} -l "app.kubernetes.io/name={{ include "python-app.name" . }},app.kubernetes.io/instance={{ .Release.Name }}"
+2. To see the application features, visit these endpoints:
+   - / (Main dashboard)
+   - /health (Health check)
+   - /security/status (Security information)
+   - /performance/cpu (CPU performance demo)
+   - /system/info (System information)
 
-3. View the application logs:
-  kubectl logs --namespace {{ .Release.Namespace }} -l "app.kubernetes.io/name={{ include "python-app.name" . }},app.kubernetes.io/instance={{ .Release.Name }}" -f
+3. To view application logs:
+   kubectl logs -f deployment/{{ include "python-app.fullname" . }} -n {{ .Release.Namespace }}
 
-4. Check the service:
-  kubectl get svc --namespace {{ .Release.Namespace }} {{ include "python-app.fullname" . }}
-
-{{- if .Values.autoscaling.enabled }}
-
-5. Check the Horizontal Pod Autoscaler:
-  kubectl get hpa --namespace {{ .Release.Namespace }} {{ include "python-app.fullname" . }}
-
-{{- end }}
-
-{{- if .Values.ingress.enabled }}
-
-6. Check the ingress:
-  kubectl get ingress --namespace {{ .Release.Namespace }} {{ include "python-app.fullname" . }}
-
-{{- end }}
-
-{{- if .Values.persistence.enabled }}
-
-7. Check the persistent volume claim:
-  kubectl get pvc --namespace {{ .Release.Namespace }} {{ include "python-app.fullname" . }}-pvc
-
-{{- end }}
-
-{{- if .Values.networkPolicy.enabled }}
-
-8. Check the network policy:
-  kubectl get networkpolicy --namespace {{ .Release.Namespace }} {{ include "python-app.fullname" . }}
-
-{{- end }}
-
-9. Access the application health endpoint:
-  kubectl exec --namespace {{ .Release.Namespace }} -it deployment/{{ include "python-app.fullname" . }} -- curl http://localhost:{{ .Values.service.targetPort }}/health
-
-10. Access the application metrics endpoint:
-  kubectl exec --namespace {{ .Release.Namespace }} -it deployment/{{ include "python-app.fullname" . }} -- curl http://localhost:{{ .Values.service.targetPort }}/metrics
-
-For more information about this application, visit:
-- CleanStart Website: https://www.cleanstart.com
-- Python Official Documentation: https://docs.python.org/
-- Flask Documentation: https://flask.palletsprojects.com/
-
-To uninstall this chart:
-  helm uninstall {{ .Release.Name }} --namespace {{ .Release.Namespace }}
+4. CleanStart Security Features:
+   - Non-root execution (UID 1001)
+   - Security context constraints
+   - Resource limits enforced
+   - Health monitoring enabled

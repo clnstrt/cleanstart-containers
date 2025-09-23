@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User CRUD Fun</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>User Management</h1>
+
+        <div class="card">
+            <h2>Add New User</h2>
+            <form action="/add" method="post" class="form-grid">
+                <input type="text" name="name" placeholder="Name" required>
+                <input type="email" name="email" placeholder="Email" required>
+                <button type="submit" class="add-button">Add User</button>
+            </form>
+        </div>
+
+        <div class="card">
+            <h2>User List</h2>
+            <ul class="user-list">
+                {% for user in users %}
+                <li class="user-item">
+                    <span><b>{{ user['name'] }}</b> ({{ user['email'] }})</span>
+                    <div class="actions">
+                        <form action="/update/{{ user['id'] }}" method="post" class="inline-form">
+                            <input type="text" name="name" value="{{ user['name'] }}" required>
+                            <input type="email" name="email" value="{{ user['email'] }}" required>
+                            <button type="submit" class="update-button">Update</button>
+                        </form>
+                        <form action="/delete/{{ user['id'] }}" method="post" class="inline-form">
+                            <button type="submit" class="delete-button" onclick="return confirm('Are you sure?');">Delete</button>
+                        </form>
+                    </div>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</body>
+</html>

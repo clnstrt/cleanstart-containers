@@ -1,0 +1,1 @@
+print("Cortex for Prometheus\n\nThis is a CNCF Cloud Native Computing Foundation project that provides horizontally scalable, highly available, and multi-tenant long-term storage for Prometheus monitoring data.")

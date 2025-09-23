@@ -1,269 +1,269 @@
-# Python App Helm Chart
+# CleanStart Python Container - Community Deployment Guide
 
-This Helm chart deploys the CleanStart Python application on a Kubernetes cluster.
+Deploy a secure, enterprise-grade Python container that demonstrates advanced security practices and performance monitoring.
 
-## Prerequisites
+## Features
 
-- Kubernetes 1.19+
-- Helm 3.2.0+
-- CleanStart Python container image
+- ✅ Security-hardened runtime environment
+- ✅ Non-root user execution (UID 1001)
+- ✅ Comprehensive health checks and monitoring
+- ✅ Multi-architecture support (AMD64/ARM64)
+- ✅ Performance optimized with benchmarking
+- ✅ Production-ready Kubernetes deployment
 
-## Installing the Chart
+## Quick Start
 
-To install the chart with the release name `my-python-app`:
+### Prerequisites
+- Kubernetes cluster (v1.19+)
+- Helm 3.0+
+- kubectl configured
+
+### Deploy with Helm
 
 ```bash
-helm install my-python-app ./python-app
+# Add the repository (if using a Helm repo)
+helm repo add cleanstart https://your-helm-repo.com
+helm repo update
+
+# Install the application
+helm install my-cleanstart-app ./helm/python-app
+
+# Or with custom values
+helm install my-cleanstart-app ./helm/python-app \
+  --set image.tag=latest \
+  --set replicaCount=3 \
+  --set resources.requests.cpu=100m \
+  --set resources.requests.memory=128Mi
 ```
 
-The command deploys the Python application on the Kubernetes cluster in the default configuration. The [Parameters](#parameters) section lists the parameters that can be configured during installation.
-
-> **Tip**: List all releases using `helm list`
-
-## Uninstalling the Chart
-
-To uninstall/delete the `my-python-app` deployment:
+### Access the Application
 
 ```bash
-helm uninstall my-python-app
+# Get service information
+kubectl get svc
+
+# Port forward to access locally
+kubectl port-forward svc/my-cleanstart-demo-python-app 8080:5000
+
+# Test the endpoints
+curl http://localhost:8080/health    # Health check
+curl http://localhost:8080/metrics   # Performance metrics
+curl http://localhost:8080/info      # System information
+curl http://localhost:8080/bench     # CPU benchmark
 ```
 
-The command removes all the Kubernetes components associated with the chart and deletes the release.
+## Application Endpoints
 
-## Parameters
+| Endpoint | Description | Purpose |
+|----------|-------------|---------|
+| `/` | Welcome message | Basic connectivity test |
+| `/health` | Health check | Kubernetes liveness/readiness |
+| `/metrics` | Performance metrics | Monitoring and observability |
+| `/info` | System information | Runtime environment details |
+| `/bench` | CPU benchmark | Performance validation |
+| `/stress` | Load testing | Stress testing capabilities |
 
-### Global parameters
+## Configuration Options
 
-| Name                      | Description                                     | Value |
-| ------------------------- | ----------------------------------------------- | ----- |
-| `global.imageRegistry`    | Global Docker image registry                    | `""`  |
-| `global.imagePullSecrets` | Global Docker registry secret names as an array | `[]`  |
-| `global.storageClass`     | Global StorageClass for Persistent Volume(s)   | `""`  |
+### values.yaml Key Parameters
 
-### Image parameters
+```yaml
+# Replica configuration
+replicaCount: 2
 
-| Name                | Description                                                                 | Value                   |
-| ------------------- | --------------------------------------------------------------------------- | ----------------------- |
-| `image.repository`  | Python image repository                                                     | `cleanstart/python`     |
-| `image.tag`         | Python image tag (immutable tags are recommended)                           | `""`                     |
-| `image.pullPolicy`  | Python image pull policy                                                     | `Always`                |
-| `image.pullSecrets` | Python image pull secrets                                                    | `[]`                    |
+# Image settings
+image:
+  repository: your-registry/cleanstart-python
+  tag: "latest"
+  pullPolicy: IfNotPresent
 
-### Service Account parameters
+# Service configuration
+service:
+  type: ClusterIP
+  port: 5000
 
-| Name                     | Description                                                                 | Value   |
-| ------------------------ | --------------------------------------------------------------------------- | ------- |
-| `serviceAccount.create`  | Specifies whether a ServiceAccount should be created                        | `true`  |
-| `serviceAccount.name`    | The name of the ServiceAccount to use.                                      | `""`    |
-| `serviceAccount.annotations` | Additional custom annotations for the ServiceAccount                    | `{}`    |
+# Resource limits
+resources:
+  requests:
+    cpu: 100m
+    memory: 128Mi
+  limits:
+    cpu: 500m
+    memory: 512Mi
 
-### Pod Security Context parameters
-
-| Name                | Description                                                                 | Value   |
-| ------------------- | --------------------------------------------------------------------------- | ------- |
-| `podSecurityContext.runAsNonRoot` | Set the container's security context runAsNonRoot                    | `true`  |
-| `podSecurityContext.runAsUser`    | Set the container's security context runAsUser                         | `1001`  |
-| `podSecurityContext.runAsGroup`  | Set the container's security context runAsGroup                        | `1001`  |
-| `podSecurityContext.fsGroup`     | Set the container's security context fsGroup                            | `1001`  |
-
-### Security Context parameters
-
-| Name                     | Description                                                                 | Value   |
-| ------------------------ | --------------------------------------------------------------------------- | ------- |
-| `securityContext.allowPrivilegeEscalation` | Set the container's security context allowPrivilegeEscalation      | `false` |
-| `securityContext.readOnlyRootFilesystem`    | Set the container's security context readOnlyRootFilesystem        | `false` |
-| `securityContext.runAsNonRoot`              | Set the container's security context runAsNonRoot                   | `true`  |
-| `securityContext.runAsUser`                 | Set the container's security context runAsUser                       | `1001`  |
-| `securityContext.runAsGroup`                | Set the container's security context runAsGroup                      | `1001`  |
-
-### Deployment parameters
-
-| Name                | Description                                                                 | Value |
-| ------------------- | --------------------------------------------------------------------------- | ----- |
-| `replicaCount`      | Number of replicas                                                          | `3`   |
-| `podAnnotations`    | Pod annotations                                                              | `{}`  |
-| `podLabels`         | Pod labels                                                                  | `{}`  |
-
-### Service parameters
-
-| Name                | Description                                                                 | Value       |
-| ------------------- | --------------------------------------------------------------------------- | ----------- |
-| `service.type`      | Kubernetes Service type                                                      | `ClusterIP` |
-| `service.port`      | Service HTTP port                                                            | `5000`      |
-| `service.targetPort` | Service HTTP target port                                                   | `5000`      |
-| `service.protocol`  | Service HTTP protocol                                                        | `TCP`       |
-| `service.name`      | Service HTTP port name                                                       | `http`      |
-| `service.annotations` | Additional custom annotations for the Service                            | `{}`        |
-| `service.sessionAffinity` | Control where client requests go, to the same pod or round-robin      | `None`      |
-
-### Ingress parameters
-
-| Name                | Description                                                                 | Value   |
-| ------------------- | --------------------------------------------------------------------------- | ------- |
-| `ingress.enabled`   | Enable ingress record generation for Python                                | `false` |
-| `ingress.className` | IngressClass resource. The controller may be specified as a class         | `nginx` |
-| `ingress.annotations` | Additional annotations for the Ingress resource                          | `{}`    |
-| `ingress.hosts`     | An array of hosts to be covered with this ingress record                   | `[]`    |
-| `ingress.tls`       | TLS configuration for additional hostname(s) to be covered with this ingress record | `[]` |
-
-### Resource parameters
-
-| Name                | Description                                                                 | Value   |
-| ------------------- | --------------------------------------------------------------------------- | ------- |
-| `resources.limits` | The resources limits for the Python container                              | `{}`    |
-| `resources.requests` | The requested resources for the Python container                           | `{}`    |
-
-### Autoscaling parameters
-
-| Name                | Description                                                                 | Value   |
-| ------------------- | --------------------------------------------------------------------------- | ------- |
-| `autoscaling.enabled` | Enable Horizontal POD autoscaling for Python                             | `true`  |
-| `autoscaling.minReplicas` | Minimum number of Python replicas                                        | `2`     |
-| `autoscaling.maxReplicas` | Maximum number of Python replicas                                        | `10`    |
-| `autoscaling.targetCPUUtilizationPercentage` | Target CPU utilization percentage                                        | `70`    |
-| `autoscaling.targetMemoryUtilizationPercentage` | Target memory utilization percentage                                   | `80`    |
-
-### Node parameters
-
-| Name                | Description                                                                 | Value |
-| ------------------- | --------------------------------------------------------------------------- | ----- |
-| `nodeSelector`      | Node labels for pod assignment                                              | `{}`  |
-| `tolerations`      | Tolerations for pod assignment                                              | `[]`  |
-| `affinity`          | Affinity for pod assignment                                                 | `{}`  |
-
-### Persistence parameters
-
-| Name                | Description                                                                 | Value   |
-| ------------------- | --------------------------------------------------------------------------- | ------- |
-| `persistence.enabled` | Enable persistence using Persistent Volume Claims                         | `false` |
-| `persistence.storageClass` | Persistent Volume storage class                                          | `""`    |
-| `persistence.accessMode` | Persistent Volume access mode                                             | `ReadWriteOnce` |
-| `persistence.size` | Persistent Volume size                                                      | `10Gi`  |
-| `persistence.annotations` | Additional custom annotations for the PVC                               | `{}`    |
-
-### Network Policy parameters
-
-| Name                | Description                                                                 | Value   |
-| ------------------- | --------------------------------------------------------------------------- | ------- |
-| `networkPolicy.enabled` | Enable NetworkPolicy                                                      | `false` |
-| `networkPolicy.ingress` | Ingress rules for the NetworkPolicy                                       | `{}`    |
-| `networkPolicy.egress` | Egress rules for the NetworkPolicy                                        | `{}`    |
-
-### Pod Disruption Budget parameters
-
-| Name                | Description                                                                 | Value   |
-| ------------------- | --------------------------------------------------------------------------- | ------- |
-| `podDisruptionBudget.enabled` | Enable Pod Disruption Budget                                             | `true`  |
-| `podDisruptionBudget.minAvailable` | Minimum number of pods that must be available                           | `1`     |
-| `podDisruptionBudget.maxUnavailable` | Maximum number of pods that can be unavailable                          | `1`     |
-
-### Environment variables
-
-The chart supports a comprehensive set of environment variables for configuring the Python application. See the `values.yaml` file for the complete list of available environment variables.
-
-### Secrets
-
-The chart supports creating Kubernetes secrets for sensitive configuration data. All secrets are base64 encoded automatically. See the `values.yaml` file for the complete list of available secrets.
-
-## Configuration and installation details
-
-### Using custom values
-
-You can customize the installation by providing a custom values file:
-
-```bash
-helm install my-python-app ./python-app -f my-values.yaml
+# Security context
+securityContext:
+  runAsNonRoot: true
+  runAsUser: 1001
+  allowPrivilegeEscalation: false
+  capabilities:
+    drop:
+      - ALL
 ```
 
-### Using environment variables
+## Testing Framework
 
-You can also set environment variables directly:
-
+### Local Testing
 ```bash
-helm install my-python-app ./python-app --set env.FLASK_ENV=production
+# Test container locally
+docker run -p 5000:5000 your-registry/cleanstart-python:latest
+
+# Verify endpoints
+curl http://localhost:5000/health
+curl http://localhost:5000/metrics
 ```
 
-### Using secrets
-
-For sensitive data, use secrets:
-
+### Kubernetes Testing
 ```bash
-helm install my-python-app ./python-app --set secrets.database.password=mysecretpassword
+# Deploy test instance
+helm install test-instance ./helm/python-app --set nameOverride=test
+
+# Run comprehensive tests
+kubectl run test-pod --image=curlimages/curl:latest --rm -it --restart=Never -- \
+  sh -c "
+    curl -f http://test-python-app:5000/health &&
+    curl -f http://test-python-app:5000/metrics &&
+    curl -f http://test-python-app:5000/info &&
+    echo 'All tests passed!'
+  "
+
+# Cleanup test
+helm uninstall test-instance
 ```
 
-## Examples
+## Deployment Scenarios
 
-### Basic installation
-
+### Development Environment
 ```bash
-helm install my-python-app ./python-app
+helm install dev-python ./helm/python-app \
+  --set replicaCount=1 \
+  --set resources.requests.cpu=50m \
+  --set resources.requests.memory=64Mi \
+  --set image.tag=dev
 ```
 
-### Installation with custom values
-
+### Production Environment
 ```bash
-helm install my-python-app ./python-app \
+helm install prod-python ./helm/python-app \
   --set replicaCount=5 \
-  --set service.type=LoadBalancer \
-  --set ingress.enabled=true \
-  --set ingress.hosts[0].host=python-app.example.com
-```
-
-### Installation with persistence
-
-```bash
-helm install my-python-app ./python-app \
-  --set persistence.enabled=true \
-  --set persistence.size=20Gi \
-  --set persistence.storageClass=fast-ssd
-```
-
-### Installation with autoscaling
-
-```bash
-helm install my-python-app ./python-app \
+  --set resources.requests.cpu=200m \
+  --set resources.requests.memory=256Mi \
+  --set resources.limits.cpu=1000m \
+  --set resources.limits.memory=1Gi \
   --set autoscaling.enabled=true \
-  --set autoscaling.minReplicas=3 \
-  --set autoscaling.maxReplicas=20 \
-  --set autoscaling.targetCPUUtilizationPercentage=60
+  --set autoscaling.maxReplicas=10
+```
+
+### High Availability Setup
+```bash
+helm install ha-python ./helm/python-app \
+  --set replicaCount=3 \
+  --set podDisruptionBudget.enabled=true \
+  --set podDisruptionBudget.minAvailable=2 \
+  --set affinity.podAntiAffinity.preferredDuringSchedulingIgnoredDuringExecution[0].weight=100
+```
+
+## Monitoring and Observability
+
+### Health Checks
+The application includes comprehensive health checks:
+- **Liveness**: `/health` endpoint
+- **Readiness**: `/health` endpoint with dependency validation
+- **Startup**: Configurable delay for application initialization
+
+### Metrics Collection
+```bash
+# View application metrics
+curl http://your-service:5000/metrics
+
+# System information
+curl http://your-service:5000/info | jq '.'
+```
+
+### Performance Benchmarking
+```bash
+# Run CPU benchmark
+curl http://your-service:5000/bench
+
+# Load testing endpoint
+curl -X POST http://your-service:5000/stress \
+  -H "Content-Type: application/json" \
+  -d '{"duration": 30, "intensity": "medium"}'
+```
+
+## Scaling Operations
+
+### Horizontal Scaling
+```bash
+# Manual scaling
+kubectl scale deployment my-cleanstart-demo-python-app --replicas=5
+
+# Auto-scaling with Helm
+helm upgrade my-cleanstart-app ./helm/python-app \
+  --set autoscaling.enabled=true \
+  --set autoscaling.minReplicas=2 \
+  --set autoscaling.maxReplicas=10 \
+  --set autoscaling.targetCPUUtilizationPercentage=70
+```
+
+### Vertical Scaling
+```bash
+helm upgrade my-cleanstart-app ./helm/python-app \
+  --set resources.requests.memory=512Mi \
+  --set resources.requests.cpu=500m \
+  --set resources.limits.memory=2Gi \
+  --set resources.limits.cpu=2000m
 ```
 
 ## Troubleshooting
 
-### Check pod status
-
+### Check Pod Status
 ```bash
 kubectl get pods -l app.kubernetes.io/name=python-app
+kubectl describe pod <pod-name>
 ```
 
-### Check logs
-
+### View Application Logs
 ```bash
 kubectl logs -l app.kubernetes.io/name=python-app -f
 ```
 
-### Check service
-
+### Test Connectivity
 ```bash
-kubectl get svc -l app.kubernetes.io/name=python-app
+kubectl exec -it <pod-name> -- python3 -c "
+import urllib.request
+response = urllib.request.urlopen('http://localhost:5000/health')
+print(response.read().decode())
+"
 ```
 
-### Check ingress
+### Common Issues
 
+**Pod Stuck in Pending**: Check resource availability
 ```bash
-kubectl get ingress -l app.kubernetes.io/name=python-app
+kubectl describe node
+kubectl top nodes
 ```
 
-### Check HPA
-
+**CrashLoopBackOff**: Check application logs
 ```bash
-kubectl get hpa -l app.kubernetes.io/name=python-app
+kubectl logs <pod-name> --previous
 ```
 
-## Support
+**Service Unreachable**: Verify service and endpoints
+```bash
+kubectl get endpoints
+kubectl get svc
+```
 
-- CleanStart Website: https://www.cleanstart.com
-- Python Official Documentation: https://docs.python.org/
-- Flask Documentation: https://flask.palletsprojects.com/
-- Kubernetes Documentation: https://kubernetes.io/docs/
-- Helm Documentation: https://helm.sh/docs/
+## Cleanup
+
+### Remove Application
+```bash
+helm uninstall my-cleanstart-app
+```
+
+### Verify Cleanup
+```bash
+kubectl get all -l app.kubernetes.io/name=python-app
+```

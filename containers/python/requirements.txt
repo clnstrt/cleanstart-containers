@@ -1,7 +1,8 @@
-Flask==2.3.3
-Werkzeug==2.3.7
-Jinja2==3.1.6
-MarkupSafe==3.0.2
-itsdangerous==2.2.0
-click==8.2.1
-blinker==1.9.0
+# Basic Python dependencies for a minimal project
+# Add your dependencies here as needed
+
+# Example: requests for HTTP calls
+# requests==2.31.0
+
+# Example: flask for web applications  
+# flask==2.3.3

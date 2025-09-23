@@ -1,6 +1,6 @@
 # 🔐 Step CLI - Basic PKI Example
 
-A comprehensive example demonstrating fundamental PKI operations and certificate management using Step CLI. This example covers certificate generation, CA setup, and basic certificate lifecycle management.
+A simple example demonstrating fundamental PKI operations and certificate management using Step CLI with CleanStart containers.
 
 ## 🎯 What This Example Demonstrates
 
@@ -8,145 +8,215 @@ A comprehensive example demonstrating fundamental PKI operations and certificate
 - **CA Setup**: Initialize and configure a local Certificate Authority
 - **Certificate Management**: Basic certificate operations and validation
 - **Certificate Inspection**: Tools for examining and validating certificates
-- **Automated Operations**: Scripts for common certificate tasks
+- **Simple Operations**: Easy-to-follow certificate tasks
 
 ## 🚀 Quick Start
 
 ### Prerequisites
 
-- Docker and Docker Compose installed
-- Ports 443, 8080, 8081 available
-- Basic understanding of PKI concepts
+- Docker installed
+- CleanStart Step CLI image available (`cleanstart/step-cli:latest`)
 
-### 1. Start the Services
-
-```bash
-# Navigate to the example directory
-cd images/step-cli/sample-project/basic-pki
-
-# Start all services
-docker compose up -d
-
-# Check service status
-docker compose ps
-
-# View logs
-docker compose logs -f
-```
-
-### 2. Initialize the CA
+### Step 1: Pull CleanStart Step CLI Image
 
 ```bash
-# Initialize the Certificate Authority
-docker exec -it step-cli-basic step ca init \
-  --name "Basic PKI CA" \
-  --dns "step-ca" \
-  --address ":443" \
-  --provisioner "admin@example.com" \
-  --password-file /app/config/ca-password.txt
-
-# Start the CA server
-docker compose restart step-ca
+# Pull the latest CleanStart Step CLI image
+docker pull cleanstart/step-cli:latest
 ```
 
-### 3. Generate Test Certificates
+**Why this command?** This ensures you have the latest CleanStart Step CLI image locally before running PKI operations.
+
+### Step 2: Test Basic Step CLI Functionality
+
+#### Test 1: Check Step CLI Version
 
 ```bash
-# Generate a server certificate
-docker exec -it step-cli-basic step certificate create \
-  --san localhost \
-  --san 127.0.0.1 \
-  --san step-ca \
-  "localhost" \
-  /app/certs/localhost.crt \
-  /app/certs/localhost.key
-
-# Generate a client certificate
-docker exec -it step-cli-basic step certificate create \
-  --profile client \
-  "client@example.com" \
-  /app/certs/client.crt \
-  /app/certs/client.key
+# Quick test to verify Step CLI is working
+docker run --rm --entrypoint="" cleanstart/step-cli:latest /step version
 ```
 
-### 4. Access the Services
+**Why this command?** Verifies that Step CLI is properly installed and accessible in the CleanStart container.
+
+#### Test 2: Check Available Commands
 
 ```bash
-# Access certificate generator web interface
-open http://localhost:8080
-
-# Access certificate inspector
-open http://localhost:8081
-
-# Check CA health
-curl -k https://localhost:443/health
+# Check Step CLI help
+docker run --rm --entrypoint="" cleanstart/step-cli:latest /step --help
 ```
 
-## 📊 Access Points
+**Why this command?** Shows all available Step CLI commands and options for PKI operations.
 
-| Service | URL | Description |
-|---------|-----|-------------|
-| **Step CA** | `https://localhost:443` | Certificate Authority server |
-| **Certificate Generator** | `http://localhost:8080` | Web interface for certificate generation |
-| **Certificate Inspector** | `http://localhost:8081` | Certificate inspection and validation |
-| **Step CLI** | Interactive shell access | Command-line certificate operations |
+#### Test 3: Check Certificate Commands
 
-## 🔍 Certificate Operations
+```bash
+# Check certificate command help
+docker run --rm --entrypoint="" cleanstart/step-cli:latest /step certificate --help
+```
 
-### Basic Certificate Generation
+**Why this command?** Provides detailed information about certificate management commands.
+
+#### Test 4: Check CA Commands
+
+```bash
+# Check CA command help
+docker run --rm --entrypoint="" cleanstart/step-cli:latest /step ca --help
+```
+
+**Why this command?** Shows Certificate Authority management commands and options.
+
+### Step 3: Test Basic PKI Operations
+
+#### Test 5: Initialize a Certificate Authority
+
+```bash
+# Initialize a basic CA
+docker run --rm --entrypoint="" cleanstart/step-cli:latest /bin/busybox sh -c '
+echo "🏭 Initializing Certificate Authority..."
+cd /tmp
+echo "password" > password.txt
+/step ca init --name "Test CA" --dns "localhost" --address ":8443" --provisioner "admin" --password-file password.txt --pki
+echo "✅ CA initialized successfully!"
+echo "Root certificate fingerprint:"
+/step certificate fingerprint /home/clnstrt/.step/certs/root_ca.crt
+'
+```
+
+**Why this command?** Tests the core PKI functionality by initializing a Certificate Authority and generating root certificates.
+
+#### Test 6: Inspect Certificates
+
+```bash
+# Inspect the generated certificates
+docker run --rm --entrypoint="" cleanstart/step-cli:latest /bin/busybox sh -c '
+echo "🔍 Inspecting Certificates..."
+cd /tmp
+echo "password" > password.txt
+/step ca init --name "Test CA" --dns "localhost" --address ":8443" --provisioner "admin" --password-file password.txt --pki
+echo ""
+echo "Root Certificate Details:"
+/step certificate inspect /home/clnstrt/.step/certs/root_ca.crt | head -10
+echo ""
+echo "Intermediate Certificate Details:"
+/step certificate inspect /home/clnstrt/.step/certs/intermediate_ca.crt | head -10
+'
+```
+
+**Why this command?** Demonstrates certificate inspection capabilities, essential for PKI operations and troubleshooting.
+
+#### Test 7: Get Certificate Fingerprints
+
+```bash
+# Get certificate fingerprints
+docker run --rm --entrypoint="" cleanstart/step-cli:latest /bin/busybox sh -c '
+echo "🔐 Certificate Fingerprints..."
+cd /tmp
+echo "password" > password.txt
+/step ca init --name "Test CA" --dns "localhost" --address ":8443" --provisioner "admin" --password-file password.txt --pki
+echo ""
+echo "Root CA Fingerprint:"
+/step certificate fingerprint /home/clnstrt/.step/certs/root_ca.crt
+echo ""
+echo "Intermediate CA Fingerprint:"
+/step certificate fingerprint /home/clnstrt/.step/certs/intermediate_ca.crt
+'
+```
+
+**Why this command?** Shows how to get certificate fingerprints, useful for certificate verification and trust establishment.
+
+### Step 4: Test Certificate Generation
+
+#### Test 8: Generate Self-Signed Certificate
 
 ```bash
 # Generate a self-signed certificate
-docker exec -it step-cli-basic step certificate create \
-  --self-signed \
-  --no-password \
-  --insecure \
-  "My Certificate" \
-  /app/certs/self-signed.crt \
-  /app/certs/self-signed.key
 
+docker run --rm --entrypoint="" cleanstart/step-cli:latest /bin/busybox sh -c '
+echo "📜 Generating Self-Signed Certificate..."
+/step certificate create "test.local" /tmp/test.crt /tmp/test.key --profile self-signed --subtle --no-password --insecure
+echo "✅ Self-signed certificate generated!"
+echo "Certificate details:"
+/step certificate inspect /tmp/test.crt
+'
+```
+
+**Why this command?** Demonstrates basic certificate generation without requiring a CA setup.
+
+#### Test 9: Generate Certificate with SANs
+
+```bash
 # Generate a certificate with multiple SANs
-docker exec -it step-cli-basic step certificate create \
-  --san example.com \
-  --san www.example.com \
-  --san api.example.com \
-  "example.com" \
-  /app/certs/example.crt \
-  /app/certs/example.key
+
+docker run --rm --entrypoint="" cleanstart/step-cli:latest /bin/busybox sh -c '
+echo "🌐 Generating Certificate with SANs..."
+/step certificate create "example.com" /tmp/example.crt /tmp/example.key \
+  --san example.com --san www.example.com --san api.example.com \
+  --profile self-signed --subtle --no-password --insecure
+echo "✅ Certificate with SANs generated!"
+echo "Certificate details:"
+/step certificate inspect /tmp/example.crt
+'
 ```
 
-### CA Operations
+**Why this command?** Shows how to create certificates with multiple Subject Alternative Names (SANs) for different domains.
 
+## 📋 Expected Output
+
+When you run these tests, you should see output similar to:
+
+```
+Smallstep CLI/0.28.7 (linux/amd64)
+Release Date: 2025-08-28 11:08 UTC
+
+🏭 Initializing Certificate Authority...
+✅ CA initialized successfully!
+Root certificate fingerprint: 0d7d3834cf187726cf331c40a31aa7ef6b29ba4df601416c9788f6ee01058cf3
+
+🔍 Inspecting Certificates...
+Root Certificate Details:
+Certificate:
+    Data:
+        Version: 3 (0x2)
+        Serial Number: 1234567890 (0x499602d2)
+        Signature Algorithm: sha256WithRSAEncryption
+        Issuer: CN=Test CA
+        Validity
+            Not Before: Sep 17 15:30:45 2025 GMT
+            Not After : Sep 17 15:30:45 2026 GMT
+        Subject: CN=Test CA
+```
+
+## 🔍 Troubleshooting
+
+### Common Issues
+
+**Docker not running**
 ```bash
-# Check CA status
-docker exec -it step-cli-basic step ca health
-
-# List CA certificates
-docker exec -it step-cli-basic step ca certificates
-
-# Get CA root certificate
-docker exec -it step-cli-basic step ca root /app/certs/ca.crt
-
-# Bootstrap with CA
-docker exec -it step-cli-basic step ca bootstrap \
-  --ca-url https://step-ca:443 \
-  --fingerprint $(docker exec -it step-cli-basic step certificate fingerprint /app/secrets/certs/root_ca.crt)
+# Check Docker status
+docker --version
+docker info
 ```
 
-### Certificate Inspection
-
+**Image not found**
 ```bash
-# Inspect a certificate
-docker exec -it step-cli-basic step certificate inspect /app/certs/localhost.crt
-
-# Get certificate fingerprint
-docker exec -it step-cli-basic step certificate fingerprint /app/certs/localhost.crt
-
-# Verify certificate chain
-docker exec -it step-cli-basic step certificate verify \
-  --roots /app/secrets/certs/root_ca.crt \
-  /app/certs/localhost.crt
+# Pull the image again
+docker pull cleanstart/step-cli:latest
 ```
+
+**Command not found**
+```bash
+# Use the correct entrypoint override
+docker run --rm --entrypoint="" cleanstart/step-cli:latest /step version
+```
+
+### CleanStart Image Specific Issues
+
+The `cleanstart/step-cli:latest` image is minimal and requires specific commands:
+
+1. **Use `--entrypoint=""` to override the default entrypoint**
+2. **Use BusyBox shell for scripts**: `/bin/busybox sh -c "command"`
+3. **Step CLI binary is located at `/step`**
+4. **Image doesn't have Python installed** - use shell scripts instead
+5. **No local files needed** - all commands work directly with the Docker image
 
 ## 📈 Understanding PKI Concepts
 
@@ -154,179 +224,34 @@ docker exec -it step-cli-basic step certificate verify \
 
 | Type | Description | Use Case |
 |------|-------------|----------|
+| **Self-Signed Certificate** | Certificate signed by itself | Testing, development |
+| **CA Certificate** | Certificate from Certificate Authority | Production, trust chain |
 | **Server Certificate** | For web servers and services | HTTPS, TLS connections |
 | **Client Certificate** | For client authentication | Mutual TLS, API authentication |
-| **Root CA Certificate** | Root of trust | Certificate chain validation |
-| **Intermediate CA** | Subordinate CA | Certificate hierarchy |
 
 ### Key Operations
 
 | Operation | Description | Command Example |
 |-----------|-------------|-----------------|
 | **Generate** | Create new certificates | `step certificate create` |
-| **Sign** | Sign certificate requests | `step ca sign` |
 | **Inspect** | Examine certificate details | `step certificate inspect` |
+| **Fingerprint** | Get certificate fingerprint | `step certificate fingerprint` |
 | **Verify** | Validate certificate chain | `step certificate verify` |
-| **Revoke** | Revoke compromised certificates | `step ca revoke` |
 
-## 🔧 Configuration Details
+## 🚀 Next Steps
 
-### CA Configuration
+After mastering these basic PKI operations:
 
-The CA is configured with:
-- **Name**: "Basic PKI CA"
-- **DNS**: step-ca
-- **Address**: :443
-- **Provisioner**: admin@example.com
-- **Password**: Stored in configuration file
+1. **Try Advanced Features**: Experiment with certificate policies and constraints
+2. **Explore Production Setup**: Learn about production CA configurations
+3. **Read Documentation**: Learn more about Step CLI capabilities
+4. **Build Your Own**: Create custom certificate management workflows
 
-### Certificate Storage
+## 📚 Resources
 
-- **Certificates**: `/app/certs/` directory
-- **CA Secrets**: `/app/secrets/` directory
-- **Configuration**: `/app/config/` directory
-- **Scripts**: `/app/scripts/` directory
-
-### Network Configuration
-
-- **PKI Network**: Internal network for CA communication
-- **Port Mapping**: Exposed ports for external access
-- **TLS**: Secure communication between services
-
-## 🧪 Testing Scenarios
-
-### 1. Basic Certificate Generation Test
-
-```bash
-# Generate a test certificate
-docker exec -it step-cli-basic step certificate create \
-  --san test.example.com \
-  "test.example.com" \
-  /app/certs/test.crt \
-  /app/certs/test.key
-
-# Verify the certificate
-docker exec -it step-cli-basic step certificate inspect /app/certs/test.crt
-
-# Check certificate validity
-docker exec -it step-cli-basic step certificate verify \
-  --roots /app/secrets/certs/root_ca.crt \
-  /app/certs/test.crt
-```
-
-### 2. CA Health Test
-
-```bash
-# Check CA health
-docker exec -it step-cli-basic step ca health
-
-# List CA configuration
-docker exec -it step-cli-basic step ca config
-
-# Check CA certificates
-docker exec -it step-cli-basic step ca certificates
-```
-
-### 3. Certificate Chain Test
-
-```bash
-# Generate intermediate certificate
-docker exec -it step-cli-basic step certificate create \
-  --profile intermediate-ca \
-  "Intermediate CA" \
-  /app/certs/intermediate.crt \
-  /app/certs/intermediate.key
-
-# Verify certificate chain
-docker exec -it step-cli-basic step certificate verify \
-  --roots /app/secrets/certs/root_ca.crt \
-  --intermediates /app/certs/intermediate.crt \
-  /app/certs/test.crt
-```
-
-## 🔍 Troubleshooting
-
-### Common Issues
-
-**CA won't start**
-```bash
-# Check CA logs
-docker compose logs step-ca
-
-# Verify CA configuration
-docker exec -it step-cli-basic cat /app/secrets/config/ca.json
-
-# Check secrets directory
-docker exec -it step-cli-basic ls -la /app/secrets/
-```
-
-**Certificate generation fails**
-```bash
-# Check certificate directory permissions
-docker exec -it step-cli-basic ls -la /app/certs/
-
-# Verify Step configuration
-docker exec -it step-cli-basic step path
-
-# Check CA connectivity
-docker exec -it step-cli-basic step ca health
-```
-
-**Certificate validation fails**
-```bash
-# Check certificate format
-docker exec -it step-cli-basic step certificate inspect /app/certs/test.crt
-
-# Verify certificate chain
-docker exec -it step-cli-basic step certificate verify \
-  --roots /app/secrets/certs/root_ca.crt \
-  /app/certs/test.crt
-
-# Check CA root certificate
-docker exec -it step-cli-basic step certificate inspect /app/secrets/certs/root_ca.crt
-```
-
-### Debug Commands
-
-```bash
-# Check all container statuses
-docker compose ps
-
-# View real-time logs
-docker compose logs -f --tail=100
-
-# Check network connectivity
-docker exec -it step-cli-basic ping step-ca
-
-# Verify volume mounts
-docker exec -it step-cli-basic ls -la /app/certs/
-docker exec -it step-cli-basic ls -la /app/secrets/
-```
-
-## 📚 Next Steps
-
-After mastering this basic example:
-
-1. **Try Advanced Certificates**: Complex certificate scenarios and automation
-2. **Explore Production PKI**: Enterprise-grade PKI with security best practices
-3. **Customize Certificates**: Modify certificate configurations for your use case
-4. **Add Automation**: Implement automated certificate management
-
-## 🧹 Cleanup
-
-```bash
-# Stop all services
-docker compose down
-
-# Remove containers and networks
-docker compose down --remove-orphans
-
-# Remove volumes (optional - will delete all certificates and CA data)
-docker compose down -v
-
-# Clean up images (optional)
-docker compose down --rmi all
-```
+- **Step CLI Documentation**: https://smallstep.com/docs/step-cli
+- **CleanStart Containers**: Check the main repository README
+- **Smallstep Official**: https://smallstep.com/
 
 ---
 

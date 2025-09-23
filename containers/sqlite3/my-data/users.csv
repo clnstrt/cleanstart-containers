@@ -1,0 +1,6 @@
+username,email,is_active
+user1,user1@test.com,1
+user2,user2@test.com,1
+user3,user3@test.com,0
+user4,user4@test.com,1
+user5,user5@test.com,1

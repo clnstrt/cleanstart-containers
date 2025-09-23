@@ -1,43 +1,58 @@
+
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: go-web-app
+  name: go-sample-deployment
+  namespace: go-sample
   labels:
-    app: go-web-app
-    version: v1.0.0
+    app: cleanstart-go-sample
+    version: v1
 spec:
   replicas: 3
   selector:
     matchLabels:
-      app: go-web-app
+      app: cleanstart-go-sample
+      version: v1
   template:
     metadata:
       labels:
-        app: go-web-app
-        version: v1.0.0
+        app: cleanstart-go-sample
+        version: v1
     spec:
       containers:
-      - name: go-web-app
-        image: go-web-app:latest
-        imagePullPolicy: IfNotPresent
+      - name: go-sample
+        image: cleanstart/go:latest
+        command: ["/bin/bash"]
+        args:
+          - -c
+          - |
+            echo "Starting CleanStart Go Sample with netcat..."
+            
+            # Create a simple HTTP response using netcat
+            while true; do
+              echo -e "HTTP/1.1 200 OK\nContent-Type: text/plain\n\nHello from CleanStart Go! Pod: $POD_NAME, Version: $APP_VERSION, Time: $(date)" | nc -l -p 8080
+            done
         ports:
         - containerPort: 8080
           name: http
           protocol: TCP
         env:
-        - name: PORT
-          value: "8080"
-        - name: DATABASE_PATH
-          value: "/app/data/users.db"
-        - name: LOG_LEVEL
-          value: "info"
+        - name: APP_VERSION
+          valueFrom:
+            configMapKeyRef:
+              name: go-sample-config
+              key: APP_VERSION
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
         resources:
           requests:
             memory: "64Mi"
-            cpu: "50m"
+            cpu: "100m"
           limits:
             memory: "128Mi"
-            cpu: "100m"
+            cpu: "200m"
         livenessProbe:
           httpGet:
             path: /
@@ -54,17 +69,10 @@ spec:
           periodSeconds: 5
           timeoutSeconds: 3
           failureThreshold: 3
-        volumeMounts:
-        - name: app-data
-          mountPath: /app/data
-        - name: app-config
-          mountPath: /app/config
-      volumes:
-      - name: app-data
-        persistentVolumeClaim:
-          claimName: go-web-pvc
-      - name: app-config
-        configMap:
-          name: go-web-config
-      restartPolicy: Always
-      terminationGracePeriodSeconds: 30
+        securityContext:
+          runAsNonRoot: false
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: false
+          capabilities:
+            drop:
+            - ALL
