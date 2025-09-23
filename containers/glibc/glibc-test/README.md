@@ -1,40 +1,34 @@
-# 🚀 Hello World!!! 
+### Quick Start 
 
-A simple **HELLO WORLD** program to run on CleanStart - glibc container. 
+Run and check the program for Glibc Docker iamage with the Dockerfile!
 
-## To run the Hello World without Dockerfile to avoid making simple things complex
+## Step 1
+Build with Dockerfile
+```bash
+FROM cleanstart/glibc:latest-dev
 
-### Pull CleanStart glibc image from [Docker Hub - CleanStart](https://hub.docker.com/u/cleanstart) 
-```bash
-docker pull cleanstart/glibc:latest
-```
-```bash
-docker pull cleanstart/glibc:latest-dev
-```
+# Set a safe working directory
+WORKDIR /workspace
 
-## If you have the glibc image pulled, you can also run your program directly:
-```bash
-docker run --rm -v $(pwd):/app -w /app cleanstart/glibc:latest gcc -o hello hello.c && ./hello
-```
-## Output 
-```bash
-Hello, World!
-Welcome to glibc!
-What's your name? Nice to meet you, !
+# Copy source code
+COPY app.c .
+
+# Compile
+RUN gcc app.c -o app
+
+# Run program
+CMD ["./app"]
 ```
 
-## 📚 Resources
+## Step 2
+Build the Dockerfile
+```bash
+docker build --no-cache -t my-glibc .
+```
 
-- [Verified Docker Image Publisher - CleanStart](https://cleanstart.com/)
-- [glibc Official Documentation](https://www.gnu.org/software/libc/)
-
-## 🤝 Contributing
-
-Feel free to contribute to this project by:
-- Reporting bugs
-- Suggesting new features
-- Submitting pull requests
-- Improving documentation
-
-## 📄 License
-This project is open source and available under the [MIT License](LICENSE).
+## Step 3
+Run the Dockerfile
+```bash
+docker run --rm my-glibc
+```
+Now you can see Glibc program output!!
