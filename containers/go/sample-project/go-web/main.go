@@ -1,8 +1,7 @@
 package main
 
 import (
-	"database/sql"   // Standard SQL package to interact with databases
-	"fmt"            // For formatted I/O (e.g., fmt.Println)
+	"database/sql"   // Standard SQL package to interact with databases           // For formatted I/O (e.g., fmt.Println)
 	"log"            // Logging messages to terminal
 	"net/http"       // For HTTP status codes           // For file system operations (checking DB file existence)
 	"strconv"        // Convert strings to integers
