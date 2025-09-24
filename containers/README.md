@@ -18,52 +18,6 @@ The aim is to create sample projects for all CleanStart community images.
 | 11    | postgres          | Relational Database             | Yes                       | No                        | no                 |
 | 12    | step-cli          | PKI & Certificates              | Yes                       | no                        | no                 |
 
-# Available Docker Images
-
-## Core Development & Runtime
-- **argocd** - Continuous Deployment (CD) platform for Kubernetes
-- **argo-workflow** - Workflow automation and orchestration engine
-- **python** - Python runtime for data science, web applications, and scripting
-- **go** - Go language runtime for building web applications and microservices
-- **node** - Node.js JavaScript runtime for server-side applications
-- **jre** - Java Runtime Environment for running Java applications
-- **jdk** - Java Development Kit for building and running Java applications
-
-## Web Servers & Databases
-- **nginx** - High-performance web server and reverse proxy
-- **postgres** - PostgreSQL relational database management system
-- **memcached** - In-memory key-value store for caching
-- **sqlite3** - Lightweight embedded SQL database
-
-## DevOps & Infrastructure
-- **kyverno-kyvernopre** - Kubernetes policy engine for security and governance
-- **logstash-exporter** - Elasticsearch Logstash metrics exporter
-- **metallb-controller** - Load balancer implementation for bare metal Kubernetes
-- **minio-operator-sidecar** - MinIO object storage operator sidecar container
-- **minio** - High-performance object storage server
-
-## Utilities & Tools
-- **busybox** - Lightweight multi-call binary with essential Unix utilities
-- **curl** - Command-line tool for data transfer with URL syntax
-- **step-cli** - PKI toolkit for certificate management and security
-
-## Additional Images
-- **redis** - In-memory data structure store for caching and messaging
-- **mongodb** - NoSQL document-oriented database
-- **mysql** - Popular relational database management system
-- **alpine** - Security-oriented lightweight Linux distribution
-- **ubuntu** - Popular Linux distribution for general-purpose containers
-- **docker** - Docker-in-Docker for CI/CD pipelines
-- **jenkins** - Automation server for continuous integration
-- **grafana** - Analytics and monitoring platform
-- **prometheus** - Systems monitoring and alerting toolkit
-- **elasticsearch** - Distributed search and analytics engine
-- **rabbitmq** - Message broker for distributed systems
-- **kafka** - Distributed streaming platform
-- **consul** - Service mesh solution and key-value store
-- **vault** - Secrets management and data protection
-- **traefik** - Modern HTTP reverse proxy and load balancer
-
 
 ## BEST PRACTICE BEFORE RUNNING ANY PROJECT
 
@@ -86,6 +40,7 @@ kill -9 <PID>
 ```bash
 Stop-Process -Id <PID>
 ```
+
 
 
 
