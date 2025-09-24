@@ -1,0 +1,13 @@
+FROM cleanstart/python:latest
+
+WORKDIR /app2
+
+COPY requirements.txt .
+RUN ["python", "-m", "pip", "install", "--no-cache-dir", "-r", "requirements.txt"]
+
+COPY app2.py .
+
+EXPOSE 5000
+
+# Cleanstart already has python as entrypoint
+CMD ["app2.py"]
