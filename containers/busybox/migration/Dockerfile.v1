@@ -1,0 +1,12 @@
+# Public BusyBox image
+FROM busybox:latest
+
+WORKDIR /app
+
+COPY index.html .
+# COPY server.sh .
+
+EXPOSE 8080
+
+# Run custom web server
+CMD ["sh", "server.sh"]
