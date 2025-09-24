@@ -1,140 +1,71 @@
-**Python App Migration: Public Image → Cleanstart Image**
-Overview:
+# Python Flask CRUD Applications
 
-**This project demonstrates migrating a Python application from a public Python Docker image (python:3.11) to a Cleanstart Python image (cleanstart/python:latest). The migration ensures identical functionality while leveraging Cleanstart’s optimized, secure, and preconfigured runtime.**
+**App1 runs on python:3.11**
+**App2 runs on cleanstart/python:latest-dev**
 
----Blue Deployment (Public Python Image)---
+Same application is Dockerised to show the migration functionality of open source image and Cleanstart image.
 
-Create Dockerfile.v1 :
-
-```bash
-FROM python:3.11
-WORKDIR /app1
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
-COPY app1.py .
-EXPOSE 5000
-CMD ["python", "app1.py"]
-```
-
-Create app1.py :
+**Features:**
 
 ```bash
-from flask import Flask
-
-app = Flask(__name__)
-
-@app.route("/")
-def hello():
-    return """
-    <html>
-      <head><title>Blue Deployment</title></head>
-      <body style="background-color:blue; color:white; text-align:center; padding-top:50px;">
-        <h1>Hello from Python container - BLUE Deployment!</h1>
-      </body>
-    </html>
-    """
-
-if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000)
+Add new users with name and email.
+Update existing user information.
+Delete users from the database.
 ```
 
+SQLite database automatically created on app startup.
 
-Build & Run :
+**Directory Structure:**
+```bash
+Copy code
+├── app1.py                  # Flask app 1
+├── app2.py                  # Flask app 2
+├── requirements.txt         # Python dependencies
+├── Dockerfile.v1            # Dockerfile for app1
+├── Dockerfile.v2            # Dockerfile for app2
+└── models/
+    ├── __init__.py
+    ├── database.py          # Database creation and setup
+    └── user.py              # User model and CRUD operations
+```
+
+Building Docker Images
+App1
+```bash
+docker build -t python-app1 -f Dockerfile.v1 .
+```
+
+**Run command:**
+```bash
+docker run -d -p 5000:5000 --name app1-container python-app1
+```
+
+Access the App1 here : http://localhost:5000/
+
+App2
+```bash
+docker build -t python-app2 -f Dockerfile.v2 .
+```
+
+Run command:
 
 ```bash
-docker build -t my-python-app -f Dockerfile.v1 .
-docker run -d -p 5000:5000 my-python-app
+docker run -d -p 5001:5001 --name app2-container python-app2
 ```
 
-Test :
-
-Open a browser and visit: http://localhost:5000
-
-You should see the Blue Deployment page.
+Access the App2 here : http://localhost:5001/
 
 
+### App1
+- **Image:** `python-app1`
+- **Port:** `5000`
 
----Green Deployment (Cleanstart Python Image)---
-
-Create Dockerfile.v2 :
-
-```bash
-FROM cleanstart/python:latest
-WORKDIR /app2
-COPY requirements.txt .
-RUN ["python", "-m", "pip", "install", "--no-cache-dir", "-r", "requirements.txt"]
-COPY app2.py .
-EXPOSE 5000
-CMD ["app2.py"]
-```
-
-Create app2.py :
-
-```bash
-from flask import Flask
-
-app = Flask(__name__)
-
-@app.route("/")
-def hello():
-    return """
-    <html>
-      <head><title>Green Deployment</title></head>
-      <body style="background-color:green; color:white; text-align:center; padding-top:50px;">
-        <h1>Hello from Nginx container - GREEN Deployment!</h1>
-      </body>
-    </html>
-    """
-
-if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000)
-```
-
-Build & Run :
-
-```bash
-docker build -t my-cleanstart-app .
-docker run -d -p 5001:5000 my-cleanstart-app
-```
-
-Test :
-
-Open a browser and visit: http://localhost:5001
-
-You should see the Green Deployment page.
-
-Migration Justification
-Aspect	Public Python Image	Cleanstart Python Image	Benefit
-Base image reliability	Official Python, widely used	Cleanstart, optimized and maintained	More secure and lightweight runtime
-Preinstalled tooling	Python only	Python + preconfigured environment	Reduces repetitive setup steps
-Security & compliance	Standard updates via Docker Hub	Hardened image with fewer vulnerabilities	Adheres to internal policies, reduces attack surface
-Image size	~900 MB (full Python)	Typically smaller and optimized	Faster deployments, lower resource consumption
-Consistency across projects	Varies by public image version	Controlled Cleanstart versions	Standardizes Python environment across projects
-Entrypoint simplification	CMD python app.py	Python entrypoint included	Simplifies Dockerfile, avoids manual CMD
-Migration validation	Baseline working app	Green deployment confirmed	Functionality remains identical while leveraging Cleanstart benefits
-Migration Testing
-
-Run both containers simultaneously:
-
-curl http://localhost:5000  # Blue Deployment
-curl http://localhost:5001  # Green Deployment
+###App2
+- **Image:** `python-app2`
+- **Port:** `5001`
 
 
-Verify identical functionality.
+**Notes:**
+The applications use Flask as the web framework and SQLite as the database.
 
-Confirms a successful migration from public Python image to Cleanstart Python image.
-
-Summary
-
-The migration demonstrates that Cleanstart Python images provide:
-
-Smaller, optimized image size
-
-Preinstalled and configured environment
-
-Enhanced security and compliance
-
-Standardized development environment
-
-Functionality remains the same as the baseline public Python image deployment.
+Ports 5000 and 5001 can be adjusted if needed.
