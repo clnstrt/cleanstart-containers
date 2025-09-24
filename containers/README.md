@@ -2,7 +2,6 @@
 The aim is to create sample projects for all CleanStart community images. 
 
 ## Index images, Use Cases and their sample projects
-# Available Docker Images
 
 # Available Docker Images
 
@@ -53,6 +52,7 @@ kill -9 <PID>
 ```bash
 Stop-Process -Id <PID>
 ```
+
 
 
 
