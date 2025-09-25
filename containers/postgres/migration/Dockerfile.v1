@@ -1,0 +1,13 @@
+# Dockerfile.v1
+FROM postgres:latest
+
+# Set environment variables
+ENV POSTGRES_USER=komal
+ENV POSTGRES_PASSWORD=komal123
+ENV POSTGRES_DB=testdb
+
+# Copy initial SQL file (optional)
+COPY init.sql /docker-entrypoint-initdb.d/
+
+# Expose Postgres port
+EXPOSE 5432

@@ -4,7 +4,7 @@ FROM busybox:latest
 WORKDIR /app
 
 COPY index.html .
-# COPY server.sh .
+COPY server.sh .
 
 EXPOSE 8080
 
