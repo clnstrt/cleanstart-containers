@@ -1,0 +1,4 @@
+# Use Amazon AWS CLI image as base
+FROM amazon/aws-cli:latest
+
+# Default entrypoint is already set to aws

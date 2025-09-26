@@ -1,0 +1,4 @@
+# Use Cleanstart AWS CLI image as base
+FROM cleanstart/aws-cli:latest
+
+# Default entrypoint is already set to aws
