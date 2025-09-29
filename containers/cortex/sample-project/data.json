@@ -1,0 +1,7 @@
+{
+  "name": "Cortex",
+  "version": "x.x.x",
+  "description": "Sample Cortex Docker image serving JSON",
+  "author": "Pratham",
+  "status": "running"
+}
