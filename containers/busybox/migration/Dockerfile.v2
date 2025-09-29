@@ -1,0 +1,12 @@
+# Cleanstart BusyBox image
+FROM cleanstart/busybox:latest-dev
+
+WORKDIR /app
+
+COPY index.html .
+COPY server.sh .
+
+EXPOSE 8080
+
+# Run custom web server
+CMD ["sh", "server.sh"]

@@ -1,0 +1,6 @@
+FROM cleanstart/nginx:latest-dev
+
+WORKDIR /app
+
+COPY ../html2 /app
+COPY nginx.conf /etc/nginx/nginx.conf
