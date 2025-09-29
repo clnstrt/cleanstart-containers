@@ -1,0 +1,2 @@
+FROM cleanstart/minio:latest-dev
+WORKDIR /data
