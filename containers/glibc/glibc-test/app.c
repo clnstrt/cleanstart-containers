@@ -1,47 +1,36 @@
 #include <stdio.h>
-#include <time.h>
-#include <unistd.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
 
 int main() {
-    time_t now;
-    struct tm *local;
-    char buffer[80];
+    int server_fd, new_socket;
+    struct sockaddr_in address;
+    int opt = 1;
+    int addrlen = sizeof(address);
+    char buffer[1024] = {0};
+    char *response = "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n<h1>GLIBC Test Server Running!</h1>";
 
-    // get current time
-    time(&now);
-    local = localtime(&now);
+    // Create socket
+    server_fd = socket(AF_INET, SOCK_STREAM, 0);
+    setsockopt(server_fd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt));
 
-    // format time
-    strftime(buffer, sizeof(buffer), "%Y-%m-%d %H:%M:%S", local);
+    address.sin_family = AF_INET;
+    address.sin_addr.s_addr = INADDR_ANY;  // Important: bind to 0.0.0.0
+    address.sin_port = htons(8081);
 
-    printf("GLIBC Test Program\n");
-    printf("------------------\n");
-    printf("Current Time : %s\n", buffer);
-    printf("Process ID  : %d\n", getpid());
+    bind(server_fd, (struct sockaddr *)&address, sizeof(address));
+    listen(server_fd, 3);
 
-    // getenv demo
-    const char *user = getenv("USER");
-    if (user)
-        printf("Environment USER: %s\n", user);
-    else
-        printf("Environment USER not set\n");
+    printf("Server listening on port 8081...\n");
 
-    // malloc + string demo
-    char *msg = malloc(50);
-    strcpy(msg, "This is a dynamically allocated string.");
-    printf("Dynamic String : %s (length: %zu)\n", msg, strlen(msg));
-    free(msg);
-
-    // file I/O demo
-    FILE *fp = fopen("output.txt", "w");
-    if (fp) {
-        fprintf(fp, "Log written at %s\n", buffer);
-        fclose(fp);
-        printf("Wrote log to output.txt\n");
-    } else {
-        perror("File open failed");
+    while(1) {
+        new_socket = accept(server_fd, (struct sockaddr *)&address, (socklen_t*)&addrlen);
+        read(new_socket, buffer, 1024);
+        write(new_socket, response, strlen(response));
+        close(new_socket);
     }
 
     return 0;
