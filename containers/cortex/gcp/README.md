@@ -14,12 +14,12 @@ kubectl apply -f namespace.yaml
 
 # Step 2: Build the Docker Image
 ```bash
-docker build -t my-go:latest .
+docker build -t cortex:latest .
 ```
 
 # Step 3: Tag the Image for Artifact Registry
 ```bash
-docker tag cortex-app:latest us-central1-docker.pkg.dev/consumption-442810/testing-community-images/cortex-app:latest
+docker tag cortex-app:latest <your_artifact_registry>/cortex-app:latest
 ```
 
 # Step 4: Configure Docker Authentication
@@ -29,7 +29,7 @@ gcloud auth configure-docker us-central1-docker.pkg.dev
 
 # Step 5: Push the Image
 ```bash
-docker push us-central1-docker.pkg.dev/consumption-442810/testing-community-images/cortex-app:latest
+docker push <your_artifact_registry>/cortex-app:latest
 ```
 
 # Step 6: Deploy the Application
@@ -59,4 +59,5 @@ kubectl get events -n cortex --sort-by='.lastTimestamp'
 kubectl delete -f gcp/service.yaml
 kubectl delete -f gcp/deployment.yaml
 kubectl delete -f gcp/namespace.yaml
+
 ```
