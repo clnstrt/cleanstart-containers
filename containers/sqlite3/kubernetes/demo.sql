@@ -7,3 +7,4 @@ UPDATE users SET name='Charlie' WHERE name='Alice';
 SELECT * FROM users;
 DELETE FROM users WHERE name='Bob';
 SELECT * FROM users;
+

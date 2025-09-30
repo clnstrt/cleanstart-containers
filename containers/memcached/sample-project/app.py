@@ -4,7 +4,7 @@ Memcached Demo Application
 A Flask app demonstrating various caching patterns with Memcached
 """
 
-from flask import Flask, jsonify, request, render_template_string
+from flask import flask, jsonify, request, render_template_string
 import time
 import json
 import hashlib
