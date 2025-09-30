@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: argocd-extensions-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: argocd-extensions-app
+  template:
+    metadata:
+      labels:
+        app: argocd-extensions-app
+    spec:
+      containers:
+      - name: argocd-extensions-app
+        image: us-central1-docker.pkg.dev/consumption-442810/testing-community-images/argocd-extensions-app:latest
+        ports:
+        - containerPort: 8080
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 8080
+          initialDelaySeconds: 30
+          periodSeconds: 30

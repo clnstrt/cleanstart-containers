@@ -4,7 +4,7 @@ gcloud container clusters get-credentials community-images --zone us-central1-a
 ```
 # Right Directory
 ```bash
-cd /cleanstart-containers/containers/go-installer/gcp
+cd /cleanstart-containers/containers/argocd-extension-installer/gcp
 ```
 
 # Step 1: Create the Namespace
@@ -14,12 +14,12 @@ kubectl apply -f namespace.yaml
 
 # Step 2: Build the Docker Image
 ```bash
-docker build -t my-go-app:latest .
+docker build -t argocd-extensions-app:latest .
 ```
 
 # Step 3: Tag the Image for Artifact Registry
 ```bash
-docker tag my-go:latest us-central1-docker.pkg.dev/consumption-442810/testing-community-images/go-app:latest
+docker tag argocd-extensions-app:latest us-central1-docker.pkg.dev/consumption-442810/testing-community-images/argocd-extensions-app:latest
 ```
 
 # Step 4: Configure Docker Authentication
@@ -29,29 +29,29 @@ gcloud auth configure-docker us-central1-docker.pkg.dev
 
 # Step 5: Push the Image
 ```bash
-docker push us-central1-docker.pkg.dev/consumption-442810/testing-community-images/go-app:latest
+docker push us-central1-docker.pkg.dev/consumption-442810/testing-community-images/argocd-extensions-app:latest
 ```
 
 # Step 6: Deploy the Application
 ```bash
-kubectl apply -f deployment.yaml -n go-app
+kubectl apply -f deployment.yaml -n argocd-extension
 ```
 
 # Step 7: Create the Service
 ```bash
-kubectl apply -f service.yaml -n go-app
+kubectl apply -f service.yaml -n argocd-extension
 ```
 
 # Step 8: Verify Deployment
 ```bash
-kubectl get all -n go-app
+kubectl get all -n argocd-extension
 ```
 
 # Useful Commands
 ```bash
-kubectl logs -f deployment/go-installer -n go-app
-kubectl get all -n go-app
-kubectl get events -n go --sort-by='.lastTimestamp'
+kubectl logs -f deployment/argocd-extension-installer -n argocd-extension
+kubectl get all -n argocd-extension
+kubectl get events -n argocd-extension --sort-by='.lastTimestamp'
 ```
 
 # Cleanup
