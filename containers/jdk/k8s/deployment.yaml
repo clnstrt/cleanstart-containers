@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: jdk-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: jdk-app
+  template:
+    metadata:
+      labels:
+        app: jdk-app
+    spec:
+      containers:
+      - name: jdk-app
+        image: us-central1-docker.pkg.dev/consumption-442810/testing-community-images/jdk-app:latest
+        ports:
+        - containerPort: 8080
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 8080
+          initialDelaySeconds: 30
+          periodSeconds: 30

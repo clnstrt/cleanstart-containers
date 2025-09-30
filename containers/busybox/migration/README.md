@@ -1,0 +1,1 @@
+In buysbox if we use the public image busybox:uclibc, and try to run the appllication or simple program you have to remove user root and clnstrt configuration and then it will work.

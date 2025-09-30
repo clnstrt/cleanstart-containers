@@ -1,8 +1,6 @@
 FROM cleanstart/jdk:latest-dev
 
-
 USER root
-# Switch to root to set permissions
 
 # Set working directory and ensure proper ownership
 WORKDIR /app
@@ -10,7 +8,7 @@ WORKDIR /app
 # Switch back to clnstrt user
 
 # Copy source files
-COPY --chown=clnstrt:clnstrt src/ ./src/
+COPY  src/ ./src/
 
 # Compile the Java application
 RUN javac -d . src/main/SimpleHttpServer.java

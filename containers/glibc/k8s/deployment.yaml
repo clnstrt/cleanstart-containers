@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: glibc-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: glibc-app
+  template:
+    metadata:
+      labels:
+        app: glibc-app
+    spec:
+      containers:
+      - name: glibc-app
+        image: us-central1-docker.pkg.dev/consumption-442810/testing-community-images/glibc-app:latest
+        ports:
+        - containerPort: 8081
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 8081
+          initialDelaySeconds: 30
+          periodSeconds: 30

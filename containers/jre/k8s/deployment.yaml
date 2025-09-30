@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: jre-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: jre-app
+  template:
+    metadata:
+      labels:
+        app: jre-app
+    spec:
+      containers:
+      - name: jre-app
+        image: us-central1-docker.pkg.dev/consumption-442810/testing-community-images/jre-app:latest
+        ports:
+        - containerPort: 8080
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 8080
+          initialDelaySeconds: 30
+          periodSeconds: 30

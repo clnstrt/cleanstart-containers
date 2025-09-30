@@ -1,4 +1,4 @@
-FROM cleanstart/postgres:latest
+FROM cleanstart/postgres:latest-dev
 
 # Set environment variables
 ENV POSTGRES_DB=helloworld

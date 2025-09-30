@@ -2,7 +2,7 @@ version: "3.8"
 
 services:
   busybox:
-    image: cleanstart/busybox
+    image: cleanstart/busybox:latest-dev
     container_name: busybox-sample
     command: ["sh", "-c", "sleep infinity"]
     working_dir: /work

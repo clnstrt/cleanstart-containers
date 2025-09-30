@@ -1,5 +1,55 @@
-version: '3.8'
+# version: '3.8'
 
+# services:
+#   # AWS CLI for basic operations
+#   aws-cli:
+#     image: cleanstart/aws-cli:latest
+#     container_name: aws-cli-basic
+#     restart: unless-stopped
+#     volumes:
+#       - ~/.aws:/aws/config:ro
+#       - ./data:/aws/data
+#       - ./scripts:/aws/scripts
+#     environment:
+#       - AWS_CONFIG_FILE=/aws/config/config
+#       - AWS_SHARED_CREDENTIALS_FILE=/aws/config/credentials
+#       - AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION:-us-east-1}
+#     command: ["sh", "-c", "echo '🚀 AWS CLI Basic Operations Demo' && echo '📊 Container Status: Healthy' && echo '☁️ AWS CLI Version:' && aws --version && echo '🔧 Available Commands:' && echo '  • aws s3 ls - List S3 buckets' && echo '  • aws ec2 describe-regions - List EC2 regions' && echo '  • aws iam get-user - Get IAM user info' && echo '  • aws sts get-caller-identity - Get current identity' && echo '📁 Working Directory: /aws' && echo '👤 User: awsuser (non-root)' && echo '✅ Ready for AWS operations!' && echo 'Press Ctrl+C to stop' && tail -f /dev/null"]
+#     healthcheck:
+#       test: ["CMD", "aws", "--version"]
+#       interval: 30s
+#       timeout: 10s
+#       retries: 3
+#     networks:
+#       - aws-network
+
+#   # AWS CLI helper for interactive sessions
+#   aws-helper:
+#     image: cleanstart/aws-cli:latest
+#     container_name: aws-cli-helper
+#     restart: unless-stopped
+#     volumes:
+#       - ~/.aws:/aws/config:ro
+#       - ./data:/aws/data
+#       - ./scripts:/aws/scripts
+#     environment:
+#       - AWS_CONFIG_FILE=/aws/config/config
+#       - AWS_SHARED_CREDENTIALS_FILE=/aws/config/credentials
+#       - AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION:-us-east-1}
+#     profiles:
+#       - interactive
+#     stdin_open: true
+#     tty: true
+#     networks:
+#       - aws-network
+
+# volumes:
+#   aws_data:
+#     driver: local
+
+# networks:
+#   aws-network:
+#     driver: bridge
 services:
   # AWS CLI for basic operations
   aws-cli:
@@ -14,7 +64,23 @@ services:
       - AWS_CONFIG_FILE=/aws/config/config
       - AWS_SHARED_CREDENTIALS_FILE=/aws/config/credentials
       - AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION:-us-east-1}
-    command: ["sh", "-c", "echo '🚀 AWS CLI Basic Operations Demo' && echo '📊 Container Status: Healthy' && echo '☁️ AWS CLI Version:' && aws --version && echo '🔧 Available Commands:' && echo '  • aws s3 ls - List S3 buckets' && echo '  • aws ec2 describe-regions - List EC2 regions' && echo '  • aws iam get-user - Get IAM user info' && echo '  • aws sts get-caller-identity - Get current identity' && echo '📁 Working Directory: /aws' && echo '👤 User: awsuser (non-root)' && echo '✅ Ready for AWS operations!' && echo 'Press Ctrl+C to stop' && tail -f /dev/null"]
+    command: >
+      sh -c "
+      echo 'AWS CLI Basic Operations Demo';
+      echo 'Container Status: Healthy';
+      echo 'AWS CLI Version:';
+      aws --version;
+      echo 'Available Commands:';
+      echo '  • aws s3 ls - List S3 buckets';
+      echo '  • aws ec2 describe-regions - List EC2 regions';
+      echo '  • aws iam get-user - Get IAM user info';
+      echo '  • aws sts get-caller-identity - Get current identity';
+      echo 'Working Directory: /aws';
+      echo 'User: awsuser (non-root)';
+      echo 'Ready for AWS operations!';
+      echo 'Press Ctrl+C to stop';
+      tail -f /dev/null
+      "
     healthcheck:
       test: ["CMD", "aws", "--version"]
       interval: 30s

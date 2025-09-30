@@ -1,7 +1,7 @@
 services:
   # PostgreSQL Database
   db:
-    image: postgres:15-alpine
+    image: cleanstart/postgres:latest-dev
     container_name: postgres-sample-db
     environment:
       POSTGRES_DB: helloworld
