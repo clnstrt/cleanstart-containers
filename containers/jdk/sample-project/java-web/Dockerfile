@@ -8,7 +8,7 @@ WORKDIR /app
 # Switch back to clnstrt user
 
 # Copy source files
-COPY --chown=clnstrt:clnstrt src/ ./src/
+COPY  src/ ./src/
 
 # Compile the Java application
 RUN javac -d . src/main/SimpleHttpServer.java

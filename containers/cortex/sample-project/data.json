@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 {
   "service": "Cortex",
   "version": "1.19.0",
@@ -45,3 +46,53 @@
     "environment": "local-dev"
   }
 }
+=======
+{
+  "service": "Cortex",
+  "version": "1.19.0",
+  "branch": "master",
+  "revision": "b72a536fe04e8bbbe843334032ebee1597eb2ce9",
+  "description": "Horizontally scalable, highly available, multi-tenant, long term storage for Prometheus.",
+  "maintainer": "Cortex Project",
+  "status": "running",
+  "endpoints": {
+    "http": "http://localhost:8080",
+    "grpc": "localhost:9095"
+  },
+  "modules": [
+    {
+      "name": "distributor",
+      "status": "initialized",
+      "replicas": 2
+    },
+    {
+      "name": "ingester",
+      "status": "initialized",
+      "replicas": 3
+    },
+    {
+      "name": "querier",
+      "status": "initialized",
+      "replicas": 1
+    },
+    {
+      "name": "store-gateway",
+      "status": "disabled"
+    }
+  ],
+  "storage": {
+    "backend": "S3",
+    "bucket": "cortex-metrics",
+    "region": "us-east-1"
+  },
+  "limits": {
+    "max_series_per_user": 5000000,
+    "max_global_series_per_metric": 10000000
+  },
+  "metadata": {
+    "docker_image": "cleanstart/cortex:latest-dev",
+    "environment": "local-dev"
+  }
+}
+
+>>>>>>> b24d9df4bb837add6d9657256fdfea46c1591f84

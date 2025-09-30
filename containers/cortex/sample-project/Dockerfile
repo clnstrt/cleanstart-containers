@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # # Dockerfile
 # FROM cleanstart/cortex:latest-dev
 
@@ -18,6 +19,8 @@
 # # Run the script
 # CMD ["python", "app.py"]
 
+=======
+>>>>>>> b24d9df4bb837add6d9657256fdfea46c1591f84
 FROM cleanstart/cortex:latest-dev
 
 # Disable Cortex binary startup

@@ -1,6 +1,9 @@
+<<<<<<< HEAD
 # Start from a base image (e.g., debian:bullseye-slim or a similar minimal Linux distribution)
 # The `Os` and `Architecture` fields confirm it's a linux/amd64 image.
 # The user `clnstrt` suggests it's a custom user.
+=======
+>>>>>>> b24d9df4bb837add6d9657256fdfea46c1591f84
 FROM cleanstart/cadvisor:latest-dev
 
 # The `User` field indicates the user was switched.
@@ -19,6 +22,7 @@ ENV SSL_CERT_FILE=/etc/ssl/certs/ca-certificates.crt
 ENTRYPOINT ["/usr/bin/cadvisor"]
 CMD ["-logtostderr"]
 
+<<<<<<< HEAD
 # The `Size` field is the total size of the image, including all layers.
 # The `RootFS` section shows the hashes of the layers.
 # This implies that the application binary and its dependencies were added
@@ -26,3 +30,5 @@ CMD ["-logtostderr"]
 # For example, something like this:
 # COPY --from=builder /path/to/cadvisor /usr/bin/cadvisor
 # COPY --from=builder /path/to/certs /etc/ssl/certs/ca-certificates.crt
+=======
+>>>>>>> b24d9df4bb837add6d9657256fdfea46c1591f84
