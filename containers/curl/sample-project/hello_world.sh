@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 echo "🚀 Curl Docker Image - Hello World!"
 echo "=================================="
@@ -8,22 +8,39 @@ echo "📋 Curl Version:"
 curl --version
 
 # Test basic HTTP request
-echo -e "\n🌐 Testing HTTP Request:"
-curl -s https://httpbin.org/get | jq .
+echo ""
+echo "🌐 Testing HTTP Request:"
+curl -s https://httpbin.org/get
 
 # Test POST request
-echo -e "\n📤 Testing POST Request:"
+echo ""
+echo "📤 Testing POST Request:"
 curl -s -X POST https://httpbin.org/post \
   -H "Content-Type: application/json" \
-  -d '{"message": "Hello from curl container!"}' | jq .
+  -d '{"message": "Hello from curl container!"}'
 
 # Test file download
-echo -e "\n📥 Testing File Download:"
+echo ""
+echo "📥 Testing File Download:"
 curl -s -o /tmp/test.txt https://httpbin.org/bytes/100
-echo "Downloaded file size: $(wc -c < /tmp/test.txt) bytes"
+if [ -f /tmp/test.txt ]; then
+  echo "Downloaded file size: $(wc -c < /tmp/test.txt) bytes"
+else
+  echo "File download failed"
+fi
 
 # Test SSL/TLS
-echo -e "\n🔒 Testing SSL/TLS:"
-curl -s https://httpbin.org/headers | jq .headers
+echo ""
+echo "🔒 Testing SSL/TLS:"
+curl -s https://httpbin.org/headers
 
-echo -e "\n✅ All tests completed successfully!"
+# Test multiple endpoints
+echo ""
+echo "🔄 Testing Multiple Endpoints:"
+for endpoint in /get /headers /user-agent /ip; do
+  echo "  - Testing $endpoint"
+  curl -s "https://httpbin.org$endpoint" > /dev/null && echo "    ✓ Success" || echo "    ✗ Failed"
+done
+
+echo ""
+echo "✅ All tests completed successfully!"
