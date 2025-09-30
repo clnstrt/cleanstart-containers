@@ -1,0 +1,10 @@
+{
+  "status": "success",
+  "message": "Hello from BusyBox HTTP server!",
+  "timestamp": "2025-09-29T12:00:00Z",
+  "data": {
+    "id": 1,
+    "name": "Cleanstart Project",
+    "version": "1.0.0"
+  }
+}

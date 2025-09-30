@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: logstash-exporter-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: logstash-exporter-app
+  template:
+    metadata:
+      labels:
+        app: logstash-exporter-app
+    spec:
+      containers:
+      - name: logstash-exporter-app
+        image: us-central1-docker.pkg.dev/consumption-442810/testing-community-images/logstash-exporter-app:latest
+        ports:
+        - containerPort: 9198
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 9198
+          initialDelaySeconds: 30
+          periodSeconds: 30

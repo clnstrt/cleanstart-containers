@@ -1,8 +1,6 @@
 FROM cleanstart/jdk:latest-dev
 
-
 USER root
-# Switch to root to set permissions
 
 # Set working directory and ensure proper ownership
 WORKDIR /app

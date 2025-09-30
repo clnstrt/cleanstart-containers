@@ -1,29 +1,20 @@
-FROM cleanstart/jdk:latest-dev
+FROM cleanstart/jre:latest-dev
 
-# Set working directory
+USER root
+
+# Set working directory and ensure proper ownership
 WORKDIR /app
 
-# Copy Maven files
-COPY pom.xml .
+# Switch back to clnstrt user
+    
+# Copy source files
+COPY src/ ./src/
 
-# Copy source code
-COPY src ./src
+# Compile the Java application
+RUN javac -d . src/main/SimpleHttpServer.java
 
-# Install Maven and build the application
-RUN apt-get update && \
-    apt-get install -y maven && \
-    mvn clean package -DskipTests && \
-    apt-get remove -y maven && \
-    apt-get autoremove -y && \
-    rm -rf /var/lib/apt/lists/*
-
-# Create non-root user
-RUN adduser --disabled-password --gecos '' appuser && \
-    chown -R appuser:appuser /app
-USER appuser
-
-# Expose port
+# Expose port 8080
 EXPOSE 8080
 
-# Run the application
-CMD ["java", "-jar", "target/database-web-app-1.0.0.jar"]
+# Override the entrypoint completely and run the application
+ENTRYPOINT ["/usr/bin/java", "SimpleHttpServer"]

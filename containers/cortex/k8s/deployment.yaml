@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cortex-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: cortex-app
+  template:
+    metadata:
+      labels:
+        app: cortex-app
+    spec:
+      containers:
+      - name: cortex-app
+        image: us-central1-docker.pkg.dev/consumption-442810/testing-community-images/cortex-app:latest
+        ports:
+        - containerPort: 8080
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 8080
+          initialDelaySeconds: 30
+          periodSeconds: 30

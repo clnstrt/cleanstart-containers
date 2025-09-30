@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: metallb-controller-app-service
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 80
+    targetPort: 7946
+  selector:
+    app: metallb-controller-app
