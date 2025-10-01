@@ -46,6 +46,9 @@ kubectl apply -f service.yaml -n logstash-exporter-app
 ```bash
 kubectl get all -n logstash-exporter-app
 ```
+# Result Through IP access logs
+<img width="1890" height="863" alt="image" src="https://github.com/user-attachments/assets/b8295691-025f-4b26-b093-ffddebb09c50" />
+
 
 # Useful Commands
 ```bash
@@ -61,3 +64,4 @@ kubectl delete -f gcp/deployment.yaml
 kubectl delete -f gcp/namespace.yaml
 
 ```
+
