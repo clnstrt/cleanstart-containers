@@ -46,6 +46,9 @@ kubectl apply -f service.yaml -n nginx
 ```bash
 kubectl get all -n nginx
 ```
+# Result through IP static html page
+<img width="1894" height="195" alt="image" src="https://github.com/user-attachments/assets/d7745ced-2e86-4401-932b-32fa93d3a10c" />
+
 
 # Useful Commands
 ```bash
@@ -61,3 +64,4 @@ kubectl delete -f gcp/deployment.yaml
 kubectl delete -f gcp/namespace.yaml
 
 ```
+
