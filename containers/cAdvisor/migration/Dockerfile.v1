@@ -1,0 +1,5 @@
+# Use Bitnami's cAdvisor image as base
+FROM bitnami/cadvisor:latest
+
+# Expose default cadvisor port
+EXPOSE 8080

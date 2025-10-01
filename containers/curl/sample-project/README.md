@@ -49,34 +49,34 @@ docker run --rm cleanstart/curl:latest curl -s -I https://google.com
 docker run --rm cleanstart/curl:latest curl -s https://httpbin.org/get | jq .
 
 # Test multiple endpoints
-docker run --rm cleanstart/curl:latest bash -c "
+docker run --rm --entrypoint sh cleanstart/curl:latest-dev -c '
   for endpoint in /get /headers /user-agent /ip; do
-    echo \"Testing \$endpoint\"
-    curl -s \"https://httpbin.org\$endpoint\" | jq -r '.url // .origin // .user-agent // .headers.User-Agent'
+    echo "Testing $endpoint"
+    curl -s "https://httpbin.org$endpoint"
+    echo ""
   done
-"
+'
 ```
 
 #### Web Scraping
 ```bash
 # Extract data with jq
-docker run --rm cleanstart/curl:latest bash -c "
-  curl -s https://httpbin.org/json | jq -r '.slideshow.slides[].title'
-"
+docker run --rm --entrypoint sh cleanstart/curl:latest-dev -c '
+  curl -s https://httpbin.org/json
+' | jq -r '.slideshow.slides[].title'
 ```
 
 #### Load Testing
 ```bash
 # Simple load test
-docker run --rm cleanstart/curl:latest bash -c "
-  for i in {1..5}; do
-    start_time=\$(date +%s%N)
-    curl -s https://httpbin.org/delay/1 > /dev/null
-    end_time=\$(date +%s%N)
-    duration=\$(( (end_time - start_time) / 1000000 ))
-    echo \"Request \$i: \${duration}ms\"
+docker run --rm --entrypoint sh cleanstart/curl:latest-dev -c '
+  i=1
+  while [ $i -le 5 ]; do
+    echo "Request $i:"
+    time curl -s https://httpbin.org/delay/1 > /dev/null
+    i=$((i + 1))
   done
-"
+'
 ```
 
 ## 📁 Project Structure

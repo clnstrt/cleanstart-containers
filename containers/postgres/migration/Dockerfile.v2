@@ -1,0 +1,10 @@
+# Dockerfile.v2
+FROM cleanstart/postgres:latest-dev
+
+ENV POSTGRES_USER=komal
+ENV POSTGRES_PASSWORD=komal123
+ENV POSTGRES_DB=testdb
+
+COPY init.sql /docker-entrypoint-initdb.d/
+
+EXPOSE 5432
