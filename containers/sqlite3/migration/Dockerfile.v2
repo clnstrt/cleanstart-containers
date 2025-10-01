@@ -1,0 +1,9 @@
+# Use the cleanstart sqlite3 image
+FROM cleanstart/sqlite3:latest-dev
+
+# Set working directory inside the container
+WORKDIR /app/sqlite3
+
+# Start sqlite3 with default database
+CMD ["sqlite3"]
+

@@ -1,0 +1,5 @@
+# Use Cleanstart's cAdvisor image as base
+FROM cleanstart/cadvisor:latest
+
+# Expose default cadvisor port
+EXPOSE 8080

@@ -1,0 +1,11 @@
+# Use alpine with curl as the base
+FROM alpine/curl:latest
+
+# Install sqlite3 in addition to curl
+RUN apk add --no-cache sqlite
+
+# Set working directory
+WORKDIR /app/sqlite3
+
+# Start sqlite3 when container runs
+CMD ["sqlite3"]
