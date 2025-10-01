@@ -46,6 +46,9 @@ kubectl apply -f service.yaml -n metallb-controller-app
 ```bash
 kubectl get all -n metallb-controller-app
 ```
+# Result through IP
+<img width="1894" height="875" alt="image" src="https://github.com/user-attachments/assets/ecae3cd6-e972-4301-9c30-7db149945607" />
+
 
 # Useful Commands
 ```bash
@@ -61,3 +64,4 @@ kubectl delete -f gcp/deployment.yaml
 kubectl delete -f gcp/namespace.yaml
 
 ```
+
