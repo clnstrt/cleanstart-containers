@@ -47,6 +47,10 @@ kubectl apply -f service.yaml -n go-app
 kubectl get all -n go-app
 ```
 
+# Access application through External IP and dashboard will look like this
+<img width="1901" height="870" alt="image" src="https://github.com/user-attachments/assets/cef2aec8-c930-442e-b5ad-b7ef127c40c9" />
+
+
 # Useful Commands
 ```bash
 kubectl logs -f deployment/go-installer -n go-app
@@ -61,3 +65,4 @@ kubectl delete -f gcp/deployment.yaml
 kubectl delete -f gcp/namespace.yaml
 
 ```
+
