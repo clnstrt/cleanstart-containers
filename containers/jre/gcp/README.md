@@ -46,6 +46,9 @@ kubectl apply -f service.yaml -n jre-app
 ```bash
 kubectl get all -n jre-app
 ```
+# Result (Through IP access the application)
+<img width="870" height="286" alt="image" src="https://github.com/user-attachments/assets/e77a13c1-56e6-41aa-a3c7-6269b69867ef" />
+
 
 # Useful Commands
 ```bash
@@ -61,3 +64,4 @@ kubectl delete -f gcp/deployment.yaml
 kubectl delete -f gcp/namespace.yaml
 
 ```
+
