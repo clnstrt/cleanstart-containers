@@ -32,9 +32,41 @@ docker run --rm -it --entrypoint /bin/sh cleanstart/minio:latest-dev
 ```
 
 **Container Start**
-Start the container
+Start the container with proper configuration
+
 ```bash
-docker run --rm -it --name minio-dev cleanstart/minio:latest
+docker run -d \
+  --name minio-cleanstart \
+  -p 9000:9000 \
+  -p 9090:9090 \
+  --tmpfs /data \
+  -e MINIO_ROOT_USER=minioadmin \
+  -e MINIO_ROOT_PASSWORD=minioadmin \
+  cleanstart/minio:latest \
+  server /data --console-address ":9090"
+```
+
+**Access URLs**
+* **MinIO Web Console**: http://localhost:9090
+  - Username: `minioadmin`
+  - Password: `minioadmin`
+* **MinIO API**: http://localhost:9000
+  - Access Key: `minioadmin`
+  - Secret Key: `minioadmin`
+
+**Container Management**
+```bash
+# Check container status
+docker ps | grep minio
+
+# View logs
+docker logs minio-cleanstart
+
+# Stop container
+docker stop minio-cleanstart
+
+# Remove container
+docker rm minio-cleanstart
 ```
 
 **Best Practices**
