@@ -47,6 +47,11 @@ kubectl apply -f service.yaml -n argocd-extension
 kubectl get all -n argocd-extension
 ```
 
+# Result 
+Through IP you will access the application dashboard
+<img width="767" height="797" alt="image" src="https://github.com/user-attachments/assets/c46b3b17-30bd-46cc-aaae-6f244ed15982" />
+
+
 # Useful Commands
 ```bash
 kubectl logs -f deployment/argocd-extension-installer -n argocd-extension
@@ -61,3 +66,4 @@ kubectl delete -f gcp/deployment.yaml
 kubectl delete -f gcp/namespace.yaml
 
 ```
+
