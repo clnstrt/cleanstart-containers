@@ -46,6 +46,9 @@ kubectl apply -f service.yaml -n cortex
 ```bash
 kubectl get all -n cortex
 ```
+# Result will be logs of json
+<img width="1029" height="845" alt="image" src="https://github.com/user-attachments/assets/59a1fcd4-61cc-4db6-b86f-9327f47354df" />
+
 
 # Useful Commands
 ```bash
@@ -61,3 +64,4 @@ kubectl delete -f gcp/deployment.yaml
 kubectl delete -f gcp/namespace.yaml
 
 ```
+
