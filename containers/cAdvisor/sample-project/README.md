@@ -23,20 +23,16 @@ This example demonstrates basic container monitoring using cAdvisor. It includes
 
 ### Prerequisites for Testing
 ```bash
-# Ensure Docker and Docker Compose are installed
-docker --version
-docker-compose --version
-
-# Pull the cAdvisor image from Docker Hub
 docker pull cleanstart/cadvisor:latest
 ```
 
 ### Step-by-Step Testing Instructions
 
 #### 1. Start the Sample Project
-```bash
 # Navigate to the basic monitoring directory
+```bash
 cd images/cAdvisor/sample-project
+```
 
 # Build the dockerfile
 ```bash
