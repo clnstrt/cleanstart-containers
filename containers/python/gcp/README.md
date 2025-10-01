@@ -46,6 +46,9 @@ kubectl apply -f service.yaml -n python
 ```bash
 kubectl get all -n python
 ```
+# Result through IP 
+<img width="1887" height="865" alt="image" src="https://github.com/user-attachments/assets/ebb1accb-f714-402f-9940-33c95c40aca4" />
+
 
 # Useful Commands
 ```bash
@@ -61,3 +64,4 @@ kubectl delete -f gcp/deployment.yaml
 kubectl delete -f gcp/namespace.yaml
 
 ```
+
