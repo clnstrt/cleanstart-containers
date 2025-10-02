@@ -1,0 +1,23 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: curl-test-job
+  namespace: curl-testing
+spec:
+  template:
+    spec:
+      containers:
+      - name: curl
+        image: cleanstart/curl:latest
+        args: ["--version"]
+        env:
+        - name: PATH
+          value: "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+        - name: SSL_CERT_FILE
+          value: "/etc/ssl/certs/ca-certificates.crt"
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "100m"
+      restartPolicy: Never
+  backoffLimit: 3

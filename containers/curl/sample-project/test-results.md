@@ -1,93 +1,66 @@
-# 🎉 Curl Docker Image Test Results
+# Curl Docker Image Test Results
 
-## ✅ **Test Summary**
+## Test Summary
 
-The `cleanstart/curl:latest` Docker image has been successfully tested and is working perfectly!
+The `cleanstart/curl:latest` Docker image has been tested and works correctly.
 
-### 🐳 **Image Pull Test**
-- ✅ Successfully pulled `cleanstart/curl:latest` from Docker Hub
-- ✅ Image is available and ready to use
+## Working Tests
 
-### 🧪 **Functionality Tests**
-
-#### 1. **Curl Version Test** ✅
+### 1. Curl Version Test ✅
 ```bash
 docker run --rm cleanstart/curl:latest curl --version
 ```
-**Result**: curl 8.15.0 with full protocol support including HTTP/HTTPS, FTP, SSL/TLS
+**Result**: curl 8.15.0 with HTTP/HTTPS support
 
-#### 2. **HTTP GET Request Test** ✅
+### 2. HTTP GET Request Test ✅
 ```bash
 docker run --rm cleanstart/curl:latest curl -s https://httpbin.org/get
 ```
-**Result**: Successfully retrieved JSON response with headers and request information
+**Result**: Successfully retrieves JSON response
 
-#### 3. **HTTP POST Request Test** ✅
+### 3. HTTP POST Request Test ✅
 ```bash
 docker run --rm cleanstart/curl:latest curl -s -X POST https://httpbin.org/post \
   -H "Content-Type: application/json" \
   -d '{"test": "data"}'
 ```
-**Result**: Successfully sent POST request with JSON data
+**Result**: Successfully sends POST request with JSON data
 
-#### 4. **SSL/TLS Test** ✅
+### 4. SSL/TLS Test ✅
 ```bash
 docker run --rm cleanstart/curl:latest curl -s -I https://httpbin.org/headers
 ```
-**Result**: Successfully established secure HTTPS connections
+**Result**: Successfully establishes HTTPS connections
 
-### 🎯 **Key Features Verified**
+### 5. File Download Test ✅
+```bash
+docker run --rm -v $(pwd):/workspace cleanstart/curl:latest \
+  curl -s -o /workspace/test.json https://httpbin.org/json
+```
+**Result**: Successfully downloads files with volume mounting
 
-✅ **HTTP/HTTPS Support** - Full protocol support  
-✅ **JSON Processing** - Ready for API testing  
-✅ **SSL/TLS Security** - Secure connections working  
-✅ **File Operations** - Download/upload capabilities  
-✅ **Custom Headers** - Authentication and API headers  
-✅ **Multiple Protocols** - HTTP, HTTPS, FTP, etc.  
+### 6. Interactive Shell Test ✅
+```bash
+docker run --rm -it cleanstart/curl:latest /bin/sh
+```
+**Result**: Interactive shell access works correctly
 
-### 📊 **Image Specifications**
+## Key Features
+
+- HTTP/HTTPS Support
+- JSON Processing  
+- SSL/TLS Security
+- File Operations
+- Custom Headers
+
+## Image Specifications
 
 - **Base Image**: Alpine Linux 3.18
 - **Curl Version**: 8.15.0
 - **SSL Support**: OpenSSL/3.5.2
-- **Protocols**: HTTP, HTTPS, FTP, FTPS, and many more
-- **Features**: HTTP2, brotli compression, IPv6, SSL/TLS
 
-### 🚀 **Ready for Production Use**
+## Test Conclusion
 
-The curl Docker image is **production-ready** and supports:
-
-1. **API Testing** - RESTful API validation and testing
-2. **Web Scraping** - Data extraction from websites
-3. **File Downloads** - Efficient file transfer operations
-4. **SSL/TLS Testing** - Certificate validation and security testing
-5. **Load Testing** - Performance testing and monitoring
-6. **Automation** - Scriptable HTTP operations
-
-### 📋 **Sample Usage Examples**
-
-```bash
-# Basic HTTP request
-docker run --rm cleanstart/curl:latest curl https://api.example.com
-
-# API testing with JSON
-docker run --rm cleanstart/curl:latest curl -X POST https://api.example.com/data \
-  -H "Content-Type: application/json" \
-  -d '{"key": "value"}'
-
-# File download
-docker run --rm -v $(pwd):/workspace cleanstart/curl:latest \
-  curl -o /workspace/file.txt https://example.com/file.txt
-
-# SSL certificate check
-docker run --rm cleanstart/curl:latest curl -I https://example.com
-```
-
-### 🎉 **Test Conclusion**
-
-✅ **All tests passed successfully!**  
-✅ **Image is fully functional**  
-✅ **Ready for production deployment**  
-✅ **Sample projects are working**  
-
-The curl Docker image from the cleanstart repository is **excellent quality** and provides all the necessary tools for HTTP automation, API testing, and web scraping tasks!
+✅ All tests passed successfully  
+✅ Image is fully functional  
+✅ Ready for production use
