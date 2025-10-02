@@ -42,7 +42,9 @@ docker pull cleanstart/kyverno-kyvernopre:latest-dev
 Run the container with basic configuration:
 
 ```bash
-docker run -it --name kyverno-pre cleanstart/kyverno-kyvernopre:latest
+docker run -it --name kyverno-pre \
+  -e KYVERNO_NAMESPACE=kyverno \
+  cleanstart/kyverno-kyvernopre:latest
 ```
 
 ## Production Deployment
@@ -54,6 +56,7 @@ docker run -d --name kyverno-pre-prod \
   --read-only \
   --security-opt=no-new-privileges \
   --user 1000:1000 \
+  -e KYVERNO_NAMESPACE=kyverno \
   cleanstart/kyverno-kyvernopre:latest
 ```
 
