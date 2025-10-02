@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: curl-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: curl-app
+  template:
+    metadata:
+      labels:
+        app: curl-app
+    spec:
+      containers:
+      - name: curl-app
+        image: cleanstart/curl:latest
+        command: ["tail", "-f", "/dev/null"]
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "100m"
+          limits:
+            memory: "128Mi"
+            cpu: "200m"
+
