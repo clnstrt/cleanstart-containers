@@ -1,6 +1,6 @@
 # Step 0: Connect to Your GKE Cluster (if not already connected)
 ```bash
-gcloud container clusters get-credentials community-images --zone us-central1-a
+gcloud container clusters get-credentials <cluster-name> --zone us-central1-a
 ```
 # Right Directory
 ```bash
@@ -19,7 +19,7 @@ docker build -t nginx:latest .
 
 # Step 3: Tag the Image for Artifact Registry
 ```bash
-docker tag nginx:latest us-central1-docker.pkg.dev/consumption-442810/testing-community-images/nginx:latest
+docker tag nginx:latest <artifact_registry>/nginx:latest
 ```
 
 # Step 4: Configure Docker Authentication
@@ -29,7 +29,7 @@ gcloud auth configure-docker us-central1-docker.pkg.dev
 
 # Step 5: Push the Image
 ```bash
-docker push us-central1-docker.pkg.dev/consumption-442810/testing-community-images/nginx:latest
+docker push <artifact_registry>/nginx:latest
 ```
 
 # Step 6: Deploy the Application
@@ -46,6 +46,9 @@ kubectl apply -f service.yaml -n nginx
 ```bash
 kubectl get all -n nginx
 ```
+# Result through IP static html page
+<img width="1894" height="195" alt="image" src="https://github.com/user-attachments/assets/d7745ced-2e86-4401-932b-32fa93d3a10c" />
+
 
 # Useful Commands
 ```bash
@@ -59,4 +62,6 @@ kubectl get events -n jdk --sort-by='.lastTimestamp'
 kubectl delete -f gcp/service.yaml
 kubectl delete -f gcp/deployment.yaml
 kubectl delete -f gcp/namespace.yaml
+
 ```
+

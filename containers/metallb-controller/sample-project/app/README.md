@@ -4,8 +4,8 @@
 docker build -t metallb-controller-app .
 ```
 
-```bash                                             
-docker run --rm metallb-controller-app
+```bash                                              
+docker run --rm -p 8080:8080 metallb-controller-app
 ```
 
 ###  Output

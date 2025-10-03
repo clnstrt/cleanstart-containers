@@ -1,6 +1,6 @@
 # Step 0: Connect to Your GKE Cluster (if not already connected)
 ```bash
-gcloud container clusters get-credentials community-images --zone us-central1-a
+gcloud container clusters get-credentials <cluster-name> --zone us-central1-a
 ```
 # Right Directory
 ```bash
@@ -19,7 +19,7 @@ docker build -t jre-app:latest .
 
 # Step 3: Tag the Image for Artifact Registry
 ```bash
-docker tag jre-app:latest us-central1-docker.pkg.dev/consumption-442810/testing-community-images/jre-app:latest
+docker tag jre-app:latest <artifact_registry>/jre-app:latest
 ```
 
 # Step 4: Configure Docker Authentication
@@ -29,7 +29,7 @@ gcloud auth configure-docker us-central1-docker.pkg.dev
 
 # Step 5: Push the Image
 ```bash
-docker push us-central1-docker.pkg.dev/consumption-442810/testing-community-images/jre-app:latest
+docker push <artifact_registry>/jre-app:latest
 ```
 
 # Step 6: Deploy the Application
@@ -46,6 +46,9 @@ kubectl apply -f service.yaml -n jre-app
 ```bash
 kubectl get all -n jre-app
 ```
+# Result (Through IP access the application)
+<img width="870" height="286" alt="image" src="https://github.com/user-attachments/assets/e77a13c1-56e6-41aa-a3c7-6269b69867ef" />
+
 
 # Useful Commands
 ```bash
@@ -59,4 +62,6 @@ kubectl get events -n jre --sort-by='.lastTimestamp'
 kubectl delete -f gcp/service.yaml
 kubectl delete -f gcp/deployment.yaml
 kubectl delete -f gcp/namespace.yaml
+
 ```
+

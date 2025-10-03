@@ -1,6 +1,6 @@
 # Step 0: Connect to Your GKE Cluster (if not already connected)
 ```bash
-gcloud container clusters get-credentials community-images --zone us-central1-a
+gcloud container clusters get-credentials <cluster-name> --zone us-central1-a
 ```
 # Right Directory
 ```bash
@@ -19,7 +19,7 @@ docker build -t my-go-app:latest .
 
 # Step 3: Tag the Image for Artifact Registry
 ```bash
-docker tag my-go:latest us-central1-docker.pkg.dev/consumption-442810/testing-community-images/go-app:latest
+docker tag my-go-app:latest <artifact_registry>/go-app:latest
 ```
 
 # Step 4: Configure Docker Authentication
@@ -29,7 +29,7 @@ gcloud auth configure-docker us-central1-docker.pkg.dev
 
 # Step 5: Push the Image
 ```bash
-docker push us-central1-docker.pkg.dev/consumption-442810/testing-community-images/go-app:latest
+docker push <your_artifact_registry>/go-app:latest
 ```
 
 # Step 6: Deploy the Application
@@ -47,6 +47,10 @@ kubectl apply -f service.yaml -n go-app
 kubectl get all -n go-app
 ```
 
+# Access application through External IP and dashboard will look like this
+<img width="1901" height="870" alt="image" src="https://github.com/user-attachments/assets/cef2aec8-c930-442e-b5ad-b7ef127c40c9" />
+
+
 # Useful Commands
 ```bash
 kubectl logs -f deployment/go-installer -n go-app
@@ -59,4 +63,6 @@ kubectl get events -n go --sort-by='.lastTimestamp'
 kubectl delete -f gcp/service.yaml
 kubectl delete -f gcp/deployment.yaml
 kubectl delete -f gcp/namespace.yaml
+
 ```
+

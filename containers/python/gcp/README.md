@@ -1,6 +1,6 @@
 # Step 0: Connect to Your GKE Cluster (if not already connected)
 ```bash
-gcloud container clusters get-credentials community-images --zone us-central1-a
+gcloud container clusters get-credentials <cluster-name> --zone us-central1-a
 ```
 # Right Directory
 ```bash
@@ -19,7 +19,7 @@ docker build -t python:latest .
 
 # Step 3: Tag the Image for Artifact Registry
 ```bash
-docker tag python:latest us-central1-docker.pkg.dev/consumption-442810/testing-community-images/python:latest
+docker tag python:latest <artifact_registry>/python:latest
 ```
 
 # Step 4: Configure Docker Authentication
@@ -29,7 +29,7 @@ gcloud auth configure-docker us-central1-docker.pkg.dev
 
 # Step 5: Push the Image
 ```bash
-docker push us-central1-docker.pkg.dev/consumption-442810/testing-community-images/python:latest
+docker push <artifact_registry>/python:latest
 ```
 
 # Step 6: Deploy the Application
@@ -46,6 +46,9 @@ kubectl apply -f service.yaml -n python
 ```bash
 kubectl get all -n python
 ```
+# Result through IP 
+<img width="1887" height="865" alt="image" src="https://github.com/user-attachments/assets/ebb1accb-f714-402f-9940-33c95c40aca4" />
+
 
 # Useful Commands
 ```bash
@@ -59,4 +62,6 @@ kubectl get events -n jdk --sort-by='.lastTimestamp'
 kubectl delete -f gcp/service.yaml
 kubectl delete -f gcp/deployment.yaml
 kubectl delete -f gcp/namespace.yaml
+
 ```
+
