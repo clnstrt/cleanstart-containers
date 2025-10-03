@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: minio-operator-sidecar-service
+  namespace: minio-operator-sidecar
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 4222
+    targetPort: 4222
+  selector:
+    app: minio-operator-sidecar

@@ -1,39 +1,36 @@
-FROM cleanstart/go:latest
+FROM cleanstart/go:latest-dev
 
-# Install system dependencies
-RUN apt-get update && apt-get install -y \
-    curl \
-    ca-certificates \
-    && rm -rf /var/lib/apt/lists/*
+# Download and extract Step CLI in a separate stage to avoid library conflicts
+FROM alpine:latest AS downloader
+RUN apk add --no-cache curl && \
+    curl -LO https://dl.step.sm/gh-release/cli/docs-cli-install/v0.24.4/step_linux_0.24.4_amd64.tar.gz && \
+    tar -xzf step_linux_0.24.4_amd64.tar.gz
 
-# Install Step CLI
-RUN curl -LO https://dl.step.sm/gh-release/cli/docs-cli-install/v0.24.4/step_linux_0.24.4_amd64.tar.gz && \
-    tar -xzf step_linux_0.24.4_amd64.tar.gz && \
-    mv step_0.24.4/bin/step /usr/local/bin/ && \
-    rm -rf step_linux_0.24.4_amd64.tar.gz step_0.24.4
-
-# Set working directory
-WORKDIR /app
+# Copy the step binary from the downloader stage
+COPY --from=downloader /step_0.24.4/bin/step ./step
 
 # Create a non-root user
-RUN groupadd -g 1001 step && \
-    useradd -u 1001 -g step -s /bin/bash step
+RUN groupadd -g 1001 clnstrt && \
+    useradd -u 1001 -g clnstrt -s /bin/bash clnstrt
 
 # Create necessary directories
-RUN mkdir -p /app/certs /app/config /app/secrets && \
-    chown -R step:step /app
+RUN mkdir -p /home/clnstrt/.step/certs /home/clnstrt/.step/config /home/clnstrt/.step/secrets && \
+    chown -R clnstrt:clnstrt /home/clnstrt
 
 # Switch to non-root user
-USER step
+USER clnstrt
 
 # Set default environment variables
-ENV STEPPATH=/app/secrets
-ENV STEP_CA_URL=https://ca.example.com
-ENV STEP_CA_FINGERPRINT=""
+ENV PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+ENV SSL_CERT_FILE=/etc/ssl/certs/ca-certificates.crt
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
-    CMD step version || exit 1
+    CMD ./step version || exit 1
 
 # Default command
-CMD ["step", "--help"]
+ENTRYPOINT ["./step"]
+CMD ["--help"]
+
+# Label as dev version
+LABEL version="latest-dev"

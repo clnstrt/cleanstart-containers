@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: minio-app
+  namespace: minio-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: minio-app
+  template:
+    metadata:
+      labels:
+        app: minio-app
+    spec:
+      containers:
+      - name: minio-app
+        image: cleanstart/minio:latest
+        ports:
+        - containerPort: 9000
+          name: api
+        - containerPort: 9090
+          name: console
+        env:
+        - name: MINIO_ROOT_USER
+          value: "minioadmin"
+        - name: MINIO_ROOT_PASSWORD
+          value: "minioadmin"
+        command:
+        - /bin/sh
+        - -c
+        - |
+          minio server /data --console-address ":9090"
+        volumeMounts:
+        - name: minio-data
+          mountPath: /data
+        livenessProbe:
+          httpGet:
+            path: /minio/health/live
+            port: 9000
+          initialDelaySeconds: 30
+          periodSeconds: 30
+        readinessProbe:
+          httpGet:
+            path: /minio/health/ready
+            port: 9000
+          initialDelaySeconds: 10
+          periodSeconds: 10
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "100m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+      volumes:
+      - name: minio-data
+        emptyDir: {}

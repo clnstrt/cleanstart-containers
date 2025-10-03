@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: minio-operator-sidecar
+  namespace: minio-operator-sidecar
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: minio-operator-sidecar
+  template:
+    metadata:
+      labels:
+        app: minio-operator-sidecar
+    spec:
+      containers:
+      - name: minio-operator-sidecar
+        image: cleanstart/minio-operator-sidecar:latest-dev
+        ports:
+        - containerPort: 4222
+        command: ["/bin/sh"]
+        args: ["-c", "echo 'Starting MinIO Operator Sidecar...'; /minio-operator-sidecar; echo 'Operator completed, keeping container alive...'; tail -f /dev/null"]
