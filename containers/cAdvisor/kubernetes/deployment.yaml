@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cadvisor-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: cadvisor-app
+  template:
+    metadata:
+      labels:
+        app: cadvisor-app
+    spec:
+      containers:
+      - name: cadvisor-app
+        image: cleanstart/cadvisor:latest
+        ports:
+        - containerPort: 8080
+        args:
+        - --port=8080
+        - --housekeeping_interval=10s

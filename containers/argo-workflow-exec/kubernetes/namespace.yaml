@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: argo-workflow-exec-test
+  labels:
+    app: argo-workflow-exec
+    purpose: testing

@@ -1,4 +1,4 @@
-# Basic S3 File Management - Sample Project
+# Basic AWS Operations - Sample Project
 
 A beginner-friendly guide to getting started with AWS CLI operations using Docker containers. This project demonstrates basic AWS CLI commands and operations in a secure, containerized environment.
 
@@ -33,3 +33,6 @@ This sample project provides:
    ```bash
    docker compose down
    ```
+
+
+

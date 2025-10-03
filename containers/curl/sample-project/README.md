@@ -1,124 +1,69 @@
-# 🌐 Curl Sample Projects
+# Curl Sample Project
 
-This directory contains sample projects for testing the `cleanstart/curl` Docker image that you already pulled from Docker Hub. These examples demonstrate curl use cases for HTTP requests, API testing, and web scraping.
+Simple examples for using the `cleanstart/curl` Docker image.
 
-## 🚀 Quick Start
+## Quick Test
 
-### Prerequisites
-- Docker installed and running
-- Internet connectivity
-
-### Setup
 ```bash
-# Navigate to this directory
-cd images/curl/sample-project
-
-# Test the image (you already pulled cleanstart/curl:latest from Docker Hub)
+# Check curl version
 docker run --rm cleanstart/curl:latest curl --version
+
+# Make a simple HTTP request
+docker run --rm cleanstart/curl:latest curl -s https://httpbin.org/get
 ```
 
-### Run Examples
+## Basic Examples
 
-#### Basic HTTP Requests
+### 1. HTTP GET Request
 ```bash
-# GET request
 docker run --rm cleanstart/curl:latest curl -s https://httpbin.org/get
+```
 
-# POST request with JSON
+### 2. HTTP POST Request
+```bash
 docker run --rm cleanstart/curl:latest curl -s -X POST https://httpbin.org/post \
   -H "Content-Type: application/json" \
   -d '{"test": "data"}'
 ```
 
-#### File Operations
+### 3. Download a File
 ```bash
-# Download a file
-docker run --rm -v $(pwd):/workspace cleanstart/curl:latest \
-  curl -s -o /workspace/data/sample.json https://httpbin.org/json
+# Create local directory
+mkdir -p ./data
+
+# Download file
+docker run --rm -v $(pwd)/data:/workspace cleanstart/curl:latest \
+  curl -s -o /workspace/test.json https://httpbin.org/json
+
+# Check downloaded file
+ls -la ./data/
 ```
 
-#### SSL/TLS Testing
+### 4. Interactive Mode
 ```bash
-# Test SSL certificate
-docker run --rm cleanstart/curl:latest curl -s -I https://google.com
+docker run --rm -it --entrypoint /bin/sh cleanstart/curl:latest
 ```
 
-#### API Testing
+## Run All Tests
+
+### Linux/Mac:
 ```bash
-# Test API endpoints
-docker run --rm cleanstart/curl:latest curl -s https://httpbin.org/get | jq .
-
-# Test multiple endpoints
-docker run --rm --entrypoint sh cleanstart/curl:latest-dev -c '
-  for endpoint in /get /headers /user-agent /ip; do
-    echo "Testing $endpoint"
-    curl -s "https://httpbin.org$endpoint"
-    echo ""
-  done
-'
+chmod +x test-all.sh
+./test-all.sh
 ```
 
-#### Web Scraping
-```bash
-# Extract data with jq
-docker run --rm --entrypoint sh cleanstart/curl:latest-dev -c '
-  curl -s https://httpbin.org/json
-' | jq -r '.slideshow.slides[].title'
+### Windows:
+```cmd
+run-tests.bat
 ```
 
-#### Load Testing
-```bash
-# Simple load test
-docker run --rm --entrypoint sh cleanstart/curl:latest-dev -c '
-  i=1
-  while [ $i -le 5 ]; do
-    echo "Request $i:"
-    time curl -s https://httpbin.org/delay/1 > /dev/null
-    i=$((i + 1))
-  done
-'
-```
+## What's Inside
 
-## 📁 Project Structure
-
-```
-sample-project/
-├── README.md                    # This file
-├── docker-compose.yml           # Docker Compose configuration
-├── basic-examples/             # Simple curl examples
-│   ├── http-requests.sh        # Basic HTTP requests
-│   ├── file-operations.sh      # File operations
-│   └── ssl-testing.sh          # SSL/TLS testing
-├── advanced-examples/          # Advanced examples
-│   ├── api-automation.sh       # API automation
-│   ├── web-scraping.sh         # Web scraping
-│   └── load-testing.sh         # Load testing
-├── scripts/                    # Helper scripts
-│   ├── setup.sh               # Setup script
-│   └── run-all-tests.sh       # Test runner
-└── data/                      # Generated data
-    └── scraped/               # Scraped content
-```
-
-## 🎯 Features
-
-- HTTP/HTTPS requests (GET, POST, PUT, DELETE)
-- File download and upload operations
-- SSL/TLS certificate testing
-- API testing and automation
-- Web scraping and data extraction
-- Load testing and performance analysis
-- JSON processing with jq
-
-## 📊 Output
-
-All examples generate output in the `data/` directory:
-- `data/` - Downloaded files
-- `data/scraped/` - Web scraping results
-
-## 🤝 Contributing
-
-To add new examples:
-1. Create script in appropriate directory
-2. Add documentation
-3. Test with Docker image
+- `basic-examples/` - Simple curl scripts
+  - `http-requests.sh` - Basic HTTP GET/POST examples
+  - `file-operations.sh` - File download examples  
+  - `ssl-testing.sh` - SSL/TLS connection tests
+- `data/` - Directory for downloaded files (created when running scripts)
+- `test-results.md` - Test verification results
+- `test-all.sh` - Complete test suite (Linux/Mac)
+- `run-tests.bat` - Test runner (Windows)

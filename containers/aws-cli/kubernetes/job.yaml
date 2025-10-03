@@ -1,0 +1,23 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: aws-cli-job
+  namespace: aws-cli-app
+spec:
+  backoffLimit: 0
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+      - name: aws-cli
+        image: cleanstart/aws-cli:latest
+        # Command can be overridden when applying with: --dry-run=client -o yaml | kubectl apply -f -
+        args: ["--version"]
+        env:
+        - name: AWS_REGION
+          value: us-east-1
+        envFrom:
+        - secretRef:
+            name: aws-credentials
+
+

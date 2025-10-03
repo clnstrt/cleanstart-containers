@@ -1,47 +1,29 @@
-# FROM kyverno/kyverno:v1.10.2
+# Kyverno-Kyvernopre Sample Dockerfile
+# This Dockerfile demonstrates how to extend the base Kyverno-Kyvernopre image
 
-# # Set working directory
-# WORKDIR /app
+FROM cleanstart/kyverno-kyvernopre:latest
 
-# # Create a non-root user
-# RUN addgroup -g 1001 -S kyverno && \
-#     adduser -u 1001 -S kyverno -G kyverno
-
-# # Create necessary directories
-# RUN mkdir -p /app/policies /app/config /app/logs && \
-#     chown -R kyverno:kyverno /app
-
-# # Copy sample projects and configurations
-# COPY sample-project/ /app/sample-project/
-# COPY README.md /app/README.md
-
-# # Set environment variables
-# ENV KYVERNO_NAMESPACE=kyverno
-# ENV KYVERNO_LOG_LEVEL=info
-# ENV KYVERNO_WATCH_NAMESPACE=""
-
-# # Switch to non-root user
-# USER kyverno
-
-# # Expose default ports
-# EXPOSE 9443 8000
-
-# # Health check
-# HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
-#     CMD kyverno version || exit 1
-
-# # Default command
-# CMD ["kyverno", "--help"]
-# Use your existing image
-FROM cleanstart/kyverno-kyvernopre:latest-dev
-
-# Set user if needed (matches image config)
-USER clnstrt
-
-# Copy any config or test files if needed
-# COPY test-config.yaml /app/test-config.yaml
+# Set working directory
 WORKDIR /app
 
-# Default command (can run your small test config)
-# CMD ["/usr/bin/kyvernopre", "apply", "-f", "test-config.yaml"]
-CMD ["/usr/bin/kyvernopre", "--help"]
+# Set default environment variables (all required for proper startup)
+ENV KYVERNO_NAMESPACE=kyverno
+ENV KYVERNO_SERVICEACCOUNT_NAME=kyverno
+ENV KYVERNO_DEPLOYMENT=kyverno
+ENV KYVERNO_POD_NAME=kyverno-pre
+ENV INIT_CONFIG='{"config":{}}'
+ENV METRICS_CONFIG='{"enabled":false}'
+
+# Copy sample configuration files
+COPY test-config.yaml /app/test-config.yaml
+
+# Expose default ports
+EXPOSE 9443 8000
+
+# Health check to verify container is working
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+    CMD /usr/bin/kyvernopre --help || exit 1
+
+# Default command - show help (works without Kubernetes cluster)
+# Note: Base image already sets ENTRYPOINT ["/usr/bin/kyvernopre"]
+CMD ["--help"]

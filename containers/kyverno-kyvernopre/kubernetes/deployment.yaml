@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kyverno
+  namespace: kyverno
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kyverno
+  template:
+    metadata:
+      labels:
+        app: kyverno
+    spec:
+      serviceAccountName: kyverno
+      containers:
+      - name: kyverno
+        image: cleanstart/kyverno-kyvernopre:latest
+        ports:
+        - containerPort: 9443
+        env:
+        - name: KYVERNO_NAMESPACE
+          value: "kyverno"
+        - name: KYVERNO_SERVICEACCOUNT_NAME
+          value: "kyverno"
+        - name: KYVERNO_DEPLOYMENT
+          value: "kyverno"
+        - name: KYVERNO_POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: INIT_CONFIG
+          value: '{"config":{}}'
+        - name: METRICS_CONFIG
+          value: '{"enabled":true}'

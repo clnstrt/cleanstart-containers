@@ -2,17 +2,14 @@
 FROM cleanstart/curl:latest-dev
 
 # Set environment variables
-ENV CURL_VERSION=8.4.0
-ENV JQ_VERSION=1.7.1
+ENV PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+ENV SSL_CERT_FILE=/etc/ssl/certs/ca-certificates.crt
 
-# Create working directory
+# Set working directory
 WORKDIR /workspace
 
-# Change ownership of workspace
-RUN chown -R curluser:curluser /workspace
+# Switch to non-root user (clnstrt as shown in docker inspect)
+USER clnstrt
 
-# Switch to non-root user
-USER curluser
-
-# Set default command
-CMD ["/bin/bash"]
+# Set default entrypoint to curl
+ENTRYPOINT ["/usr/bin/curl"]
