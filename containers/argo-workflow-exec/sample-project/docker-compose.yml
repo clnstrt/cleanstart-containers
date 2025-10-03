@@ -1,8 +1,0 @@
-services:
-  argoexec-test:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: argoexec-test
-    entrypoint: ["/test-argoexec.sh"]
-    command: []

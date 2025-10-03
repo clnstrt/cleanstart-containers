@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: argo-workflow-exec-test
+  namespace: argo-workflow-exec-test
+  labels:
+    app: argo-workflow-exec
+    purpose: testing
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: argo-workflow-exec
+  template:
+    metadata:
+      labels:
+        app: argo-workflow-exec
+        purpose: testing
+    spec:
+      containers:
+      - name: argo-workflow-exec
+        image: cleanstart/argo-workflow-exec:latest-dev
+        command: ["/bin/sh"]
+        args: ["-c", "echo '🚀 Testing argoexec...'; echo 'Script is running...'; echo 'Current user: $(whoami)'; echo 'Current directory: $(pwd)'; echo 'PATH: $PATH'; echo ''; if command -v argoexec >/dev/null 2>&1; then echo '✅ argoexec found in PATH'; echo 'Running argoexec --help:'; echo '----------------------------------------'; argoexec --help; echo '----------------------------------------'; echo ''; echo 'Testing argoexec version:'; argoexec version; else echo '❌ argoexec not found in PATH'; echo ''; echo 'Searching for argoexec in common locations...'; for dir in /usr/local/bin /usr/bin /bin /opt/argo/bin; do if [ -f \"$dir/argoexec\" ]; then echo \"✅ Found argoexec at: $dir/argoexec\"; echo 'Testing:'; \"$dir/argoexec\" --help; break; fi; done; echo ''; echo 'Searching entire filesystem for argoexec...'; find /usr -name 'argoexec' 2>/dev/null | head -5; if [ -f './argoexec' ]; then echo '✅ Found argoexec in current directory'; ./argoexec --help; fi; fi; echo ''; echo '🔍 Additional system information:'; echo 'Operating System: $(uname -a)'; echo 'Available disk space:'; df -h / 2>/dev/null || echo 'Could not check disk space'; echo ''; echo 'Test completed.'; sleep 30"]
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "50m"
+          limits:
+            memory: "128Mi"
+            cpu: "100m"
+        securityContext:
+          runAsNonRoot: true
+          runAsUser: 1000
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: false
+      restartPolicy: Always
