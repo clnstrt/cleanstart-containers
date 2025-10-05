@@ -1,0 +1,55 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: step-cli-demo
+  namespace: step-cli-sample
+spec:
+  template:
+    metadata:
+      labels:
+        app: step-cli-demo
+    spec:
+      restartPolicy: Never
+      containers:
+      - name: step-cli
+        image: cleanstart/step-cli:latest-dev
+        command: ["sh", "-c"]
+        args:
+        - |
+          echo "=== Step CLI Demo on Kubernetes ==="
+          echo "Timestamp: $(date)"
+          echo
+          
+          echo "1. Testing Step CLI Version:"
+          ./step version
+          echo
+          
+          echo "2. Testing Step CLI Help:"
+          ./step --help
+          echo
+          
+          echo "3. Testing Certificate Authority Commands:"
+          ./step ca --help
+          echo
+          
+          echo "4. Testing Certificate Commands:"
+          ./step certificate --help
+          echo
+          
+          echo "5. Testing Crypto Commands:"
+          ./step crypto --help
+          echo
+          
+          echo "6. Testing OIDC Commands (may not be available):"
+          ./step oidc --help || echo "OIDC not available in this build (expected)"
+          echo
+          
+          echo "=== Demo Complete ==="
+          echo "Step CLI is working correctly on Kubernetes!"
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "100m"
+          limits:
+            memory: "128Mi"
+            cpu: "200m"

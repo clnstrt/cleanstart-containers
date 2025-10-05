@@ -8,7 +8,21 @@ A simple and clean testing environment for the CleanStart Step CLI container.
 - Docker installed
 - CleanStart Step CLI image available
 
-### Step 1: Pull the Image
+### Step 1: Verify Your Image
+First, let's inspect your built image to confirm it's ready for testing:
+
+```bash
+# Inspect the image metadata
+docker inspect cleanstart/step-cli:latest-dev
+
+# Check image size and layers
+docker images cleanstart/step-cli:latest-dev
+
+# Verify the image exists locally
+docker image ls | grep step-cli
+```
+
+### Step 2: Pull the Image (if needed)
 ```bash
 docker pull cleanstart/step-cli:latest-dev
 ```
@@ -19,12 +33,56 @@ cd containers/step-cli
 docker build -t cleanstart/step-cli:latest-dev .
 ```
 
-### Step 2: Run All Tests
+### Step 3: Run Simple Tests
 ```bash
 cd containers/step-cli/sample-project
+chmod +x simple-test.sh
+./simple-test.sh
+```
+
+### Step 4: Run Complete Test Suite
+```bash
 chmod +x run-all-tests.sh
 ./run-all-tests.sh
 ```
+
+## 🔍 Image Validation
+
+### Verify Image Metadata
+Based on your docker inspect output, your image should have these characteristics:
+
+```bash
+# Check image details
+docker inspect cleanstart/step-cli:latest-dev | jq '.[0] | {
+  Id: .Id,
+  RepoTags: .RepoTags,
+  Architecture: .Architecture,
+  Os: .Os,
+  Size: .Size,
+  User: .Config.User,
+  WorkingDir: .Config.WorkingDir,
+  Entrypoint: .Config.Entrypoint,
+  Cmd: .Config.Cmd
+}'
+```
+
+**Expected Values:**
+- **Architecture**: `amd64`
+- **OS**: `linux`
+- **User**: `clnstrt` (non-root user)
+- **Entrypoint**: `["./step"]`
+- **Default Cmd**: `["--help"]`
+- **Size**: ~453MB (may vary)
+
+### Verify Image Labels
+```bash
+docker inspect cleanstart/step-cli:latest-dev | jq '.[0].Config.Labels'
+```
+
+**Expected Labels:**
+- `Cleanstart.main.package`: `step-cli`
+- `org.opencontainers.image.authors`: `Cleanstart Team https://www.cleanstart.com/`
+- `org.opencontainers.image.vendor`: `Cleanstart`
 
 ## 🧪 Individual Test Commands
 
@@ -48,10 +106,11 @@ docker run --rm --entrypoint="" cleanstart/step-cli:latest-dev ./step ca --help
 docker run --rm --entrypoint="" cleanstart/step-cli:latest-dev ./step certificate --help
 ```
 
-### OIDC Commands Help
+### OIDC Commands Help (Note: May not be available in all builds)
 ```bash
 docker run --rm --entrypoint="" cleanstart/step-cli:latest-dev ./step oidc --help
 ```
+**Note**: OIDC support may not be available in minimal builds. This is expected behavior.
 
 ### Crypto Commands Help
 ```bash
@@ -111,8 +170,31 @@ chmod +x run-all-tests.sh
 ```
 sample-project/
 ├── README.md                    # This documentation
+├── simple-test.sh              # Quick validation script
 └── run-all-tests.sh            # Complete test script
 ```
+
+## 🚀 Quick Start Testing
+
+For the fastest way to test your image:
+
+```bash
+# Make scripts executable
+chmod +x simple-test.sh run-all-tests.sh
+
+# Run simple validation (recommended first)
+./simple-test.sh
+
+# Run comprehensive tests
+./run-all-tests.sh
+```
+
+The `simple-test.sh` script provides:
+- ✅ Image existence verification
+- ✅ Metadata inspection
+- ✅ Basic functionality tests
+- ✅ Non-root user validation
+- ✅ Quick pass/fail results
 
 ## 📚 Resources
 

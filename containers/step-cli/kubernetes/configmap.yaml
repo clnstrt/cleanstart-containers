@@ -1,0 +1,60 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: step-cli-config
+  namespace: step-cli-sample
+data:
+  # Step CLI configuration
+  step-config.yaml: |
+    # Step CLI configuration for Kubernetes deployment
+    # This is a sample configuration file
+    
+    # Default CA URL (example)
+    ca-url: "https://ca.example.com"
+    
+    # Default root certificate
+    root: "/home/clnstrt/.step/certs/root_ca.crt"
+    
+    # Default fingerprint
+    fingerprint: "your-ca-fingerprint-here"
+    
+  # Sample certificate request configuration
+  cert-request.json: |
+    {
+      "subject": {
+        "commonName": "k8s-step-cli.example.com"
+      },
+      "sans": [
+        "k8s-step-cli.example.com",
+        "step-cli.k8s.local"
+      ],
+      "keyUsage": [
+        "digitalSignature",
+        "keyEncipherment"
+      ],
+      "extKeyUsage": [
+        "serverAuth",
+        "clientAuth"
+      ]
+    }
+  
+  # Sample script for certificate operations
+  cert-script.sh: |
+    #!/bin/bash
+    echo "Step CLI Certificate Management Script"
+    echo "====================================="
+    
+    # Check if Step CLI is working
+    ./step version
+    
+    # List available commands
+    echo "Available Step CLI commands:"
+    ./step --help
+    
+    # Certificate authority commands
+    echo "CA commands:"
+    ./step ca --help
+    
+    # Certificate commands
+    echo "Certificate commands:"
+    ./step certificate --help
