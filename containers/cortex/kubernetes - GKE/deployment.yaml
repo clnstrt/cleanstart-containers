@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: cortex-app
-        image: us-central1-docker.pkg.dev/consumption-442810/testing-community-images/cortex-app:latest
+        image: cleanstart/cortex:latest-dev
         ports:
         - containerPort: 8080
         livenessProbe:

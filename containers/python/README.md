@@ -14,6 +14,13 @@ Expected output
 Hello World
 ```
 
-This is the basic step to check the image as it does not require any Dockerfile or any other steps.Simply run the above command!
+**Reference:**
 
+CleanStart Community Images: https://hub.docker.com/u/cleanstart 
+
+Get more from CleanStart images from https://github.com/clnstrt/cleanstart-containers/tree/main/containers⁠, 
+
+  -  how-to-Run sample projects using dockerfile 
+  -  how-to-Deploy via Kubernete YAML 
+  -  how-to-Migrate from public images to CleanStart images
 

@@ -129,6 +129,35 @@ docker-compose --version
 docker run --rm cleanstart/[container-name] --version
 ```
 
+## Index images, Use Cases and their sample projects
+
+# Available Docker Images
+
+| Sr No | Image Name              | Use Case                                    | Dockerfile-Based Projects | Kubernetes-Based Projects | Helm-Based Projects |
+|-------|-------------------------|---------------------------------------------|---------------------------|---------------------------|----------------------|
+| 1     | argocd-workflow-exec    | Execute ArgoCD Workflows                    | Yes                       | No                        | No                   |
+| 2     | argocd-extension-installer | ArgoCD Extensions & Plugins Installation | Yes                       | Yes                       | Yes                  |
+| 3     | aws-cli                 | AWS Command Line Interface                  | Yes                       | Yes                       | No                   |
+| 4     | busybox                 | Lightweight Utility                         | Yes                       | No                        | No                   |
+| 5     | cadvisor                | Container Resource Monitoring               | Yes                       | Yes                       | Yes                  |
+| 6     | cortex                  | Scalable Prometheus-Compatible Monitoring   | Yes                       | Yes                       | Yes                  |
+| 7     | curl                    | Data Transfer                               | Yes                       | No                        | No                   |
+| 8     | glibc                   | GNU C Library Runtime Support               | Yes                       | No                        | No                   |
+| 9     | go                      | Web Applications & Microservices            | Yes                       | Yes                       | No                   |
+| 10    | jdk                     | Java Development Kit                        | Yes                       | No                        | No                   |
+| 11    | jre                     | Java Runtime                                | Yes                       | No                        | No                   |
+| 12    | kyverno-kyvernopre      | Kubernetes Policy Engine                    | Yes                       | No                        | Yes                  |
+| 13    | logstash-exporter       | Elasticsearch Metrics Exporter              | Yes                       | No                        | No                   |
+| 14    | memcached               | In-Memory Caching                           | Yes                       | No                        | No                   |
+| 15    | metallb-controller      | Kubernetes Load Balancer                    | Yes                       | No                        | Yes                  |
+| 16    | minio                   | Object Storage Server                       | Yes                       | No                        | Yes                  |
+| 17    | minio-operator-sidecar  | MinIO Storage Operator                      | Yes                       | No                        | Yes                  |
+| 18    | nginx                   | Web Server & Reverse Proxy                  | Yes                       | No                        | No                   |
+| 19    | postgres                | Relational Database                         | Yes                       | No                        | No                   |
+| 20    | python                  | Data Science & Web Apps                     | Yes                       | Yes                       | Yes                  |
+| 21    | sqlite3                 | Lightweight SQL Database                    | Yes                       | No                        | No                   |
+| 22    | step-cli                | PKI & Certificates                          | Yes                       | No                        | No                   |
+
 
 ## 📚 Documentation
 
