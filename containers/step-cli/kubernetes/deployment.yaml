@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: step-cli-deployment
+  namespace: step-cli-sample
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: step-cli
+  template:
+    metadata:
+      labels:
+        app: step-cli
+    spec:
+      containers:
+      - name: step-cli
+        image: cleanstart/step-cli:latest-dev
+        command: ["sh", "-c"]
+        args:
+        - |
+          echo "Step CLI container started on Kubernetes"
+          echo "Container is ready for Step CLI operations"
+          echo "Use 'kubectl exec' to run Step CLI commands"
+          
+          # Keep container running
+          while true; do
+            sleep 3600
+          done
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "100m"
+          limits:
+            memory: "128Mi"
+            cpu: "200m"
+        livenessProbe:
+          exec:
+            command:
+            - ./step
+            - version
+          initialDelaySeconds: 10
+          periodSeconds: 30
+        readinessProbe:
+          exec:
+            command:
+            - ./step
+            - version
+          initialDelaySeconds: 5
+          periodSeconds: 10

@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: step-cli-sample
+  labels:
+    name: step-cli-sample
+    app: step-cli

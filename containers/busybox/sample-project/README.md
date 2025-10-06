@@ -62,13 +62,5 @@ cleanstart-containers/
         ├── start.sh                     # Main HTTP server script
         ├── data.json                    # Sample JSON data
         ├── docker-compose.yml           # Docker Compose config
-        ├── README.md                    # This file
-        └── basic-examples/              # Additional BusyBox examples
-            ├── Dockerfile
-            ├── README.md
-            ├── docker-compose.yml
-            ├── start.sh
-            ├── filesystem.sh
-            ├── networking.sh
-            └── process.sh
+        └── README.md                    # This file
 ```
