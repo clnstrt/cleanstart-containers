@@ -1,6 +1,6 @@
 ---
-name: New Image or Version Request
-about: Request a new container image or version to be added
+name: New CleanStart Image or Version Request
+about: Request a new CleanStart Community container image or version to be added
 title: 'Request a new container image or version to be added title: ''[IMAGE REQUEST]
   '''
 labels: new image request

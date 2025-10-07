@@ -1,6 +1,6 @@
 ---
-name: Container Image Bug Report
-about: Describe this issue template's purpose here.
+name: CleanStart Container Image Bug Report
+about: Report bug, and help us to improve quality
 title: 'Report an issue with a container image title: ''[IMAGE NAME] '''
 labels: bug, image-issue
 assignees: cleanstart-community-admin

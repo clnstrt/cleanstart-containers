@@ -1,8 +1,9 @@
 ---
-name: General Inquiry
-about: Ask a general question
+name: General Inquiry about CleanStart
+about: Ask a general question about CleanStart, CleanStart Community images on DockerHub,
+  CleanStart Enterprise images etc.
 title: General Question or Inquiry
-labels: ''
+labels: question
 assignees: cleanstart-community-admin
 
 ---

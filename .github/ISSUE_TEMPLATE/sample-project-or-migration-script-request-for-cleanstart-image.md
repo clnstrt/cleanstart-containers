@@ -1,6 +1,7 @@
 ---
-name: Sample Project or Migration Script Request
-about: Describe this issue template's purpose here.
+name: Sample Project or Migration Script Request for CleanStart Image
+about: 'Let us know what type of Sample project, migration project you want us to
+  build for you. '
 title: 'Request sample projects, migration scripts, or deployment guides title: ''[SAMPLE
   REQUEST] '''
 labels: how-to
