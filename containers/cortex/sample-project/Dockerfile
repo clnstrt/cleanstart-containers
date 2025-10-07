@@ -10,5 +10,5 @@ COPY data.json .
 COPY app.py .
 
 # Run your Python app instead of Cortex
-CMD ["python", "app.py"]
+CMD ["app.py"]
 
