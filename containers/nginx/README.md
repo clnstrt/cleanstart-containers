@@ -459,6 +459,12 @@ This deployment is open source and available under the [MIT License](LICENSE).
 - [Prometheus Monitoring](https://prometheus.io/docs/)
 - [Kubernetes HPA Documentation](https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/)
 
----
+**Reference:**
 
-**Note**: This deployment is designed for production use with proper security, monitoring, and scaling capabilities. Adjust resource limits and scaling parameters based on your specific requirements and cluster capacity.
+CleanStart Community Images: https://hub.docker.com/u/cleanstart 
+
+Get more from CleanStart images from https://github.com/clnstrt/cleanstart-containers/tree/main/containers⁠, 
+
+  -  how-to-Run sample projects using dockerfile 
+  -  how-to-Deploy via Kubernete YAML 
+  -  how-to-Migrate from public images to CleanStart images

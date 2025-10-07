@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: argocd-extensions-app
-        image: us-central1-docker.pkg.dev/consumption-442810/testing-community-images/argocd-extensions-app:latest
+        image: cleanstart/argocd-extension-installer:latest-dev
         ports:
         - containerPort: 8080
         livenessProbe:
